@@ -1,0 +1,30 @@
+#pragma once
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
+
+#include <vector>
+#include <glm/glm.hpp>
+
+class Entity
+{
+public:
+	Entity(glm::vec2 p_pos, SDL_Texture* p_tex);
+	glm::vec2& getPos()
+	{
+		return pos;
+	}
+	glm::vec2 getPosCopy()
+	{
+		return pos;
+	}
+	void setPos(glm::vec2 posold)
+	{
+		pos.x = posold.x;
+		pos.y = posold.y;
+	}
+	SDL_Texture* getTex();
+	SDL_Rect getCurrentFrame();
+	SDL_Rect currentFrame;
+	glm::vec2 pos;
+	SDL_Texture* tex;
+};

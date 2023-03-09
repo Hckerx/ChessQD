@@ -1,2 +1,2 @@
-# ChessQLD
-Chess written in SDL2.
+# Platformer
+A mess
