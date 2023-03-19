@@ -7,10 +7,10 @@
 #include "RenderWindow.hpp"
 #include "Entity.hpp"
 
-RenderWindow::RenderWindow(const char* p_title, int p_w, int p_h)
+RenderWindow::RenderWindow(const char* p_title, int p_h)
 	:window(NULL), renderer(NULL)  
 {
-	window = SDL_CreateWindow(p_title, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, p_w, p_h, SDL_WINDOW_SHOWN);
+	window = SDL_CreateWindow(p_title, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, p_h, p_h, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
 
 	if (window == NULL)
 	{
@@ -18,22 +18,21 @@ RenderWindow::RenderWindow(const char* p_title, int p_w, int p_h)
 	}
 
 	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
-	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 
-    // Clear the entire screen to our selected color.
-    SDL_RenderClear(renderer);
+	// Clear the entire screen to our selected color.
+	SDL_RenderClear(renderer);
 
-    // Up until now everything was drawn behind the scenes.
-    // This will show the new, red contents of the window.
-	
-    SDL_RenderPresent(renderer);
+	// Up until now everything was drawn behind the scenes.
+	// This will show the new, red contents of the window.
+
+	SDL_RenderPresent(renderer);
 
 	// Todo
 	SDL_Surface* icon = IMG_Load("bin/debug/res/gfx/icon.png");
-    SDL_SetWindowIcon(window, icon);
+	SDL_SetWindowIcon(window, icon);
 
 
-	ToggleFullscreen();
 	SDL_ShowCursor(1);
 
 	}
@@ -53,6 +52,7 @@ void RenderWindow::cleanUp()
 {
 	SDL_DestroyWindow(window);
 }
+
 
 void RenderWindow::clear()
 {
@@ -117,7 +117,6 @@ int RenderWindow::displayWelcomeMessage(TTF_Font* font128, TTF_Font* comment, in
       } else if (event.type == SDL_KEYDOWN) {
 			switch (event.key.keysym.sym)
                     {
-                    case SDLK_f:  ToggleFullscreen(); break;
                     case SDLK_q: 
 						SDL_DestroyTexture(textTexture);
   						SDL_FreeSurface(textSurface);
@@ -136,33 +135,6 @@ int RenderWindow::displayWelcomeMessage(TTF_Font* font128, TTF_Font* comment, in
   return 0;
 }
 
-// void RenderWindow::displayWelcomeMessage(TTF_Font* font, int height, int width) {
-
-// 	std::cout << "test" << std::endl;
-//   SDL_Color textColor = {255, 0, 0};
-//   SDL_Surface* textSurface = TTF_RenderText_Blended(font, "Welcome to my Platformer game", textColor);
-//   if (!textSurface) {
-//     fprintf(stderr, "Failed to render text surface: %s\n", TTF_GetError());
-//     return;
-//   }
-
-//   // Create a texture from the rendered text surface and set its blend mode to alpha blending
-//   textTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
-//   SDL_SetTextureBlendMode(textTexture, SDL_BLENDMODE_BLEND);
-
-//   // Calculate the position of the text so it is centered on the screen
-//   textRect.w = textSurface->w;
-//   textRect.h = textSurface->h;
-//   textRect.x = (width - textRect.w) / 2;
-//   textRect.y = (height - textRect.h) / 2;
-
-//   SDL_RenderCopy(renderer, textTexture, NULL, &textRect);
-  
-// 	SDL_RenderPresent(renderer);
-//   SDL_Delay(10000);
-//   SDL_DestroyTexture(textTexture);
-//   SDL_FreeSurface(textSurface);
-// }
 void RenderWindow::render(Entity& p_entity, glm::vec2 offset)
 {
 	SDL_Rect src; 
@@ -170,43 +142,28 @@ void RenderWindow::render(Entity& p_entity, glm::vec2 offset)
 	src.y = p_entity.getCurrentFrame().y;
 	src.w = p_entity.getCurrentFrame().w;
 	src.h = p_entity.getCurrentFrame().h;
+	
 
 	SDL_Rect dst;
 	dst.x = p_entity.getPos().x - offset.x;
 	dst.y = p_entity.getPos().y - offset.y;
-	dst.w = p_entity.getCurrentFrame().w;
-		dst.h = p_entity.getCurrentFrame().h;
+	dst.w = std::min(windowy, windowx)/8;
+	dst.h = std::min(windowy, windowx)/8;
 
 	SDL_RenderCopy(renderer, p_entity.getTex(), &src, &dst);
 }
-void RenderWindow::renderbg(SDL_Texture* tex, int Groesex, int Groesey, bool Bild) {
-	if (Bild) {
-		SDL_Rect src;
-		src.x = 0;
-		src.y = 0;
-		src.w = 1000;
-		src.h = 527;
-
-		SDL_Rect dst;
-		dst.x = 0;
-		dst.y = 0;
-		dst.w = Groesex;
-		dst.h = Groesey;
-		SDL_RenderCopy(renderer, tex, &src, &dst);
-	}
-	else {
-		SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-		int square_size = std::min(Groesey, Groesex) / 8;
-		for (int i = 0; i < 8; i++) {
-			for (int j = 0; j < 8; j++) {
-				SDL_Rect rect = {j * square_size, i * square_size, square_size, square_size};
-				if ((i + j) % 2 == 0) {
-					SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+void RenderWindow::renderbg() {
+	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+	int square_size = std::min(windowx, windowy) / 8;
+	for (int i = 0; i < 8; i++) {
+		for (int j = 0; j < 8; j++) {
+			SDL_Rect rect = {j * square_size, i * square_size, square_size, square_size};
+			if ((i + j) % 2 == 0) {
+				SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 				} else {
-					SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-				}
-				SDL_RenderFillRect(renderer, &rect);
+				SDL_SetRenderDrawColor(renderer, 139,69,19, 255);
 			}
+			SDL_RenderFillRect(renderer, &rect);
 		}
 	}
 }
@@ -217,9 +174,3 @@ void RenderWindow::display()
 }
 
 
-void RenderWindow::ToggleFullscreen() {
-    Uint32 FullscreenFlag = SDL_WINDOW_FULLSCREEN;
-    bool IsFullscreen = SDL_GetWindowFlags(window) & FullscreenFlag;
-    SDL_SetWindowFullscreen(window, IsFullscreen ? 0 : FullscreenFlag);
-    SDL_ShowCursor(IsFullscreen);
-}
