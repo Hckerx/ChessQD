@@ -15,7 +15,7 @@ public:
 	SDL_Texture* loadTexture(const char* p_filePath);
 	void cleanUp();
 	void clear();
-	void render(Entity& p_entity, glm::vec2 offset);
+	void render(Entity& p_entity);
 	void renderbg();
 	int windowx;
 	int windowy;

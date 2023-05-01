@@ -13,7 +13,7 @@ Queen::Queen(glm::vec2 p_pos, SDL_Texture* p_tex, bool white)
         else {
                 currentFrame.y = 0;
         }
-        currentFrame.x = 0;
+        currentFrame.x = 4*128;
         currentFrame.w = 128;
         currentFrame.h = 128;
 }

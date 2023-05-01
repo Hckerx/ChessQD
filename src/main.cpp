@@ -1,4 +1,5 @@
 #include <glm/fwd.hpp>
+#include <ostream>
 #define SDL_MAIN_HANDLED
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
@@ -8,7 +9,15 @@
 
 #include "RenderWindow.hpp"
 #include "pawn.hpp"
+#include "rook.hpp"
+#include "bishop.hpp"
+#include "king.hpp"
+#include "queen.hpp"
+#include "knight.hpp"
 #include "Entity.hpp"
+
+
+// autosave, lines brighter, keybinds for tabs, groß und kleinschreibung bei search and replace ignorein
 
 int main(int argc, char* args[])
 {
@@ -27,6 +36,9 @@ int main(int argc, char* args[])
     int shortDM = DM.h * 0.9;
 
     RenderWindow window("Schach", shortDM);
+
+
+    bool is_playing_white = true;
 
 
     //TTF_Font* font128 = TTF_OpenFont("bin/debug/res/font/font.ttf", 128);
@@ -54,29 +66,39 @@ int main(int argc, char* args[])
     bool gameRunning = true;
 
     SDL_Event event;
-    const Uint8 *keystate = SDL_GetKeyboardState(NULL);
+    std::vector<Entity> Pieces;
+    for (int i = 0; i < 8; i++) {
+      Pieces.push_back(Pawn({i, 1}, Textures, !is_playing_white));
+      Pieces.push_back(Pawn({i, 6}, Textures, is_playing_white)); 
+    } 
+
+    Pieces.push_back(Rook({0,0}, Textures, !is_playing_white));
+    Pieces.push_back(Rook({7,0}, Textures, !is_playing_white));
+    Pieces.push_back(Rook({0,7}, Textures, is_playing_white));
+    Pieces.push_back(Rook({7,7}, Textures, is_playing_white));
+
+    Pieces.push_back(Knight({1, 0}, Textures, !is_playing_white));
+    Pieces.push_back(Knight({6, 0}, Textures, !is_playing_white));
+    Pieces.push_back(Knight({1, 7}, Textures, is_playing_white));
+    Pieces.push_back(Knight({6, 7}, Textures, is_playing_white));
+
+    
+    Pieces.push_back(Bishop({2, 0}, Textures, !is_playing_white));
+    Pieces.push_back(Bishop({5, 0}, Textures, !is_playing_white));
+    Pieces.push_back(Bishop({2, 7}, Textures, is_playing_white));
+    Pieces.push_back(Bishop({5, 7}, Textures, is_playing_white));
+    
+
+    Pieces.push_back(Queen({(is_playing_white ? 3 : 4), 0}, Textures, !is_playing_white));
+    Pieces.push_back(Queen({(is_playing_white ? 3 : 4), 7}, Textures, is_playing_white));
+
+    Pieces.push_back(King({(is_playing_white ? 4 : 3), 0}, Textures, !is_playing_white));
+    Pieces.push_back(King({(is_playing_white ? 4 : 3), 7}, Textures, is_playing_white));
+    
+
     while (gameRunning)
     {
         window.updateWindowSize();
-        int squareSize = std::min(window.windowx, window.windowy)/8;
-        Entity black_Pawn_1 = Pawn({squareSize * 0, squareSize}, Textures, false);
-        Entity black_Pawn_2 = Pawn({squareSize * 1, squareSize}, Textures, false);
-        Entity black_Pawn_3 = Pawn({squareSize * 2, squareSize}, Textures, false);
-        Entity black_Pawn_4 = Pawn({squareSize * 3, squareSize}, Textures, false);
-        Entity black_Pawn_5 = Pawn({squareSize * 4, squareSize}, Textures, false);
-        Entity black_Pawn_6 = Pawn({squareSize * 5, squareSize}, Textures, false);
-        Entity black_Pawn_7 = Pawn({squareSize * 6, squareSize}, Textures, false);
-        Entity black_Pawn_8 = Pawn({squareSize * 7, squareSize}, Textures, false);
-
-
-        Entity white_Pawn_1 = Pawn({squareSize * 0, squareSize * 6}, Textures, true);
-        Entity white_Pawn_2 = Pawn({squareSize * 1, squareSize * 6}, Textures, true);
-        Entity white_Pawn_3 = Pawn({squareSize * 2, squareSize * 6}, Textures, true);
-        Entity white_Pawn_4 = Pawn({squareSize * 3, squareSize * 6}, Textures, true);
-        Entity white_Pawn_5 = Pawn({squareSize * 4, squareSize * 6}, Textures, true);
-        Entity white_Pawn_6 = Pawn({squareSize * 5, squareSize * 6}, Textures, true);
-        Entity white_Pawn_7 = Pawn({squareSize * 6, squareSize * 6}, Textures, true);
-        Entity white_Pawn_8 = Pawn({squareSize * 7, squareSize * 6}, Textures, true);
 
 
         while (SDL_PollEvent(&event))
@@ -96,23 +118,11 @@ int main(int argc, char* args[])
 
         window.clear();
         window.renderbg();
-        window.render(white_Pawn_1, {0,0});
-        window.render(white_Pawn_2, {0,0});
-        window.render(white_Pawn_3, {0,0});
-        window.render(white_Pawn_4, {0,0});
-        window.render(white_Pawn_5, {0,0});
-        window.render(white_Pawn_6, {0,0});
-        window.render(white_Pawn_7, {0,0});
-        window.render(white_Pawn_8, {0,0});
-        window.render(black_Pawn_1, {0,0});
-        window.render(black_Pawn_2, {0,0});
-        window.render(black_Pawn_3, {0,0});
-        window.render(black_Pawn_4, {0,0});
-        window.render(black_Pawn_5, {0,0});
-        window.render(black_Pawn_6, {0,0});
-        window.render(black_Pawn_7, {0,0});
-        window.render(black_Pawn_8, {0,0});
-        window.display();
+        for (int i = 0; i < (int)Pieces.size(); i++) {
+          window.render(Pieces[i]);
+        }
+    
+          window.display();
     }
     window.cleanUp();
     // TTF_CloseFont(font32);
@@ -148,7 +158,7 @@ TTF_CloseFont(font24);
 SDL_Quit();
 
 Mix_PlayChannel(-1, swingSfx, 0);
-    window.renderCenter(0, 0 + 3, "POLYMARS", font32, black);
+    window.renderCenter(0, 0 + 3, "POLYMARS", font32, white);
     window.renderCenter(0, 0, "POLYMARS", font32, white);
 
 */

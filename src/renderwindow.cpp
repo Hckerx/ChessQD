@@ -135,7 +135,7 @@ int RenderWindow::displayWelcomeMessage(TTF_Font* font128, TTF_Font* comment, in
   return 0;
 }
 
-void RenderWindow::render(Entity& p_entity, glm::vec2 offset)
+void RenderWindow::render(Entity& p_entity)
 {
 	SDL_Rect src; 
 	src.x = p_entity.getCurrentFrame().x;
@@ -145,8 +145,8 @@ void RenderWindow::render(Entity& p_entity, glm::vec2 offset)
 	
 
 	SDL_Rect dst;
-	dst.x = p_entity.getPos().x - offset.x;
-	dst.y = p_entity.getPos().y - offset.y;
+	dst.x = p_entity.getPos().x * std::min(windowy, windowx)/8;
+	dst.y = p_entity.getPos().y * std::min(windowy, windowx)/8;
 	dst.w = std::min(windowy, windowx)/8;
 	dst.h = std::min(windowy, windowx)/8;
 
@@ -166,6 +166,7 @@ void RenderWindow::renderbg() {
 			SDL_RenderFillRect(renderer, &rect);
 		}
 	}
+  SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 }
 
 void RenderWindow::display()
