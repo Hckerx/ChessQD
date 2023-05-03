@@ -13,8 +13,8 @@
 #include "knight.hpp"
 #include "Entity.hpp"
 
-std::vector<Entity> FenImport(std::string FenString) {
-  std::vector<Entity> Pieces;
+std::vector<Entity*> FenImport(std::string FenString) {
+  std::vector<Entity*> Pieces;
   bool white_to_move;
   int countx = 0;
   int county = 0;
@@ -28,27 +28,27 @@ std::vector<Entity> FenImport(std::string FenString) {
     else if (std::isalpha(c)){
       switch (tolower(c)){
         case 'k':
-        Pieces.push_back(King({countx, county}, isupper(c)));
+        Pieces.push_back(new King({countx, county}, isupper(c)));
         countx += 1;
         break;
         case 'n':
-        Pieces.push_back(Knight({countx, county}, isupper(c)));
+        Pieces.push_back (new Knight({countx, county}, isupper(c)));
         countx += 1;
         break;
         case 'p':
-        Pieces.push_back(Pawn({countx, county}, isupper(c)));
+        Pieces.push_back(new Pawn({countx, county}, isupper(c)));
         countx += 1;
         break;
         case 'r':
-        Pieces.push_back(Rook({countx, county}, isupper(c)));
+        Pieces.push_back(new Rook({countx, county}, isupper(c)));
         countx += 1;
         break;
         case 'b':
-        Pieces.push_back(Bishop({countx, county}, isupper(c)));
+        Pieces.push_back(new Bishop({countx, county}, isupper(c)));
         countx += 1;
         break;
         case 'q':
-        Pieces.push_back(Queen({countx, county}, isupper(c)));
+        Pieces.push_back(new Queen({countx, county}, isupper(c)));
         countx += 1;
         break;
       }
@@ -59,11 +59,21 @@ std::vector<Entity> FenImport(std::string FenString) {
   return Pieces; 
 }   
    
-void selectPiece(int x, int y, std::vector<Entity>* Pieces) {
-    // 
-    // while () {
-    //    
-    //}
+void selectPiece(int x, int y, std::vector<Entity*> Pieces) {
+    
+    for (Entity* i: Pieces)
+    {
+       if (glm::vec2(x,y) ==  i->pos){
+         // i.displayMoves();
+            i->test();
+          std::cout<<typeid(i).name()<<std::endl;
+       }
+
+    }
+    
+     
+    
+ 
     return;
      
 }

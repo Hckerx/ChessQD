@@ -16,6 +16,7 @@ Pawn::Pawn(glm::vec2 p_pos, bool white)
         currentFrame.x = 0;
         currentFrame.w = 128;
         currentFrame.h = 128;
+
 }
        
   

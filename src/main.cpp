@@ -98,7 +98,7 @@ int main(int argc, char* args[])
     // Pieces.push_back(King({(is_playing_white ? 4 : 3), 0}, !is_playing_white));
     // Pieces.push_back(King({(is_playing_white ? 4 : 3), 7}, is_playing_white));
     
-    std::vector<Entity> Pieces = FenImport("r6k/pp4pp/2p5/6q1/2B1P1b1/P2P2b1/1PP3PP/5R1K");
+    std::vector<Entity*> Pieces = FenImport("ppppp");
 
     while (gameRunning)
     {
@@ -111,7 +111,7 @@ int main(int argc, char* args[])
                 case SDL_MOUSEBUTTONDOWN:
                     if (event.button.button == SDL_BUTTON_LEFT){
                         SDL_GetMouseState(&x, &y); 
-                        //selectPiece(x/window.squareSize, y/window.squareSize, &Pieces);
+                        selectPiece(x/window.squareSize, y/window.squareSize, Pieces);
                         break;
                     }
                     break;
@@ -130,7 +130,7 @@ int main(int argc, char* args[])
         window.clear();
         window.renderbg();
         for (int i = 0; i < (int)Pieces.size(); i++) {
-          window.render(Pieces[i]);
+          window.render(*Pieces[i]);
         }
     
           window.display();
