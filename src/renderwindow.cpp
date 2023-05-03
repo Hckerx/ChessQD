@@ -16,7 +16,7 @@ RenderWindow::RenderWindow(const char* p_title, int p_h)
 	{
 		std::cout << "Window failed to init. Error: " << SDL_GetError() << std::endl;
 	}
-
+    updateWindowSize();
 	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 
@@ -32,14 +32,14 @@ RenderWindow::RenderWindow(const char* p_title, int p_h)
 	SDL_Surface* icon = IMG_Load("bin/debug/res/gfx/icon.png");
 	SDL_SetWindowIcon(window, icon);
 
-
 	SDL_ShowCursor(1);
-
+ 
+    squareSize = std::min(windowy, windowx)/8;
+    loadTexture("bin/debug/res/gfx/pieces.png");
 	}
 
 SDL_Texture* RenderWindow::loadTexture(const char* p_filePath)
 {
-	SDL_Texture* texture = NULL;
 	texture = IMG_LoadTexture(renderer, p_filePath);
 
 	if (texture == NULL)
@@ -145,19 +145,18 @@ void RenderWindow::render(Entity& p_entity)
 	
 
 	SDL_Rect dst;
-	dst.x = p_entity.getPos().x * std::min(windowy, windowx)/8;
-	dst.y = p_entity.getPos().y * std::min(windowy, windowx)/8;
-	dst.w = std::min(windowy, windowx)/8;
-	dst.h = std::min(windowy, windowx)/8;
+	dst.x = p_entity.getPos().x * squareSize;
+	dst.y = p_entity.getPos().y * squareSize;
+	dst.w = squareSize;
+	dst.h = squareSize;
 
-	SDL_RenderCopy(renderer, p_entity.getTex(), &src, &dst);
+	SDL_RenderCopy(renderer, texture, &src, &dst);
 }
 void RenderWindow::renderbg() {
 	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-	int square_size = std::min(windowx, windowy) / 8;
 	for (int i = 0; i < 8; i++) {
 		for (int j = 0; j < 8; j++) {
-			SDL_Rect rect = {j * square_size, i * square_size, square_size, square_size};
+			SDL_Rect rect = {j * squareSize, i * squareSize, squareSize, squareSize};
 			if ((i + j) % 2 == 0) {
 				SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 				} else {

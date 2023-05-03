@@ -8,7 +8,7 @@
 class Entity
 {
 public:
-	Entity(glm::vec2 p_pos, SDL_Texture* p_tex);
+	Entity(glm::vec2 p_pos);
 	glm::vec2& getPos()
 	{
 		return pos;
@@ -22,9 +22,7 @@ public:
 		pos.x = posold.x;
 		pos.y = posold.y;
 	}
-	SDL_Texture* getTex();
 	SDL_Rect getCurrentFrame();
 	SDL_Rect currentFrame;
 	glm::vec2 pos;
-	SDL_Texture* tex;
 };

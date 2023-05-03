@@ -7,14 +7,9 @@
 #include <ctime>
 #include <glm/glm.hpp>
 
-Entity::Entity(glm::vec2 p_pos, SDL_Texture* p_tex)
-:pos(p_pos), tex(p_tex)
+Entity::Entity(glm::vec2 p_pos)
+:pos(p_pos)
 {
-}
-
-SDL_Texture* Entity::getTex()
-{
-	return tex;
 }
 
 SDL_Rect Entity::getCurrentFrame()

@@ -9,3 +9,5 @@ cleanwin:
 	del *.o
 clean:
 	rm *.o
+test:
+	./bin/debug/main

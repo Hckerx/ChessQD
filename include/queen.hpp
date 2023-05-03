@@ -6,7 +6,7 @@
 class Queen: public Entity
 {
 public:
-    Queen(glm::vec2 p_pos, SDL_Texture* p_tex, bool white);
+    Queen(glm::vec2 p_pos, bool white);
 
 private:
 };

@@ -6,7 +6,7 @@
 class King: public Entity
 {
 public:
-    King(glm::vec2 p_pos, SDL_Texture* p_tex, bool white);
+    King(glm::vec2 p_pos, bool white);
 
 private:
 };

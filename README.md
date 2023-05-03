@@ -1,2 +1,2 @@
-# Platformer
+# ChessQLD
 A mess

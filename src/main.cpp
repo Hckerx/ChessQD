@@ -8,6 +8,8 @@
 #include <vector>
 
 #include "RenderWindow.hpp"
+#include "util.hpp"
+
 #include "pawn.hpp"
 #include "rook.hpp"
 #include "bishop.hpp"
@@ -40,6 +42,8 @@ int main(int argc, char* args[])
 
     bool is_playing_white = true;
 
+    int x, y;
+
 
     //TTF_Font* font128 = TTF_OpenFont("bin/debug/res/font/font.ttf", 128);
     //TTF_Font* comment = TTF_OpenFont("bin/debug/res/font/font.ttf", 32);
@@ -62,39 +66,39 @@ int main(int argc, char* args[])
     //Board Board = Board(shortDM);
 
 
-    SDL_Texture* Textures = window.loadTexture("bin/debug/res/gfx/pieces.png");
     bool gameRunning = true;
 
     SDL_Event event;
-    std::vector<Entity> Pieces;
-    for (int i = 0; i < 8; i++) {
-      Pieces.push_back(Pawn({i, 1}, Textures, !is_playing_white));
-      Pieces.push_back(Pawn({i, 6}, Textures, is_playing_white)); 
-    } 
+    // std::vector<Entity> Pieces;
+    // for (int i = 0; i < 8; i++) {
+    //   Pieces.push_back(Pawn({i, 1}, !is_playing_white));
+    //   Pieces.push_back(Pawn({i, 6}, is_playing_white)); 
+    // } 
 
-    Pieces.push_back(Rook({0,0}, Textures, !is_playing_white));
-    Pieces.push_back(Rook({7,0}, Textures, !is_playing_white));
-    Pieces.push_back(Rook({0,7}, Textures, is_playing_white));
-    Pieces.push_back(Rook({7,7}, Textures, is_playing_white));
+    // Pieces.push_back(Rook({0,0}, !is_playing_white));
+    // Pieces.push_back(Rook({7,0}, !is_playing_white));
+    // Pieces.push_back(Rook({0,7}, is_playing_white));
+    // Pieces.push_back(Rook({7,7}, is_playing_white));
 
-    Pieces.push_back(Knight({1, 0}, Textures, !is_playing_white));
-    Pieces.push_back(Knight({6, 0}, Textures, !is_playing_white));
-    Pieces.push_back(Knight({1, 7}, Textures, is_playing_white));
-    Pieces.push_back(Knight({6, 7}, Textures, is_playing_white));
+    // Pieces.push_back(Knight({1, 0}, !is_playing_white));
+    // Pieces.push_back(Knight({6, 0}, !is_playing_white));
+    // Pieces.push_back(Knight({1, 7}, is_playing_white));
+    // Pieces.push_back(Knight({6, 7}, is_playing_white));
 
+    // 
+    // Pieces.push_back(Bishop({2, 0}, !is_playing_white));
+    // Pieces.push_back(Bishop({5, 0}, !is_playing_white));
+    // Pieces.push_back(Bishop({2, 7}, is_playing_white));
+    // Pieces.push_back(Bishop({5, 7}, is_playing_white));
+    // 
+
+    // Pieces.push_back(Queen({(is_playing_white ? 3 : 4), 0}, !is_playing_white));
+    // Pieces.push_back(Queen({(is_playing_white ? 3 : 4), 7}, is_playing_white));
+
+    // Pieces.push_back(King({(is_playing_white ? 4 : 3), 0}, !is_playing_white));
+    // Pieces.push_back(King({(is_playing_white ? 4 : 3), 7}, is_playing_white));
     
-    Pieces.push_back(Bishop({2, 0}, Textures, !is_playing_white));
-    Pieces.push_back(Bishop({5, 0}, Textures, !is_playing_white));
-    Pieces.push_back(Bishop({2, 7}, Textures, is_playing_white));
-    Pieces.push_back(Bishop({5, 7}, Textures, is_playing_white));
-    
-
-    Pieces.push_back(Queen({(is_playing_white ? 3 : 4), 0}, Textures, !is_playing_white));
-    Pieces.push_back(Queen({(is_playing_white ? 3 : 4), 7}, Textures, is_playing_white));
-
-    Pieces.push_back(King({(is_playing_white ? 4 : 3), 0}, Textures, !is_playing_white));
-    Pieces.push_back(King({(is_playing_white ? 4 : 3), 7}, Textures, is_playing_white));
-    
+    std::vector<Entity> Pieces = FenImport("r6k/pp4pp/2p5/6q1/2B1P1b1/P2P2b1/1PP3PP/5R1K");
 
     while (gameRunning)
     {
@@ -104,6 +108,13 @@ int main(int argc, char* args[])
         while (SDL_PollEvent(&event))
         {
             switch (event.type) {
+                case SDL_MOUSEBUTTONDOWN:
+                    if (event.button.button == SDL_BUTTON_LEFT){
+                        SDL_GetMouseState(&x, &y); 
+                        //selectPiece(x/window.squareSize, y/window.squareSize, &Pieces);
+                        break;
+                    }
+                    break;
                 case SDL_QUIT:
                     gameRunning = false;
                     break;
@@ -168,3 +179,10 @@ Mix_PlayChannel(-1, swingSfx, 0);
 
 //#include <SDL2/SDL_ttf.h>
 //#include <SDL2/SDL_mixer.h>
+//
+//
+//
+
+
+
+

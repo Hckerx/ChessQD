@@ -5,8 +5,8 @@
 
 #include "glm/glm.hpp"
 #include <iostream>
-Knight::Knight(glm::vec2 p_pos, SDL_Texture* p_tex, bool white)
-:Entity(p_pos, p_tex){
+Knight::Knight(glm::vec2 p_pos, bool white)
+:Entity(p_pos){
         if (white) {
                 currentFrame.y = 128;
         }

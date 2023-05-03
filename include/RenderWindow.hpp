@@ -1,4 +1,5 @@
 #pragma once
+#include <algorithm>
 #include <glm/glm.hpp>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
@@ -19,13 +20,16 @@ public:
 	void renderbg();
 	int windowx;
 	int windowy;
+    int squareSize;
 	void updateWindowSize() {
 		SDL_GetWindowSize(window, &windowx, &windowy);
+        squareSize = std::min(windowx, windowy)/8;
 	}
 		
 
 	void display();
 private:
+	SDL_Texture* texture = NULL;
 	SDL_Window* window;
 	SDL_Renderer* renderer;
 };
