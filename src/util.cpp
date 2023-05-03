@@ -65,7 +65,7 @@ void selectPiece(int x, int y, std::vector<Entity*> Pieces) {
     {
        if (glm::vec2(x,y) ==  i->pos){
          // i.displayMoves();
-            i->test();
+            i->highlightPiece();
           std::cout<<typeid(i).name()<<std::endl;
        }
 

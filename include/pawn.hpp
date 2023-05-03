@@ -5,7 +5,7 @@
 class Pawn: public Entity
 {
 public:
-    void test() override {
+    void highlightPiece() override {
         std::cout<<"this sisr r"<<std::endl;
     }
     Pawn(glm::vec2 p_pos, bool white);
