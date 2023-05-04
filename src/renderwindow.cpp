@@ -1,6 +1,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>
+#include <glm/fwd.hpp>
 #include <iostream>
 #include <string>
 
@@ -157,10 +158,10 @@ void RenderWindow::renderbg(std::vector<glm::vec2> highlight) {
 			SDL_RenderFillRect(renderer, &rect);
 			for (glm::vec2 k : highlight)
 			{
-			if (k == glm::vec2(j,i) ){
-				SDL_SetRenderDrawColor(renderer, 255,255,0, 200);
-				SDL_RenderFillRect(renderer, &rect);
-			}
+                if (k == glm::vec2(j,i) && k != glm::vec2(1000, 1000)){
+                    SDL_SetRenderDrawColor(renderer, 255,255,0, 200);
+                    SDL_RenderFillRect(renderer, &rect);
+                }
 			}
 		}
 	}

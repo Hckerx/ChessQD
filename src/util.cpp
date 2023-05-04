@@ -72,7 +72,7 @@ glm::vec2 selectPiece(int x, int y, std::vector<Entity*> Pieces) {
 
     }  
  
-    return glm::vec2(NULL,NULL);
+    return glm::vec2(1000,1000);
      
 }
 
