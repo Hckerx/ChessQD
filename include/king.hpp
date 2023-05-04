@@ -7,7 +7,7 @@ class King: public Entity
 {
 public:
     King(glm::vec2 p_pos, bool white);
-    void highlightPiece() override {
+    void highlightPiece() {
             std::cout<<"this sisr r"<<std::endl;
         	}
 private:
