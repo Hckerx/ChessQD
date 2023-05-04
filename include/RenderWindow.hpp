@@ -17,7 +17,7 @@ public:
 	void cleanUp();
 	void clear();
 	void render(Entity& p_entity);
-	void renderbg();
+	void renderbg(std::vector<glm::vec2> highlight);
 	int windowx;
 	int windowy;
     int squareSize;

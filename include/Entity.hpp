@@ -22,8 +22,11 @@ public:
 		pos.x = posold.x;
 		pos.y = posold.y;
 	}
+	void highlightPiece (){
+		
+	}
 
-	virtual void highlightPiece() = 0;
+	virtual void findMoves() = 0;
 	SDL_Rect getCurrentFrame();
 	SDL_Rect currentFrame;
 	glm::vec2 pos;

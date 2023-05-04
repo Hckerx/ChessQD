@@ -59,7 +59,7 @@ std::vector<Entity*> FenImport(std::string FenString) {
   return Pieces; 
 }   
    
-void selectPiece(int x, int y, std::vector<Entity*> Pieces) {
+glm::vec2 selectPiece(int x, int y, std::vector<Entity*> Pieces) {
     
     for (Entity* i: Pieces)
     {
@@ -67,14 +67,12 @@ void selectPiece(int x, int y, std::vector<Entity*> Pieces) {
          // i.displayMoves();
             i->highlightPiece();
           std::cout<<typeid(i).name()<<std::endl;
+          return glm::vec2(x,y);
        }
 
-    }
-    
-     
-    
+    }  
  
-    return;
+    return glm::vec2(NULL,NULL);
      
 }
 

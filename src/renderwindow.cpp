@@ -18,15 +18,7 @@ RenderWindow::RenderWindow(const char* p_title, int p_h)
 	}
     updateWindowSize();
 	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
-	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-
-	// Clear the entire screen to our selected color.
-	SDL_RenderClear(renderer);
-
-	// Up until now everything was drawn behind the scenes.
-	// This will show the new, red contents of the window.
-
-	SDL_RenderPresent(renderer);
+	SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
 
 	// Todo
 	SDL_Surface* icon = IMG_Load("bin/debug/res/gfx/icon.png");
@@ -152,7 +144,7 @@ void RenderWindow::render(Entity& p_entity)
 
 	SDL_RenderCopy(renderer, texture, &src, &dst);
 }
-void RenderWindow::renderbg() {
+void RenderWindow::renderbg(std::vector<glm::vec2> highlight) {
 	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 	for (int i = 0; i < 8; i++) {
 		for (int j = 0; j < 8; j++) {
@@ -163,6 +155,13 @@ void RenderWindow::renderbg() {
 				SDL_SetRenderDrawColor(renderer, 139,69,19, 255);
 			}
 			SDL_RenderFillRect(renderer, &rect);
+			for (glm::vec2 k : highlight)
+			{
+			if (k == glm::vec2(j,i) ){
+				SDL_SetRenderDrawColor(renderer, 255,255,0, 200);
+				SDL_RenderFillRect(renderer, &rect);
+			}
+			}
 		}
 	}
   SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);

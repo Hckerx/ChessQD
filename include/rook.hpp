@@ -7,7 +7,7 @@ class Rook: public Entity
 {
 public:
     Rook(glm::vec2 p_pos, bool white);
-    void highlightPiece() {
+    void findMoves() {
         std::cout<<"this sisr r"<<std::endl;
     }
 private:

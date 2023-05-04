@@ -43,8 +43,7 @@ int main(int argc, char* args[])
     bool is_playing_white = true;
 
     int x, y;
-
-
+    
     //TTF_Font* font128 = TTF_OpenFont("bin/debug/res/font/font.ttf", 128);
     //TTF_Font* comment = TTF_OpenFont("bin/debug/res/font/font.ttf", 32);
 
@@ -69,36 +68,9 @@ int main(int argc, char* args[])
     bool gameRunning = true;
 
     SDL_Event event;
-    // std::vector<Entity> Pieces;
-    // for (int i = 0; i < 8; i++) {
-    //   Pieces.push_back(Pawn({i, 1}, !is_playing_white));
-    //   Pieces.push_back(Pawn({i, 6}, is_playing_white)); 
-    // } 
-
-    // Pieces.push_back(Rook({0,0}, !is_playing_white));
-    // Pieces.push_back(Rook({7,0}, !is_playing_white));
-    // Pieces.push_back(Rook({0,7}, is_playing_white));
-    // Pieces.push_back(Rook({7,7}, is_playing_white));
-
-    // Pieces.push_back(Knight({1, 0}, !is_playing_white));
-    // Pieces.push_back(Knight({6, 0}, !is_playing_white));
-    // Pieces.push_back(Knight({1, 7}, is_playing_white));
-    // Pieces.push_back(Knight({6, 7}, is_playing_white));
-
-    // 
-    // Pieces.push_back(Bishop({2, 0}, !is_playing_white));
-    // Pieces.push_back(Bishop({5, 0}, !is_playing_white));
-    // Pieces.push_back(Bishop({2, 7}, is_playing_white));
-    // Pieces.push_back(Bishop({5, 7}, is_playing_white));
-    // 
-
-    // Pieces.push_back(Queen({(is_playing_white ? 3 : 4), 0}, !is_playing_white));
-    // Pieces.push_back(Queen({(is_playing_white ? 3 : 4), 7}, is_playing_white));
-
-    // Pieces.push_back(King({(is_playing_white ? 4 : 3), 0}, !is_playing_white));
-    // Pieces.push_back(King({(is_playing_white ? 4 : 3), 7}, is_playing_white));
-    
-    std::vector<Entity*> Pieces = FenImport("ppppp");
+   
+    glm::vec2 selectedField;
+    std::vector<Entity*> Pieces = FenImport("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR");
 
     while (gameRunning)
     {
@@ -111,7 +83,7 @@ int main(int argc, char* args[])
                 case SDL_MOUSEBUTTONDOWN:
                     if (event.button.button == SDL_BUTTON_LEFT){
                         SDL_GetMouseState(&x, &y); 
-                        selectPiece(x/window.squareSize, y/window.squareSize, Pieces);
+                        selectedField = selectPiece(x/window.squareSize, y/window.squareSize, Pieces);
                         break;
                     }
                     break;
@@ -128,7 +100,8 @@ int main(int argc, char* args[])
 
 
         window.clear();
-        window.renderbg();
+        std::vector<glm::vec2> testvector = {glm::vec2(1,1),glm::vec2(1,2)};
+        window.renderbg(std::vector<glm::vec2>{selectedField});
         for (int i = 0; i < (int)Pieces.size(); i++) {
           window.render(*Pieces[i]);
         }

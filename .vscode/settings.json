@@ -61,5 +61,6 @@
         "memory_resource": "cpp",
         "string_view": "cpp",
         "cinttypes": "cpp"
-    }
+    },
+    "C_Cpp.errorSquiggles": "enabledIfIncludesResolve"
 }
