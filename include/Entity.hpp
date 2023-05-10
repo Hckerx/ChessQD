@@ -3,6 +3,7 @@
 #include <SDL2/SDL_image.h>
 
 #include <vector>
+#include <iostream>
 #include <glm/glm.hpp>
 
 class Entity
@@ -22,10 +23,6 @@ public:
 		pos.x = posold.x;
 		pos.y = posold.y;
 	}
-	void highlightPiece (){
-		
-	}
-
 	virtual void findMoves() = 0;
 	SDL_Rect getCurrentFrame();
 	SDL_Rect currentFrame;

@@ -24,7 +24,8 @@
         {
             "name": "f",
             "includePath": [
-                "${workspaceFolder}/**"
+                "${workspaceFolder}/**",
+                "/usr/include/SDL2/**"
             ],
             "defines": [
                 "_DEBUG",

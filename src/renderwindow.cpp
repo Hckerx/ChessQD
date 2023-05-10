@@ -168,6 +168,21 @@ void RenderWindow::renderbg(std::vector<glm::vec2> highlight) {
   SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 }
 
+void RenderWindow::renderbg() {
+	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+	for (int i = 0; i < 8; i++) {
+		for (int j = 0; j < 8; j++) {
+			SDL_Rect rect = {j * squareSize, i * squareSize, squareSize, squareSize};
+			if ((i + j) % 2 == 0) {
+				SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+				} else {
+				SDL_SetRenderDrawColor(renderer, 139,69,19, 255);
+			}
+			SDL_RenderFillRect(renderer, &rect);
+		}
+	}
+  SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+}
 void RenderWindow::display()
 {
     SDL_RenderPresent(renderer);

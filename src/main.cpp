@@ -68,28 +68,55 @@ int main(int argc, char* args[])
     bool gameRunning = true;
 
     SDL_Event event;
-   
-    glm::vec2 selectedField;
+    std::vector<glm::vec2>high={{1000,1000}};
+    Entity* selectedEntity;
     std::vector<Entity*> Pieces = FenImport("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR");
 
+    bool isPieceSelected;
     while (gameRunning)
     {
         window.updateWindowSize();
 
-
+        if (isPieceSelected)
+        {
+            
+                    SDL_GetMouseState(&x, &y);
+                    float test = x / window.squareSize;
+                    std::cout << test << std::endl;
+                    selectedEntity->setPos(glm::vec2({((float)x / (float)window.squareSize), ((float)y / (float)window.squareSize)}));
+                
+            
+        }
         while (SDL_PollEvent(&event))
         {
             switch (event.type) {
                 case SDL_MOUSEBUTTONDOWN:
                     if (event.button.button == SDL_BUTTON_LEFT){
-                        SDL_GetMouseState(&x, &y); 
-                        selectedField = selectPiece(x/window.squareSize, y/window.squareSize, Pieces);
+                        SDL_GetMouseState(&x, &y);
+                        isPieceSelected = true;
+                        selectedEntity = selectPiece(x/window.squareSize, y/window.squareSize, Pieces);
+                        if (selectedEntity==nullptr)
+                        {
+                            high = {{1000,1000}};
+                        }
+                        else{
+                            high={selectedEntity->getPos()};
+                        }
                         break;
                     }
                     break;
                 case SDL_QUIT:
                     gameRunning = false;
                     break;
+                case SDL_MOUSEBUTTONUP:
+                    if (event.button.button == SDL_BUTTON_LEFT) {
+                        SDL_GetMouseState(&x, &y);
+                        high = {{1000,1000}};
+                        selectedEntity->setPos(glm::vec2{x/window.squareSize,y/window.squareSize});
+                        isPieceSelected = false;
+
+
+                    }
                 case SDL_KEYDOWN:
                     switch (event.key.keysym.sym)
                     {
@@ -101,7 +128,13 @@ int main(int argc, char* args[])
 
         window.clear();
         std::vector<glm::vec2> testvector = {glm::vec2(1,1),glm::vec2(1,2)};
-        window.renderbg(std::vector<glm::vec2>{selectedField});
+//        if (isPieceSelected) {
+//             }
+//        else {
+           
+            window.renderbg(high);
+           
+ //       }
         for (int i = 0; i < (int)Pieces.size(); i++) {
           window.render(*Pieces[i]);
         }
