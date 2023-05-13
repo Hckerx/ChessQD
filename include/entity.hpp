@@ -23,18 +23,16 @@ public:
 		pos.x = posold.x;
 		pos.y = posold.y;
 	}
-	virtual bool move(glm::vec2 newPos, glm::vec2 oldPos) {
-		
+	void move(glm::vec2 newPos, glm::vec2 oldPos) {
 		for (glm::vec2 i: legalMoves) {
 			if (i == newPos)	{
-
 				setPos(newPos);
-				
-				return true;
+				hasMoved = true;
+				return;
 			}
 	}
 		setPos(oldPos);
-		return false;
+		return;
 	}
 	virtual void findMoves() = 0;
 	std::vector<glm::vec2> legalMoves;	
@@ -42,4 +40,5 @@ public:
 	SDL_Rect currentFrame;
 	glm::vec2 pos;
 	bool white;
+	bool hasMoved;
 };

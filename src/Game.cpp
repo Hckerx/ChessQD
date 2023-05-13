@@ -22,7 +22,7 @@
 
 #include "game.hpp"
 
-Game::Game() : window("Duuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu Huuuuuuuuuuuuuuuuuuuuurensohn"){
+Game::Game() : window("Schach"){
     run();
 }
 void Game::run() {
