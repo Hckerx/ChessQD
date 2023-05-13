@@ -6,7 +6,8 @@
 #include "glm/glm.hpp"
 #include <iostream>
 Queen::Queen(glm::vec2 p_pos, bool white)
-:Entity(p_pos){
+:Entity(p_pos, white){
+        white = white;
         if (white) {
                 currentFrame.y = 128;
         }
@@ -16,4 +17,16 @@ Queen::Queen(glm::vec2 p_pos, bool white)
         currentFrame.x = 4*128;
         currentFrame.w = 128;
         currentFrame.h = 128;
+}
+
+void Queen::findMoves() {
+        legalMoves.clear();
+        for (size_t i = 0; i < 8; i++) {
+                legalMoves.push_back(glm::vec2(pos[0] + i, pos[1] + i));
+                legalMoves.push_back(glm::vec2(pos[0] - i, pos[1] - i));
+                legalMoves.push_back(glm::vec2(pos[0] + i, pos[1] - i));
+                legalMoves.push_back(glm::vec2(pos[0] - i, pos[1] + i));
+                legalMoves.push_back(glm::vec2(pos[0], i));
+                legalMoves.push_back(glm::vec2(i, pos[1]));
+        }
 }

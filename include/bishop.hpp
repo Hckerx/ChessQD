@@ -7,6 +7,6 @@ class Bishop: public Entity
 {
 public:
     Bishop(glm::vec2 p_pos, bool white);
-    void findMoves() {return;} 
+    void findMoves(); 
 private:
 };

@@ -7,7 +7,7 @@ class King: public Entity
 {
 public:
     King(glm::vec2 p_pos, bool white);
-    void findMoves() {return;} 
+    void findMoves(); 
 private:
 };
 

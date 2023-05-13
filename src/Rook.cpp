@@ -6,7 +6,7 @@
 #include "glm/glm.hpp"
 #include <iostream>
 Rook::Rook(glm::vec2 p_pos, bool white)
-:Entity(p_pos){
+:Entity(p_pos, white){
         if (white) {
                 currentFrame.y = 128;
         }
@@ -19,6 +19,7 @@ Rook::Rook(glm::vec2 p_pos, bool white)
 }
 
 void Rook::findMoves() {
+        legalMoves.clear();
         for (size_t i = 0; i < 8; i++)
         {
                 legalMoves.push_back(glm::vec2(pos[0], i));

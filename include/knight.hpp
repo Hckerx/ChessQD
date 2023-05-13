@@ -7,7 +7,7 @@ class Knight: public Entity
 {
 public:
     Knight(glm::vec2 p_pos, bool white);
-    void findMoves() {return;}
+    void findMoves();
 
 private:
 };
