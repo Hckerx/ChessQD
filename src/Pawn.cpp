@@ -22,26 +22,32 @@ Pawn::Pawn(glm::vec2 p_pos, bool white)
 void Pawn::findMoves(){
         legalMoves.clear();
         //Fixme handle takes and blockade, and pawn +2 at start and promoting????
-        if (hasMoved) {
+        if (!hasMoved) {
 
-        }
-        if (white) {
-                legalMoves.push_back(glm::vec2(pos[0],pos[1] - 1));
+                if (white) {
+                        legalMoves.push_back(glm::vec2(pos[0],pos[1] - 1));
+                        legalMoves.push_back(glm::vec2(pos[0],pos[1] - 2));
+                }
+                else {
+                        legalMoves.push_back(glm::vec2(pos[0],pos[1] + 1));
+                        legalMoves.push_back(glm::vec2(pos[0],pos[1] + 2));
+                }
         }
         else {
-                legalMoves.push_back(glm::vec2(pos[0],pos[1] + 1));
+
+                        legalMoves.push_back(glm::vec2(pos[0],pos[1] + 1));
+                        legalMoves.push_back(glm::vec2(pos[0],pos[1] - 1));
         }
 }
        
   
 bool Pawn::move(glm::vec2 newPos, glm::vec2 oldPos) {
-        if (Entity::move(newPos, oldPos)) {
+        if (!Entity::move(newPos, oldPos)) {
                 hasMoved = true;
                 return true;
         }
         return false;
 }
-
 
 
 
