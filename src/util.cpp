@@ -3,7 +3,7 @@
 #include <iostream>
 #include <vector>
 
-#include "RenderWindow.hpp"
+#include "renderWindow.hpp"
 
 #include "pawn.hpp"
 #include "rook.hpp"
@@ -11,11 +11,11 @@
 #include "king.hpp"
 #include "queen.hpp"
 #include "knight.hpp"
-#include "Entity.hpp"
+#include "entity.hpp"
 
 std::vector<Entity*> FenImport(std::string FenString) {
   std::vector<Entity*> Pieces;
-  bool white_to_move;
+  bool white_to_findMoves;
   int countx = 0;
   int county = 0;
   for (char c: FenString) {
@@ -59,12 +59,12 @@ std::vector<Entity*> FenImport(std::string FenString) {
   return Pieces; 
 }   
    
-Entity* selectPiece(int x, int y, std::vector<Entity*> Pieces) {
+Entity* getMatchingPiece(int x, int y, std::vector<Entity*> Pieces) {
     
     for (Entity* i: Pieces)
     {
        if (glm::vec2(x,y) ==  i->pos){
-         // i.displayMoves();
+         // i.displayfindMovess();
           return i;
        }
 

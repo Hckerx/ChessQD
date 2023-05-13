@@ -1,5 +1,5 @@
 #include "pawn.hpp"
-#include "Entity.hpp"
+#include "entity.hpp"
 #include "SDL2/SDL.h"
 
 

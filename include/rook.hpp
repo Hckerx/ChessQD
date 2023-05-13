@@ -2,13 +2,11 @@
 #include <glm/glm.hpp>
 #include <iostream>
 
-#include "Entity.hpp"
+#include "entity.hpp"
 class Rook: public Entity
 {
 public:
     Rook(glm::vec2 p_pos, bool white);
-    void findMoves() {
-        std::cout<<"this sisr r"<<std::endl;
-    }
-private:
+    void findMoves() ;
+;private:
 };

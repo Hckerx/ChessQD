@@ -2,13 +2,11 @@
 #include <glm/glm.hpp>
 #include <iostream>
 
-#include "Entity.hpp"
+#include "entity.hpp"
 class Queen: public Entity
 {
 public:
     Queen(glm::vec2 p_pos, bool white);
-    void findMoves() {
-        std::cout<<"this sisr r"<<std::endl;
-    }
+    void findMoves() {return;} 
 private:
 };

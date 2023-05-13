@@ -1,169 +1,16 @@
-#include <glm/fwd.hpp>
-#include <ostream>
-#define SDL_MAIN_HANDLED
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
-
-#include <iostream>
-#include <vector>
-
-#include "RenderWindow.hpp"
-#include "util.hpp"
-
-#include "pawn.hpp"
-#include "rook.hpp"
-#include "bishop.hpp"
-#include "king.hpp"
-#include "queen.hpp"
-#include "knight.hpp"
-#include "Entity.hpp"
-
+#include "game.hpp"
 
 // autosave, lines brighter, keybinds for tabs, groß und kleinschreibung bei search and replace ignorein
 
 int main(int argc, char* args[])
 {
-    if (SDL_Init(SDL_INIT_VIDEO) > 0)
-        std::cout << "HEY.. SDL_Init HAS FAILED. SDL_ERROR: " << SDL_GetError() << std::endl;
-
-    if (!(IMG_Init(IMG_INIT_PNG)))
-        std::cout << "IMG_init has failed. Error: " << SDL_GetError() << std::endl;
-
-    if (TTF_Init() == -1)
-        std::cout << "TTF_init has failed. Error: " << SDL_GetError() << std::endl;
-
-    SDL_DisplayMode DM;
-    SDL_GetCurrentDisplayMode(0, &DM);
-
-    int shortDM = DM.h * 0.9;
-
-    RenderWindow window("Schach", shortDM);
-
-
-    bool is_playing_white = true;
-
-    int x, y;
-    
-    //TTF_Font* font128 = TTF_OpenFont("bin/debug/res/font/font.ttf", 128);
-    //TTF_Font* comment = TTF_OpenFont("bin/debug/res/font/font.ttf", 32);
-
-    // Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048);
-
-    /* if (window.displayWelcomeMessage(font128, comment, DM.h, DM.w, "Welcome to my Game") == 1) {
-    window.cleanUp();
-    // TTF_CloseFont(font32);
-    // TTF_CloseFont(font24);
-    //	TTF_Quit();
-
-    TTF_Quit();
-    TTF_CloseFont(comment);
-    TTF_CloseFont(font128);
-    SDL_Quit();
-    return 0;
-} */
-    // 389 129
-    //Board Board = Board(shortDM);
-
-
-    bool gameRunning = true;
-
-    SDL_Event event;
-    std::vector<glm::vec2>high={{1000,1000}};
-    Entity* selectedEntity;
-    std::vector<Entity*> Pieces = FenImport("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR");
-
-    bool isPieceSelected;
-    while (gameRunning)
-    {
-        window.updateWindowSize();
-
-        if (isPieceSelected)
-        {
-            
-                    SDL_GetMouseState(&x, &y);
-                    float test = x / window.squareSize;
-                    std::cout << test << std::endl;
-                    selectedEntity->setPos(glm::vec2({((float)x / (float)window.squareSize), ((float)y / (float)window.squareSize)}));
-                
-            
-        }
-        while (SDL_PollEvent(&event))
-        {
-            switch (event.type) {
-                case SDL_MOUSEBUTTONDOWN:
-                    if (event.button.button == SDL_BUTTON_LEFT){
-                        SDL_GetMouseState(&x, &y);
-                        isPieceSelected = true;
-                        selectedEntity = selectPiece(x/window.squareSize, y/window.squareSize, Pieces);
-                        if (selectedEntity==nullptr)
-                        {
-                            high = {{1000,1000}};
-                        }
-                        else{
-                            high={selectedEntity->getPos()};
-                        }
-                        break;
-                    }
-                    break;
-                case SDL_QUIT:
-                    gameRunning = false;
-                    break;
-                case SDL_MOUSEBUTTONUP:
-                    if (event.button.button == SDL_BUTTON_LEFT) {
-                        SDL_GetMouseState(&x, &y);
-                        high = {{1000,1000}};
-                        selectedEntity->setPos(glm::vec2{x/window.squareSize,y/window.squareSize});
-                        isPieceSelected = false;
-
-
-                    }
-                case SDL_KEYDOWN:
-                    switch (event.key.keysym.sym)
-                    {
-                        case SDLK_q: gameRunning = false; break;
-                    }
-            }
-        }
-
-
-        window.clear();
-        std::vector<glm::vec2> testvector = {glm::vec2(1,1),glm::vec2(1,2)};
-//        if (isPieceSelected) {
-//             }
-//        else {
-           
-            window.renderbg(high);
-           
- //       }
-        for (int i = 0; i < (int)Pieces.size(); i++) {
-          window.render(*Pieces[i]);
-        }
-    
-          window.display();
-    }
-    window.cleanUp();
-    // TTF_CloseFont(font32);
-    // TTF_CloseFont(font24);
-    //	TTF_Quit();
-
-    //TTF_Quit();
-    //TTF_CloseFont(comment);
-    //TTF_CloseFont(font128);
-    SDL_Quit();
+    Game Game;
 
     return 0;
+
+
+
 }
-
-
-
-
-
-
-
-
-
-
-
 
 /*
 TTF_Font* font48 = TTF_OpenFont("res/font/font.ttf", 48);
@@ -188,6 +35,7 @@ Mix_PlayChannel(-1, swingSfx, 0);
 //
 //
 //
+
 
 
 
