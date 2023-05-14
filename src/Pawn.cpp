@@ -21,7 +21,7 @@ Pawn::Pawn(glm::vec2 p_pos, bool white)
         lastPos = pos;
 
 }
-void Pawn::findMoves(){
+void Pawn::findMoves(std::vector<Entity*> Pieces){
         
         
         legalMoves.clear();

@@ -22,7 +22,7 @@ private:
     std::vector<glm::vec2> lastPositions = {{1000,1000}};
 
     // Pieces 
-    std::vector<Entity*> Pieces = FenImport("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR");
+    std::vector<Entity*> Pieces = FenImport("8/8/8/8/R7/8/8/8");
     Entity* selectedEntity;
 
     void run();

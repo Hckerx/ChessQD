@@ -7,6 +7,6 @@ class Queen: public Entity
 {
 public:
     Queen(glm::vec2 p_pos, bool white);
-    void findMoves(); 
+    void findMoves(std::vector<Entity*> Pieces); 
 private:
 };

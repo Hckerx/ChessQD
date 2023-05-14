@@ -18,7 +18,7 @@ Knight::Knight(glm::vec2 p_pos, bool white)
         currentFrame.h = 128;
 }
 
-void Knight::findMoves() {
+void Knight::findMoves(std::vector<Entity*> Pieces) {
         legalMoves.clear();
         legalMoves.push_back(glm::vec2(pos[0] + 2, pos[1] + 1));
         legalMoves.push_back(glm::vec2(pos[0] + 2, pos[1] - 1));

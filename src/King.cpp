@@ -18,7 +18,7 @@ King::King(glm::vec2 p_pos, bool white)
         currentFrame.h = 128;
 }
 
-void King::findMoves() {
+void King::findMoves(std::vector<Entity *> Pieces) {
         //FIXME add special Rules rochade schach schachmatt?????
         legalMoves.clear();
         legalMoves.push_back(glm::vec2(pos[0] + 1, pos[1] + 1));

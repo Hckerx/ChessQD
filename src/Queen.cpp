@@ -19,7 +19,7 @@ Queen::Queen(glm::vec2 p_pos, bool white)
         currentFrame.h = 128;
 }
 
-void Queen::findMoves() {
+void Queen::findMoves(std::vector<Entity*> Pieces) {
         legalMoves.clear();
         for (size_t i = 0; i < 8; i++) {
                 legalMoves.push_back(glm::vec2(pos[0] + i, pos[1] + i));

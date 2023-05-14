@@ -59,7 +59,7 @@ void Game::selectPiece() {
         lastPositions = {{1000, 1000}};
     }
     else {
-    selectedEntity->findMoves();    
+    selectedEntity->findMoves(Pieces);    
     lastPositions = {selectedEntity->getPos()};
     }
 }

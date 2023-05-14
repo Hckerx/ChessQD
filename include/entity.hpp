@@ -34,7 +34,7 @@ public:
 		setPos(oldPos);
 		return;
 	}
-	virtual void findMoves() = 0;
+	virtual void findMoves(std::vector<Entity *> Pieces) = 0;
 	std::vector<glm::vec2> legalMoves;	
 	SDL_Rect getCurrentFrame();
 	SDL_Rect currentFrame;
