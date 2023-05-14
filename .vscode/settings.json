@@ -62,5 +62,5 @@
         "string_view": "cpp",
         "cinttypes": "cpp"
     },
-    "C_Cpp.errorSquiggles": "enabledIfIncludesResolve"
+    "C_Cpp.errorSquiggles": "enabled"
 }

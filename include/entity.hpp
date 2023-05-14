@@ -23,6 +23,7 @@ public:
 		pos.x = posold.x;
 		pos.y = posold.y;
 	}
+	bool findIndMoves(std::vector<Entity *> Pieces, int x, int y);
 	void move(glm::vec2 newPos, glm::vec2 oldPos) {
 		for (glm::vec2 i: legalMoves) {
 			if (i == newPos)	{
