@@ -2,7 +2,7 @@
 #include "entity.hpp"
 #include "SDL2/SDL.h"
 
-
+#include "util.hpp"
 #include "glm/glm.hpp"
 #include <iostream>
 Pawn::Pawn(glm::vec2 p_pos, bool white)
@@ -21,20 +21,20 @@ Pawn::Pawn(glm::vec2 p_pos, bool white)
         lastPos = pos;
 
 }
+
+
+
 void Pawn::findMoves(std::vector<Entity*> Pieces){
-        
-        
         legalMoves.clear();
-        //Fixme handle takes and blockade, and pawn +2 at start and promoting????
         if (lastPos != pos)
         {
             lastPos = {1000,1000};
-            if (white) {
+            if (white && getMatchingPiece(pos.x, pos.y-1)!=nullptr) {
                         legalMoves.push_back(glm::vec2(pos[0],pos[1] - 1));
                 }
-                else {
-                        legalMoves.push_back(glm::vec2(pos[0],pos[1] + 1));
-                }
+            else {
+                legalMoves.push_back(glm::vec2(pos[0],pos[1] + 1));
+            }
         }
         else{
                 if (white) {

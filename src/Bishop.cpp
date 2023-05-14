@@ -4,7 +4,9 @@
 
 
 #include "glm/glm.hpp"
+#include <glm/fwd.hpp>
 #include <iostream>
+
 Bishop::Bishop(glm::vec2 p_pos, bool white)
 :Entity(p_pos, white){
         if (white) {
@@ -20,10 +22,25 @@ Bishop::Bishop(glm::vec2 p_pos, bool white)
 
 void Bishop::findMoves(std::vector<Entity*> Pieces){
         legalMoves.clear();
-        for (size_t i = 0; i < 8; i++) {
-                legalMoves.push_back(glm::vec2(pos[0] + i, pos[1] + i));
-                legalMoves.push_back(glm::vec2(pos[0] - i, pos[1] - i));
-                legalMoves.push_back(glm::vec2(pos[0] + i, pos[1] - i));
-                legalMoves.push_back(glm::vec2(pos[0] - i, pos[1] + i));
+        for (int8_t i = pos.x+1; i<8; i++) {
+            if (!findIndMoves(Pieces, i, pos.y+(i-pos.x))) {
+                break;
+            }
         }
+        for (int8_t i = pos.x-1; i>=0; i--) {
+            if (!findIndMoves(Pieces, i, pos.y-(i-pos.x))) {
+                break;
+            }
+        }
+        for (int8_t i = pos.x+1; i<8; i++) {
+            if (!findIndMoves(Pieces, i, pos.y-(i-pos.x))) {
+                break;
+            }
+        }
+        for (int8_t i = pos.x-1; i>=0; i--) {
+            if (!findIndMoves(Pieces, i, pos.y+(i-pos.x))) {
+                break;
+            }
+        }
+
 }

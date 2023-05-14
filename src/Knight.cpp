@@ -20,12 +20,12 @@ Knight::Knight(glm::vec2 p_pos, bool white)
 
 void Knight::findMoves(std::vector<Entity*> Pieces) {
         legalMoves.clear();
-        legalMoves.push_back(glm::vec2(pos[0] + 2, pos[1] + 1));
-        legalMoves.push_back(glm::vec2(pos[0] + 2, pos[1] - 1));
-        legalMoves.push_back(glm::vec2(pos[0] - 2, pos[1] + 1));
-        legalMoves.push_back(glm::vec2(pos[0] - 2, pos[1] - 1));
-        legalMoves.push_back(glm::vec2(pos[0] + 1, pos[1] + 2));
-        legalMoves.push_back(glm::vec2(pos[0] + 1, pos[1] - 2));
-        legalMoves.push_back(glm::vec2(pos[0] - 1, pos[1] + 2));
-        legalMoves.push_back(glm::vec2(pos[0] - 1, pos[1] - 2));
+        findIndMoves(Pieces, pos[0] + 2, pos[1] + 1);
+        findIndMoves(Pieces, pos[0] + 2, pos[1] - 1);
+        findIndMoves(Pieces, pos[0] - 2, pos[1] + 1);
+        findIndMoves(Pieces, pos[0] - 2, pos[1] - 1);
+        findIndMoves(Pieces, pos[0] + 1, pos[1] + 2);
+        findIndMoves(Pieces, pos[0] + 1, pos[1] - 2);
+        findIndMoves(Pieces, pos[0] - 1, pos[1] + 2);
+        findIndMoves(Pieces, pos[0] - 1, pos[1] - 2);
 }

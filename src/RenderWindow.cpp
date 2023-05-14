@@ -129,7 +129,6 @@ int RenderWindow::displayWelcomeMessage(TTF_Font* font128, TTF_Font* comment, in
 	SDL_Texture* textTexture;
 	SDL_Rect textRectComment;
 	SDL_Texture* textTextureComment;
-	std::cout << "test" << std::endl;
 	SDL_Color textColor = {255, 0, 0};
 	SDL_Color textColorComment = {0, 0, 0};
 	SDL_Surface* textSurface = TTF_RenderText_Blended(font128, text, textColor);

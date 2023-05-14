@@ -10,5 +10,4 @@ public:
     Rook(glm::vec2 p_pos, bool white);
     void findMoves(std::vector<Entity*> Pieces) ;
 ;private:
-    bool findIndMoves(std::vector<Entity *> Pieces,int x,int y);
 };

@@ -20,13 +20,53 @@ Queen::Queen(glm::vec2 p_pos, bool white)
 }
 
 void Queen::findMoves(std::vector<Entity*> Pieces) {
-        legalMoves.clear();
-        for (size_t i = 0; i < 8; i++) {
-                legalMoves.push_back(glm::vec2(pos[0] + i, pos[1] + i));
-                legalMoves.push_back(glm::vec2(pos[0] - i, pos[1] - i));
-                legalMoves.push_back(glm::vec2(pos[0] + i, pos[1] - i));
-                legalMoves.push_back(glm::vec2(pos[0] - i, pos[1] + i));
-                legalMoves.push_back(glm::vec2(pos[0], i));
-                legalMoves.push_back(glm::vec2(i, pos[1]));
+    legalMoves.clear();
+    for (int8_t i = pos.x+1; i<8; i++) {
+        if (!findIndMoves(Pieces, i, pos.y+(i-pos.x))) {
+            break;
         }
+    }
+    for (int8_t i = pos.x-1; i>=0; i--) {
+        if (!findIndMoves(Pieces, i, pos.y-(i-pos.x))) {
+            break;
+        }
+    }
+    for (int8_t i = pos.x+1; i<8; i++) {
+        if (!findIndMoves(Pieces, i, pos.y-(i-pos.x))) {
+            break;
+        }
+    }
+    for (int8_t i = pos.x-1; i>=0; i--) {
+        if (!findIndMoves(Pieces, i, pos.y+(i-pos.x))) {
+            break;
+        }
+    }
+    int pos_x = pos[0]+1;
+    for (int8_t i = pos_x; i < 8; i++)
+    {
+        if(!findIndMoves(Pieces,i,pos[1])){
+            break;
+        }
+    }
+    pos_x = pos[0]-1;
+    for (int8_t i = pos_x; i >= 0; i--)
+    {
+        if(!findIndMoves(Pieces,i,pos[1])){
+            break;
+        }
+    }
+    int pos_y = pos[1]+1;
+    for (int8_t i = pos_y; i < 8; i++)
+    {
+        if(!findIndMoves(Pieces,pos[0],i)){
+            break;
+        }
+    }
+    pos_y = pos.y - 1;
+    for (int8_t i = pos_y; i >= 0; i-=1)
+    {
+        if(!findIndMoves(Pieces,pos[0],i)){
+            break;
+        }
+    }
 }
