@@ -1,6 +1,5 @@
 #include "bishop.hpp"
 #include "entity.hpp"
-#include "SDL2/SDL.h"
 #include "glm/glm.hpp"
 
 #include <glm/fwd.hpp>

@@ -1,6 +1,7 @@
 #pragma once
 #include <algorithm>
 #include <glm/glm.hpp>
+#define SDL_MAIN_HANDLED
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>

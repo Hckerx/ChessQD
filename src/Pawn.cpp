@@ -1,6 +1,5 @@
 #include "pawn.hpp"
 #include "entity.hpp"
-#include "SDL2/SDL.h"
 
 #include "util.hpp"
 #include "glm/glm.hpp"

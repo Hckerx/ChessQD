@@ -1,6 +1,5 @@
 #include "knight.hpp"
 #include "entity.hpp"
-#include "SDL2/SDL.h"
 
 
 #include "glm/glm.hpp"
