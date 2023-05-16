@@ -4,7 +4,6 @@
 #include <vector>
 
 #include "renderWindow.hpp"
-
 #include "pawn.hpp"
 #include "rook.hpp"
 #include "bishop.hpp"
@@ -15,7 +14,6 @@
 
 std::vector<Entity*> FenImport(std::string FenString) {
   std::vector<Entity*> Pieces;
-  //bool white_to_findMoves;
   int countx = 0;
   int county = 0;
   for (char c: FenString) {
@@ -53,9 +51,7 @@ std::vector<Entity*> FenImport(std::string FenString) {
         break;
       }
     }
-
-
-    }
+  }
   return Pieces; 
 }   
    
@@ -64,13 +60,8 @@ Entity* getMatchingPiece(int x, int y, std::vector<Entity*> Pieces) {
     for (Entity* i: Pieces)
     {
        if (glm::vec2(x,y) ==  i->pos){
-         // i.displayfindMovess();
           return i;
        }
-
     }  
     return nullptr;
 }
-
-// 
- 

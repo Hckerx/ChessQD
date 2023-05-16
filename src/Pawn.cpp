@@ -23,7 +23,6 @@ Pawn::Pawn(glm::vec2 p_pos, bool white)
 }
 
 
-
 void Pawn::findMoves(std::vector<Entity*> Pieces){
         legalMoves.clear();
         int step;
@@ -34,7 +33,6 @@ void Pawn::findMoves(std::vector<Entity*> Pieces){
             step = -1;
         }
 
-
         // Check if pawn has moved. If  it has set it to 1000 so it cannot move twice any more. 
         if (lastPos != pos && lastPos != glm::vec2{1000,1000})
             lastPos = {1000,1000};
@@ -44,7 +42,6 @@ void Pawn::findMoves(std::vector<Entity*> Pieces){
                 if (lastPos == pos && getMatchingPiece(pos[0],pos[1] - 2*step, Pieces) == nullptr ){
                         legalMoves.push_back(glm::vec2(pos[0],pos[1] - 2*step));
                 }
-
         } 
         
         Entity* hypoPiece = getMatchingPiece(pos[0]-1, pos[1]-step, Pieces); 
@@ -58,7 +55,5 @@ void Pawn::findMoves(std::vector<Entity*> Pieces){
                 if (hypoPiece->white != white) {
                         legalMoves.push_back(glm::vec2(pos[0]+1, pos[1]-step));
                 }
-        }
-           
-                            
+        }                         
 }

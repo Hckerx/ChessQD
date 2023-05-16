@@ -2,6 +2,7 @@
 #include "entity.hpp"
 #include "SDL2/SDL.h"
 #include "glm/glm.hpp"
+
 #include <glm/fwd.hpp>
 #include <iostream>
 
@@ -40,5 +41,4 @@ void Bishop::findMoves(std::vector<Entity*> Pieces){
                 break;
             }
         }
-
 }

@@ -1,4 +1,6 @@
 #include "entity.hpp"
+#include "util.hpp"
+
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <cstdlib>
@@ -7,7 +9,6 @@
 #include <ctime>
 #include <glm/glm.hpp>
 #include <algorithm>
-#include "util.hpp"
 
 Entity::Entity(glm::vec2 p_pos, bool white)
 :pos(p_pos), white(white)
@@ -36,7 +37,6 @@ bool Entity::findIndMoves(std::vector<Entity *> Pieces, int x, int y){
         return false;
     }
 }
-
 
 bool Entity::move(glm::vec2 newPos, glm::vec2 oldPos, std::vector<Entity*> Pieces, bool white_turn) {
     if (white_turn == white) {

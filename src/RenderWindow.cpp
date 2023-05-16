@@ -8,10 +8,8 @@
 #include "renderWindow.hpp"
 #include "entity.hpp"
 
-
 RenderWindow::RenderWindow(const char* p_title)
 {
-
     if (SDL_Init(SDL_INIT_VIDEO) > 0) std::cout << "HEY.. SDL_Init HAS FAILED. SDL_ERROR: " << SDL_GetError() << std::endl;
 
     if (!(IMG_Init(IMG_INIT_PNG)))
@@ -126,7 +124,6 @@ void RenderWindow::display()
 }
 
 
-
 void RenderWindow::fullRender(std::vector<glm::vec2> highlight, std::vector<Entity*> Pieces, bool playing_white) {
     clear();
 	renderbg(highlight, playing_white);
@@ -135,8 +132,6 @@ void RenderWindow::fullRender(std::vector<glm::vec2> highlight, std::vector<Enti
     }
 	display();
 }
-
-
 
 
 int RenderWindow::displayWelcomeMessage(TTF_Font* font128, TTF_Font* comment, int height, int width, const char* text) {
@@ -205,8 +200,7 @@ int RenderWindow::displayWelcomeMessage(TTF_Font* font128, TTF_Font* comment, in
 	  }
     }
 
-    // Render the text
-    
+    // Render the text  
   }
 
   // Destroy the texture and free the surface after the loop

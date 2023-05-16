@@ -1,9 +1,8 @@
 #include "king.hpp"
 #include "entity.hpp"
 #include "SDL2/SDL.h"
-
-
 #include "glm/glm.hpp"
+
 #include <iostream>
 King::King(glm::vec2 p_pos, bool white)
 :Entity(p_pos, white){
