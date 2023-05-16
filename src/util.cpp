@@ -15,7 +15,7 @@
 
 std::vector<Entity*> FenImport(std::string FenString) {
   std::vector<Entity*> Pieces;
-  bool white_to_findMoves;
+  //bool white_to_findMoves;
   int countx = 0;
   int county = 0;
   for (char c: FenString) {
@@ -72,5 +72,5 @@ Entity* getMatchingPiece(int x, int y, std::vector<Entity*> Pieces) {
     return nullptr;
 }
 
-
-
+// 
+ 

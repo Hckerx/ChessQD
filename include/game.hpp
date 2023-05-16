@@ -15,6 +15,7 @@ private:
     //Game Logic
     bool gameRunning = true;
     bool isPieceSelected;
+    bool white_turn = true;
     bool playing_white = true;
 
     // RenderWindow stuff

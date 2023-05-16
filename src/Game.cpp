@@ -27,13 +27,14 @@ Game::Game() : window("Schach"){
 void Game::run() {
     while (gameRunning)
     {
+        
         window.updateWindowSize();
         if (isPieceSelected)
         {
            DragPiece();
         }
         handleEvents();
-        window.fullRender(lastPositions, Pieces);
+        window.fullRender(lastPositions, Pieces, white_turn);
     }
 }
 
@@ -65,7 +66,9 @@ void Game::selectPiece() {
 
 void Game::placePiece() {
     SDL_GetMouseState(&Mouse_x, &Mouse_y);
-    selectedEntity->move(glm::vec2{Mouse_x/window.squareSize,Mouse_y/window.squareSize}, lastPositions[0]);
+    if (selectedEntity->move(glm::vec2{Mouse_x/window.squareSize,Mouse_y/window.squareSize}, lastPositions[0], Pieces, white_turn)) {
+        white_turn = !white_turn;
+    } 
     lastPositions.push_back(selectedEntity->getPos());
     isPieceSelected = false;
 }

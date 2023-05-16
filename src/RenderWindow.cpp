@@ -65,7 +65,7 @@ void RenderWindow::clear()
 	SDL_RenderClear(renderer);
 }
 
-void RenderWindow::render(Entity& p_entity)
+void RenderWindow::render(Entity& p_entity, bool playing_white)
 {
 	SDL_Rect src; 
 	src.x = p_entity.getCurrentFrame().x;
@@ -75,14 +75,20 @@ void RenderWindow::render(Entity& p_entity)
 	
 
 	SDL_Rect dst;
-	dst.x = p_entity.getPos().x * squareSize;
-	dst.y = p_entity.getPos().y * squareSize;
+    if (playing_white) {
+        dst.x = p_entity.getPos().x * squareSize;
+        dst.y = p_entity.getPos().y * squareSize;
+    }
+    else {
+        dst.x = windowx - (p_entity.getPos().x * squareSize + squareSize);
+        dst.y = windowy - (p_entity.getPos().y * squareSize + squareSize);
+    }
 	dst.w = squareSize;
 	dst.h = squareSize;
 
 	SDL_RenderCopy(renderer, texture, &src, &dst);
 }
-void RenderWindow::renderbg(std::vector<glm::vec2> highlight = {{1000,1000}}) {
+void RenderWindow::renderbg(std::vector<glm::vec2> highlight = {{1000,1000}}, bool white_turn = true) {
 	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 	for (int i = 0; i < 8; i++) {
 		for (int j = 0; j < 8; j++) {
@@ -95,10 +101,19 @@ void RenderWindow::renderbg(std::vector<glm::vec2> highlight = {{1000,1000}}) {
 			SDL_RenderFillRect(renderer, &rect);
 			for (glm::vec2 k : highlight)
 			{
-                if (k == glm::vec2(j,i) && k != glm::vec2(1000, 1000)){
-                    SDL_SetRenderDrawColor(renderer, 255,255,0, 200);
-                    SDL_RenderFillRect(renderer, &rect);
+                if (white_turn) {
+                    if (k == glm::vec2(j,i) && k != glm::vec2(1000, 1000)){
+                        SDL_SetRenderDrawColor(renderer, 255,255,0, 200);
+                        SDL_RenderFillRect(renderer, &rect);
+                    }
+                    
+                } else {
+                    if (k == glm::vec2(8-(j+1), 8-(i+1)) && k != glm::vec2(1000, 1000)){
+                        SDL_SetRenderDrawColor(renderer, 255,255,0, 200);
+                        SDL_RenderFillRect(renderer, &rect);
+                    }
                 }
+                
 			}
 		}
 	}
@@ -112,11 +127,11 @@ void RenderWindow::display()
 
 
 
-void RenderWindow::fullRender(std::vector<glm::vec2> highlight, std::vector<Entity*> Pieces) {
+void RenderWindow::fullRender(std::vector<glm::vec2> highlight, std::vector<Entity*> Pieces, bool playing_white) {
     clear();
-	renderbg(highlight);
+	renderbg(highlight, playing_white);
 	for (int i = 0; i < (int)Pieces.size(); i++) {
-        render(*Pieces[i]);
+        render(*Pieces[i], playing_white);
     }
 	display();
 }
