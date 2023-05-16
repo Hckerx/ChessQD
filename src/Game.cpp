@@ -1,4 +1,3 @@
-
 #include <cmath>
 #include <glm/fwd.hpp>
 
@@ -29,7 +28,7 @@ void Game::run() {
     while (gameRunning)
     {
         window.updateWindowSize();
-        if (isPieceSelected && selectedEntity != nullptr)
+        if (isPieceSelected)
         {
            DragPiece();
         }
@@ -53,14 +52,14 @@ void Game::DragPiece() {
 
 void Game::selectPiece() {
     SDL_GetMouseState(&Mouse_x, &Mouse_y);
-    isPieceSelected = true;
     selectedEntity = getMatchingPiece(Mouse_x/window.squareSize, Mouse_y/window.squareSize, Pieces);
     if (selectedEntity == nullptr) {
         lastPositions = {{1000, 1000}};
     }
     else {
-    selectedEntity->findMoves(Pieces);    
-    lastPositions = {selectedEntity->getPos()};
+        selectedEntity->findMoves(Pieces);    
+        lastPositions = {selectedEntity->getPos()};
+        isPieceSelected = true;
     }
 }
 

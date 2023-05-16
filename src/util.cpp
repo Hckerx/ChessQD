@@ -69,9 +69,7 @@ Entity* getMatchingPiece(int x, int y, std::vector<Entity*> Pieces) {
        }
 
     }  
- 
     return nullptr;
-     
 }
 
 
