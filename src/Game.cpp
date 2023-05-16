@@ -45,15 +45,38 @@ Game::~Game() {
 void Game::DragPiece() {
         
     SDL_GetMouseState(&Mouse_x, &Mouse_y);
-    float newPos_x = (float)Mouse_x / (float)window.squareSize - 0.5 ;
-    float newPos_y = (float)Mouse_y / (float)window.squareSize - 0.5;
+    float Mousex;
+    float Mousey;
+    if(white_turn){
+        Mousex =  (float)Mouse_x/(float)window.squareSize;
+        Mousey =  (float)Mouse_y/(float)window.squareSize ; 	
+    }
+    else
+    {
+        Mousex =  8-(float)Mouse_x/(float)window.squareSize;;
+        Mousey =  8-(float)Mouse_y/(float)window.squareSize; ;
+    }
+
+    float newPos_x = Mousex - 0.5 ;
+    float newPos_y = Mousey - 0.5;
     selectedEntity->setPos(glm::vec2(newPos_x, newPos_y));
         
 }
 
 void Game::selectPiece() {
     SDL_GetMouseState(&Mouse_x, &Mouse_y);
-    selectedEntity = getMatchingPiece(Mouse_x/window.squareSize, Mouse_y/window.squareSize, Pieces);
+    if(white_turn){
+        Mouse_x =  Mouse_x/window.squareSize;
+        Mouse_y =  Mouse_y/window.squareSize ;	
+    }
+    else
+    {
+        Mouse_x =  7-Mouse_x/window.squareSize;
+        Mouse_y =  7-Mouse_y/window.squareSize ;
+    }
+    
+     
+    selectedEntity = getMatchingPiece(Mouse_x, Mouse_y, Pieces);
     if (selectedEntity == nullptr) {
         lastPositions = {{1000, 1000}};
     }
@@ -66,7 +89,17 @@ void Game::selectPiece() {
 
 void Game::placePiece() {
     SDL_GetMouseState(&Mouse_x, &Mouse_y);
-    if (selectedEntity->move(glm::vec2{Mouse_x/window.squareSize,Mouse_y/window.squareSize}, lastPositions[0], Pieces, white_turn)) {
+    if(white_turn){
+        Mouse_x =  Mouse_x/window.squareSize;
+        Mouse_y =  Mouse_y/window.squareSize ;	
+    }
+    else
+    {
+        Mouse_x =  7 - Mouse_x/window.squareSize; 
+        Mouse_y =  7 - Mouse_y/window.squareSize ;
+    }
+
+    if (selectedEntity->move(glm::vec2{Mouse_x,Mouse_y}, lastPositions[0], Pieces, white_turn)) {
         white_turn = !white_turn;
     } 
     lastPositions.push_back(selectedEntity->getPos());
