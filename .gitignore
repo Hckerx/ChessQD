@@ -3,3 +3,4 @@
 .cache/
 src/compile_commands.json
 bin/debug/main
+bin/debug/main.exe
