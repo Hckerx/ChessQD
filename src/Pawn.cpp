@@ -26,27 +26,39 @@ Pawn::Pawn(glm::vec2 p_pos, bool white)
 
 void Pawn::findMoves(std::vector<Entity*> Pieces){
         legalMoves.clear();
-        if (lastPos != pos)
-        {
-            lastPos = {1000,1000};
-            if (white && getMatchingPiece(pos.x, pos.y-1)!=nullptr) {
-                        legalMoves.push_back(glm::vec2(pos[0],pos[1] - 1));
-                }
-            else {
-                legalMoves.push_back(glm::vec2(pos[0],pos[1] + 1));
-            }
+        int step;
+        if(white){
+           step = 1;      
         }
         else{
-                if (white) {
-                        legalMoves.push_back(glm::vec2(pos[0],pos[1] - 1));
-                        legalMoves.push_back(glm::vec2(pos[0],pos[1] - 2));
-                }
-                else {
-                        legalMoves.push_back(glm::vec2(pos[0],pos[1] + 1));
-                        legalMoves.push_back(glm::vec2(pos[0],pos[1] + 2));
-                }
-        }                      
-}
-       
-  
+            step = -1;
+        }
 
+
+        // Check if pawn has moved. If  it has set it to 1000 so it cannot move twice any more. 
+        if (lastPos != pos && lastPos != glm::vec2{1000,1000})
+            lastPos = {1000,1000};
+        if(getMatchingPiece(pos[0], pos[1]-step, Pieces) == nullptr) {
+                legalMoves.push_back(glm::vec2(pos[0],pos[1] - step)); 
+                
+                if (lastPos == pos && getMatchingPiece(pos[0],pos[1] - 2*step, Pieces) == nullptr ){
+                        legalMoves.push_back(glm::vec2(pos[0],pos[1] - 2*step));
+                }
+
+        } 
+        
+        Entity* hypoPiece = getMatchingPiece(pos[0]-1, pos[1]-step, Pieces); 
+        if (hypoPiece != nullptr) {
+                if (hypoPiece->white != white) {
+                        legalMoves.push_back(glm::vec2(pos[0]-1, pos[1]-step));
+                }
+        }
+        hypoPiece = getMatchingPiece(pos[0]+1, pos[1]-step, Pieces); 
+        if (hypoPiece != nullptr) {
+                if (hypoPiece->white != white) {
+                        legalMoves.push_back(glm::vec2(pos[0]+1, pos[1]-step));
+                }
+        }
+           
+                            
+}
