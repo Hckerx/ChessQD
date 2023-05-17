@@ -3,6 +3,7 @@
 #include "glm/glm.hpp"
 
 #include <iostream>
+#include <memory>
 King::King(glm::vec2 p_pos, bool white)
 :Entity(p_pos, white){
         if (white) {
@@ -16,7 +17,7 @@ King::King(glm::vec2 p_pos, bool white)
         currentFrame.h = 128;
 }
 
-void King::findMoves(std::vector<Entity *> Pieces) {
+void King::findMoves(std::vector<std::shared_ptr<Entity>>& Pieces) {
         //FIXME add special Rules rochade schach schachmatt?????
         legalMoves.clear();
         findIndMoves(Pieces, pos[0] + 1, pos[1] + 1);

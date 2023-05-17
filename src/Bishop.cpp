@@ -18,7 +18,7 @@ Bishop::Bishop(glm::vec2 p_pos, bool white)
         currentFrame.h = 128;
 }
 
-void Bishop::findMoves(std::vector<Entity*> Pieces){
+void Bishop::findMoves(std::vector<std::shared_ptr<Entity>>& Pieces){
         legalMoves.clear();
         for (int8_t i = pos.x+1; i<8; i++) {
             if (!findIndMoves(Pieces, i, pos.y+(i-pos.x))) {

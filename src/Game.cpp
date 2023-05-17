@@ -21,7 +21,7 @@
 
 #include "game.hpp"
 
-Game::Game() : window("Schach"){
+Game::Game() : window("never gonna give you up"){
     run();
 }
 void Game::run() {
@@ -34,7 +34,7 @@ void Game::run() {
            DragPiece();
         }
         handleEvents();
-        window.fullRender(lastPositions, Pieces, white_turn);
+        window.fullRender(lastPositions, Pieces, rotate_board);
     }
 }
 
@@ -43,40 +43,20 @@ Game::~Game() {
 }
 
 void Game::DragPiece() {
-        
-    SDL_GetMouseState(&Mouse_x, &Mouse_y);
-    float Mousex;
-    float Mousey;
-    if(white_turn){
-        Mousex =  (float)Mouse_x/(float)window.squareSize;
-        Mousey =  (float)Mouse_y/(float)window.squareSize ; 	
-    }
-    else
-    {
-        Mousex =  8-(float)Mouse_x/(float)window.squareSize;;
-        Mousey =  8-(float)Mouse_y/(float)window.squareSize; ;
-    }
 
-    float newPos_x = Mousex - 0.5 ;
-    float newPos_y = Mousey - 0.5;
-    selectedEntity->setPos(glm::vec2(newPos_x, newPos_y));
+    glm::vec2 newPos = getMousePosition(rotate_board,window.squareSize);
+
+    
+    newPos -= 0.5;
+    selectedEntity->setPos(newPos);
         
 }
 
 void Game::selectPiece() {
-    SDL_GetMouseState(&Mouse_x, &Mouse_y);
-    if(white_turn){
-        Mouse_x =  Mouse_x/window.squareSize;
-        Mouse_y =  Mouse_y/window.squareSize ;	
-    }
-    else
-    {
-        Mouse_x =  7-Mouse_x/window.squareSize;
-        Mouse_y =  7-Mouse_y/window.squareSize ;
-    }
     
+    glm::ivec2 MousePosition = getMousePosition(rotate_board,window.squareSize);
      
-    selectedEntity = getMatchingPiece(Mouse_x, Mouse_y, Pieces);
+    selectedEntity = getMatchingPiece(MousePosition, Pieces);
     if (selectedEntity == nullptr) {
         lastPositions = {{1000, 1000}};
     }
@@ -88,18 +68,9 @@ void Game::selectPiece() {
 }
 
 void Game::placePiece() {
-    SDL_GetMouseState(&Mouse_x, &Mouse_y);
-    if(white_turn){
-        Mouse_x =  Mouse_x/window.squareSize;
-        Mouse_y =  Mouse_y/window.squareSize ;	
-    }
-    else
-    {
-        Mouse_x =  7 - Mouse_x/window.squareSize; 
-        Mouse_y =  7 - Mouse_y/window.squareSize;
-    }
+     glm::ivec2 MousePosition = getMousePosition(rotate_board,window.squareSize);
 
-    if (selectedEntity->move(glm::vec2{Mouse_x,Mouse_y}, lastPositions[0], Pieces, white_turn)) {
+    if (selectedEntity->move(MousePosition, lastPositions[0], Pieces, white_turn)) {
         white_turn = !white_turn;
     } 
     lastPositions.push_back(selectedEntity->getPos());

@@ -6,7 +6,6 @@
 
 Queen::Queen(glm::vec2 p_pos, bool white)
 :Entity(p_pos, white){
-        white = white;
         if (white) {
                 currentFrame.y = 128;
         }
@@ -18,7 +17,7 @@ Queen::Queen(glm::vec2 p_pos, bool white)
         currentFrame.h = 128;
 }
 
-void Queen::findMoves(std::vector<Entity*> Pieces) {
+void Queen::findMoves(std::vector<std::shared_ptr<Entity>>& Pieces) {
     legalMoves.clear();
     for (int8_t i = pos.x+1; i<8; i++) {
         if (!findIndMoves(Pieces, i, pos.y+(i-pos.x))) {

@@ -4,6 +4,7 @@
 #include <SDL2/SDL_image.h>
 #include <vector>
 #include <iostream>
+#include <memory>
 #include <glm/glm.hpp>
 
 class Entity
@@ -24,9 +25,9 @@ public:
 		pos.x = posold.x;
 		pos.y = posold.y;
 	}
-    bool move(glm::vec2 newPos, glm::vec2 oldPos, std::vector<Entity*> Pieces, bool white_turn);
-	bool findIndMoves(std::vector<Entity *> Pieces, int x, int y);
-	virtual void findMoves(std::vector<Entity *> Pieces) = 0;
+    bool move(glm::vec2 newPos, glm::vec2 oldPos, std::vector<std::shared_ptr<Entity>>& Pieces, bool white_turn);
+	bool findIndMoves(std::vector<std::shared_ptr<Entity>>& Pieces, int x, int y);
+	virtual void findMoves(std::vector<std::shared_ptr<Entity>>& Pieces) = 0;
 	std::vector<glm::vec2> legalMoves;	
 	SDL_Rect getCurrentFrame();
 	SDL_Rect currentFrame;
