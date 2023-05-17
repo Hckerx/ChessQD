@@ -96,7 +96,7 @@ void Game::placePiece() {
     else
     {
         Mouse_x =  7 - Mouse_x/window.squareSize; 
-        Mouse_y =  7 - Mouse_y/window.squareSize ;
+        Mouse_y =  7 - Mouse_y/window.squareSize;
     }
 
     if (selectedEntity->move(glm::vec2{Mouse_x,Mouse_y}, lastPositions[0], Pieces, white_turn)) {

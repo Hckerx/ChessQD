@@ -50,6 +50,7 @@ bool Entity::move(glm::vec2 newPos, glm::vec2 oldPos, std::vector<Entity*> Piece
                         Pieces.erase(position);
                     }
                 }
+                std::cout << newPos.y;
                 setPos(newPos);
                 return true;
             }
