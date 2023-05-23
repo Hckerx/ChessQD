@@ -30,3 +30,5 @@ void King::findMoves(std::vector<std::shared_ptr<Entity>>& Pieces) {
         findIndMoves(Pieces, pos[0] - 1, pos[1]);
 
 }
+
+

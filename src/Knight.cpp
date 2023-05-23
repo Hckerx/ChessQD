@@ -28,3 +28,5 @@ void Knight::findMoves(std::vector<std::shared_ptr<Entity>>& Pieces) {
         findIndMoves(Pieces, pos[0] - 1, pos[1] + 2);
         findIndMoves(Pieces, pos[0] - 1, pos[1] - 2);
 }
+
+

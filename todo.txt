@@ -1,0 +1,2 @@
+cmake for files to increase build time
+check, checkmate, queening, online, en passsant, ai

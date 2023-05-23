@@ -129,3 +129,4 @@ glm::vec2 getMousePosition(bool rotating,int squareSize){
     }
     return glm::vec2 {Mousex,Mousey};
 }
+
