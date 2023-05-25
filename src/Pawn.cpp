@@ -36,23 +36,25 @@ void Pawn::findMoves(std::vector<std::shared_ptr<Entity>>& Pieces){
             lastPos = {1000,1000};
             isEnPassantVulnerable = true;
         }
-        if(getMatchingPiece(glm::vec2{pos[0], pos[1]-step}, Pieces) == nullptr) {
+        if(getMatchingPiece(glm::vec2{pos[0], pos[1]-step}, Pieces) == nullptr and !(pos[0] > 7 || pos[0] < 0 || pos[1]-step > 7|| pos[1]-step < 0)) {
                 legalMoves.push_back(glm::vec2(pos[0],pos[1] - step)); 
                 
                 if (lastPos == pos && getMatchingPiece(glm::vec2{pos[0],pos[1] - 2*step}, Pieces) == nullptr ){
-                        legalMoves.push_back(glm::vec2(pos[0],pos[1] - 2*step));
+                        if (!(pos[0] > 7 || pos[0] < 0 || pos[1]-2*step > 7|| pos[1]-2*step < 0)) {
+                                legalMoves.push_back(glm::vec2(pos[0],pos[1] - 2*step));
+                        }
                 }
         } 
         
         std::shared_ptr<Entity> hypoPiece = getMatchingPiece(glm::vec2{pos[0]-1, pos[1]-step}, Pieces); 
         if (hypoPiece != nullptr) {
-                if (hypoPiece->white != white) {
+                if (hypoPiece->white != white && !(pos[0]-1 > 7 || pos[0]-1 < 0 || pos[1]-step > 7 || pos[1]-step < 0)) {
                         legalMoves.push_back(glm::vec2(pos[0]-1, pos[1]-step));
                 }
         }
         hypoPiece = getMatchingPiece(glm::vec2{pos[0]+1, pos[1]-step}, Pieces); 
         if (hypoPiece != nullptr) {
-                if (hypoPiece->white != white) {
+                if (hypoPiece->white != white && !(pos[0]+1 > 7 || pos[0]+1 < 0 || pos[1]+step > 7 || pos[1]+step < 0)) {
                         legalMoves.push_back(glm::vec2(pos[0]+1, pos[1]-step));
                 }
         }                         
