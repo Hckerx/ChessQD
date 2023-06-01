@@ -4,6 +4,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <cstdlib>
+#include <glm/detail/qualifier.hpp>
 #include <iostream>
 #include <memory>
 #include <vector>
@@ -77,47 +78,35 @@ bool Entity::move(glm::vec2 newPos, glm::vec2 oldPos, std::vector<std::shared_pt
 
 
 
-void Entity::findMovesWithCheck(std::vector<std::shared_ptr<Entity>>& Pieces) {
+bool Entity::findMovesWithCheck(std::vector<std::shared_ptr<Entity>>& Pieces) {
     findMoves(Pieces);
-    std::cout << "----------------- moves for the entity ---------------" << std::endl; 
-    for (auto i : legalMoves)
-    {
-        std::cout << glm::to_string(i) << std::endl; 
-    }
-    std::cout << "----------------- moves for the entity ---------------" << std::endl; 
-    for (auto i = legalMoves.begin(); i!=legalMoves.end(); i++) {
-        glm::vec2 oldpos = pos;
-        //pos.x = (int)i->x; //neue position setzten um damit die moves alleer pieces zu überprüfen
-        //pos.y = (int)i->y;
-        
-        std::cout << "print *i" << std::endl;
-        std::cout << i->x << ", " << i->y << std::endl;
-        std::cout << "print *i finished" << std::endl;
+    std::vector<glm::vec2> legalMovescopy = legalMoves;
+    std::vector<glm::vec2> newLegalMoves;
 
-        if (isKingInCheck(Pieces)) {
-            std::cout << "entered if" << std::endl;
-            i = legalMoves.erase(i);
-            if (legalMoves.empty()) {
-                pos = oldpos;
-                return;
-            }
+    glm::vec2 oldpos = pos;
+    
+    for (auto move : legalMovescopy)
+    {
+        pos = move; //neue position setzten um damit die moves alleer pieces zu überprüfen
+
+
+        if (!isKingInCheck(Pieces)) {
+            newLegalMoves.push_back(move);
         }
-        pos = oldpos;
-        std::cout << "print oldpos" << std::endl;
-        std::cout << i->x << ", " << i->y << std::endl;
-        std::cout << "print oldpos finished" << std::endl;
     }
+    pos = oldpos;
+    legalMoves = newLegalMoves;
+    return legalMoves.empty();
 }
 
 
 
 bool Entity::isKingInCheck(std::vector<std::shared_ptr<Entity>>& Pieces) {
-    std::cout << "check function has been activated" << std::endl;
     glm::vec2 kingPos;
     for (auto& i : Pieces) {
         i->findMoves(Pieces);
         std::shared_ptr<King> derivedPtr = std::dynamic_pointer_cast<King>(i); //was macht das?
-        if (derivedPtr != nullptr and i->white == white) {
+        if (derivedPtr != nullptr && i->white == white) {
                 kingPos = i->pos; 
         }
     }
@@ -127,7 +116,6 @@ bool Entity::isKingInCheck(std::vector<std::shared_ptr<Entity>>& Pieces) {
     for (auto& i : Pieces) {
         for (glm::vec2 j : i->legalMoves) {
             if (j == kingPos) {
-                std::cout << glm::to_string(i->pos) << "with move --> " << glm::to_string(j) <<  std::endl; 
                 return true;
             }
         }    

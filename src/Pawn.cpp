@@ -16,7 +16,6 @@ Pawn::Pawn(glm::vec2 p_pos, bool white)
         currentFrame.x = 0;
         currentFrame.w = 128;
         currentFrame.h = 128;
-        lastPos = pos;
 
 }
 
@@ -31,15 +30,9 @@ void Pawn::findMoves(std::vector<std::shared_ptr<Entity>>& Pieces){
             step = -1;
         }
 
-        // Check if pawn has moved. If  it has set it to 1000 so it cannot move twice any more. 
-        if (lastPos != pos && lastPos != glm::vec2{1000,1000}) {
-            lastPos = {1000,1000};
-            isEnPassantVulnerable = true;
-        }
         if(getMatchingPiece(glm::vec2{pos[0], pos[1]-step}, Pieces) == nullptr and !(pos[0] > 7 || pos[0] < 0 || pos[1]-step > 7|| pos[1]-step < 0)) {
                 legalMoves.push_back(glm::vec2(pos[0],pos[1] - step)); 
-                
-                if (lastPos == pos && getMatchingPiece(glm::vec2{pos[0],pos[1] - 2*step}, Pieces) == nullptr ){
+                if (((pos.y == 6 && white) || (pos.y == 1 && white == false)) && getMatchingPiece(glm::vec2{pos[0],pos[1] - 2*step}, Pieces) == nullptr ){
                         if (!(pos[0] > 7 || pos[0] < 0 || pos[1]-2*step > 7|| pos[1]-2*step < 0)) {
                                 legalMoves.push_back(glm::vec2(pos[0],pos[1] - 2*step));
                         }

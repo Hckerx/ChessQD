@@ -1,5 +1,6 @@
 #include <cmath>
 #include <glm/fwd.hpp>
+#include <glm/gtx/string_cast.hpp>
 
 #define SDL_MAIN_HANDLED
 #include <SDL2/SDL.h>
@@ -62,19 +63,37 @@ void Game::selectPiece() {
     }
     else {
         selectedEntity->findMovesWithCheck(Pieces);    
+        //selectedEntity->findMoves(Pieces);    
         lastPositions = {selectedEntity->getPos()};
         isPieceSelected = true;
     }
 }
 
 void Game::placePiece() {
+
      glm::ivec2 MousePosition = getMousePosition(rotate_board,window.squareSize);
 
     if (selectedEntity->move(MousePosition, lastPositions[0], Pieces, white_turn)) {
+        std::cout << "------------------------------------------------------------" << std::endl;
         white_turn = !white_turn;
+        bool checkmate_white = true;
+        bool checkmate_black = true;
+        for (auto i : Pieces) {
+            if (i->white && !i->findMovesWithCheck(Pieces)) {
+                checkmate_white = false;
+            }
+            if (!i->white && !i->findMovesWithCheck(Pieces)) {
+                checkmate_black = false;
+            }
+        }
+        if (checkmate_black || checkmate_white) {
+            std::cout << "checkmate either of them" << std::endl;
+            gameRunning = false;
+        }
     } 
     lastPositions.push_back(selectedEntity->getPos());
     isPieceSelected = false;
+    std::cout << "------------------------------------------------------------" << std::endl;
 }
 
 void Game::handleEvents() {

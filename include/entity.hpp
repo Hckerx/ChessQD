@@ -29,7 +29,7 @@ public:
 	bool findIndMoves(std::vector<std::shared_ptr<Entity>>& Pieces, int x, int y);
 	virtual void findMoves(std::vector<std::shared_ptr<Entity>>& Pieces)= 0;
     bool isKingInCheck(std::vector<std::shared_ptr<Entity>>& Pieces);
-    void findMovesWithCheck(std::vector<std::shared_ptr<Entity>>& Pieces);
+    bool findMovesWithCheck(std::vector<std::shared_ptr<Entity>>& Pieces);
 	std::vector<glm::vec2> legalMoves;	
 	SDL_Rect getCurrentFrame();
 	SDL_Rect currentFrame;

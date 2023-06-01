@@ -8,5 +8,4 @@ public:
     void findMoves(std::vector<std::shared_ptr<Entity>>& Pieces);
     bool isEnPassantVulnerable;
 private:
-    glm::vec2 lastPos;
 };
