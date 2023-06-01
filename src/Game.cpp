@@ -28,14 +28,14 @@ Game::Game() : window("never gonna give you up"){
 void Game::run() {
     while (gameRunning)
     {
-        
         window.updateWindowSize();
         if (isPieceSelected)
         {
            DragPiece();
         }
         handleEvents();
-        window.fullRender(lastPositions, Pieces, rotate_board);
+        std::vector<glm::vec2> temp = {{1000,1000}};
+        window.fullRender((!hasClickedPiece ? temp : std::vector<glm::vec2>(lastPositions.end() - 2, lastPositions.end())), Pieces, rotate_board);
     }
 }
 
@@ -54,18 +54,20 @@ void Game::DragPiece() {
 }
 
 void Game::selectPiece() {
+    game_started = true;
     
     glm::ivec2 MousePosition = getMousePosition(rotate_board,window.squareSize);
      
     selectedEntity = getMatchingPiece(MousePosition, Pieces);
-    if (selectedEntity == nullptr) {
-        lastPositions = {{1000, 1000}};
-    }
-    else {
+    if (selectedEntity != nullptr) {
         selectedEntity->findMovesWithCheck(Pieces);    
         //selectedEntity->findMoves(Pieces);    
-        lastPositions = {selectedEntity->getPos()};
+        lastPositions.push_back(selectedEntity->getPos());
         isPieceSelected = true;
+        hasClickedPiece = true;
+    }
+    else {
+        hasClickedPiece = false;
     }
 }
 
@@ -76,6 +78,14 @@ void Game::placePiece() {
     if (selectedEntity->move(MousePosition, lastPositions[0], Pieces, white_turn)) {
         std::cout << "------------------------------------------------------------" << std::endl;
         white_turn = !white_turn;
+        handleCheckmate();
+        lastEntities.push_back(selectedEntity);
+    } 
+    lastPositions.push_back(selectedEntity->getPos());
+    isPieceSelected = false;
+    std::cout << "------------------------------------------------------------" << std::endl;
+}
+void Game::handleCheckmate() {
         bool checkmate_white = true;
         bool checkmate_black = true;
         for (auto i : Pieces) {
@@ -90,13 +100,11 @@ void Game::placePiece() {
             std::cout << "checkmate either of them" << std::endl;
             gameRunning = false;
         }
-    } 
-    lastPositions.push_back(selectedEntity->getPos());
-    isPieceSelected = false;
-    std::cout << "------------------------------------------------------------" << std::endl;
 }
-
+//prolly hashmaps of all pieces' moves im too stupid for this
 void Game::handleEvents() {
+    if (counter <= 0)
+        counter = 1;
     while (SDL_PollEvent(&event)) {
         switch (event.type) {
             case SDL_MOUSEBUTTONDOWN:
@@ -112,9 +120,12 @@ void Game::handleEvents() {
                 if (event.button.button == SDL_BUTTON_LEFT && selectedEntity != nullptr) {
                     placePiece();
                 }
+                break;
             case SDL_KEYDOWN:
                 switch (event.key.keysym.sym) {
                     case SDLK_q: gameRunning = false; break;
+                    case SDLK_LEFT: if (game_started && lastEntities.size() >= 1*counter && lastPositions.size() >= 2*counter){lastEntities[lastEntities.size() - 1*counter]->setPos(lastPositions[lastPositions.size()-2*counter]); white_turn = !white_turn; counter++;} break;
+                    case SDLK_RIGHT: if (game_started && lastEntities.size() >= 1*counter-1 && lastPositions.size() >= 1*counter-1 && counter > 1){counter--; lastEntities[lastEntities.size() - counter]->setPos(lastPositions[lastPositions.size()-counter]); white_turn = !white_turn; } break;
                 }
         }
     }
