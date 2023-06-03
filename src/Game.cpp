@@ -1,7 +1,7 @@
 #include <cmath>
 #include <glm/fwd.hpp>
 #include <glm/gtx/string_cast.hpp>
-
+#define SDL_MAIN_HANDLED
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 
