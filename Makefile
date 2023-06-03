@@ -11,3 +11,6 @@ clean:
 	rm *.o
 test:
 	./bin/debug/main
+
+testwin:
+	.\\bin\\debug\\main.exe	
