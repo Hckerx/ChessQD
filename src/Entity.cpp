@@ -85,13 +85,25 @@ bool Entity::findMovesWithCheck(std::vector<std::shared_ptr<Entity>>& Pieces) {
 
     glm::vec2 oldpos = pos;
     
+    glm::vec2 PfuschKoordinaten;
     for (auto move : legalMovescopy)
     {
-        pos = move; //neue position setzten um damit die moves alleer pieces zu überprüfen
+        
+        std::shared_ptr<Entity> hypoPiece = getMatchingPiece(glm::vec2{move.x, move.y}, Pieces);
+        if (hypoPiece != nullptr) {
+            glm::vec2 PfuschKoordinaten = hypoPiece->getPos(); // Dies sollte man niemals machen. Wir machen es trotzdem LMFAO
+            hypoPiece->setPos({2000,2000});
+            pos = move; //neue position setzten um damit die moves alleer pieces zu überprüfen
+            if (!isKingInCheck(Pieces)) {
+                newLegalMoves.push_back(move);
+            }
+            hypoPiece->setPos(PfuschKoordinaten);
 
-
-        if (!isKingInCheck(Pieces)) {
-            newLegalMoves.push_back(move);
+        } else {
+            pos = move;
+            if (!isKingInCheck(Pieces)) {
+                newLegalMoves.push_back(move);
+            }
         }
     }
     pos = oldpos;

@@ -61,8 +61,8 @@ void Game::selectPiece() {
     if (selectedEntity != nullptr) {
         selectedEntity->findMovesWithCheck(Pieces);    
         //selectedEntity->findMoves(Pieces);    
-        //lastPositions.push_back(selectedEntity->getPos());
-        lastPositions = {selectedEntity->getPos()};
+        lastPositions.push_back(selectedEntity->getPos());
+        //lastPositions = {selectedEntity->getPos()};
         isPieceSelected = true;
         hasClickedPiece = true;
     }
@@ -75,11 +75,11 @@ void Game::placePiece() {
 
      glm::ivec2 MousePosition = getMousePosition(rotate_board,window.squareSize);
 
-    if (selectedEntity->move(MousePosition, lastPositions[0], Pieces, white_turn)) {
+    if (selectedEntity->move(MousePosition, lastPositions[lastPositions.size()-1], Pieces, white_turn)) {
         std::cout << "------------------------------------------------------------" << std::endl;
         white_turn = !white_turn;
         handleCheckmate();
-        //lastEntities.push_back(selectedEntity);
+        lastEntities.push_back(selectedEntity);
     } 
     lastPositions.push_back(selectedEntity->getPos());
     isPieceSelected = false;
@@ -124,8 +124,8 @@ void Game::handleEvents() {
             case SDL_KEYDOWN:
                 switch (event.key.keysym.sym) {
                     case SDLK_q: gameRunning = false; break;
-                    // case SDLK_LEFT: if (game_started && lastEntities.size() >= 1*counter && lastPositions.size() >= 2*counter){lastEntities[lastEntities.size() - 1*counter]->setPos(lastPositions[lastPositions.size()-2*counter]); white_turn = !white_turn; counter++;} break;
-                   // case SDLK_RIGHT: if (game_started && lastEntities.size() >= 1*counter-1 && lastPositions.size() >= 1*counter-1 && counter > 1){counter--; lastEntities[lastEntities.size() - counter]->setPos(lastPositions[lastPositions.size()-counter]); white_turn = !white_turn; } break;
+                     case SDLK_LEFT: if (game_started && lastEntities.size() >= 1*counter && lastPositions.size() >= 2*counter){lastEntities[lastEntities.size() - 1*counter]->setPos(lastPositions[lastPositions.size()-2*counter]); white_turn = !white_turn; counter++;} break;
+                    case SDLK_RIGHT: if (game_started && lastEntities.size() >= 1*counter-1 && lastPositions.size() >= 1*counter-1 && counter > 1){counter--; lastEntities[lastEntities.size() - counter]->setPos(lastPositions[lastPositions.size()-counter]); white_turn = !white_turn; } break;
                 }
         }
     }
