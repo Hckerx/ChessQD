@@ -20,6 +20,7 @@ private:
     bool rotate_board = true; // set to playing white if you want behaviour of rotating board on move
     bool game_started = false;
     bool hasClickedPiece = false;
+    bool isOverridable = false;
 
     // RenderWindow stuff
     RenderWindow window;

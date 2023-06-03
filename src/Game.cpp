@@ -73,8 +73,23 @@ void Game::selectPiece() {
 
 void Game::placePiece() {
 
-     glm::ivec2 MousePosition = getMousePosition(rotate_board,window.squareSize);
+    glm::ivec2 MousePosition = getMousePosition(rotate_board,window.squareSize);
 
+    if (!isOverridable) {
+        while (counter > 0) {
+            std::cout << "entered loop for what ever reason" << std::endl;
+            lastEntities[(lastEntities.size() - 1) - (counter-1)]->setPos(lastPositions[(lastPositions.size() - 1) - (2*(counter-1)+1) ]);
+            counter--;
+        }
+        counter = 0;
+    }
+    if (!lastEntities.empty()) {
+        if (lastEntities[lastEntities.size()-1]->white) {
+            white_turn = false;
+        } else {
+            white_turn = true;
+        }
+    }
     if (selectedEntity->move(MousePosition, lastPositions[lastPositions.size()-1], Pieces, white_turn)) {
         std::cout << "------------------------------------------------------------" << std::endl;
         white_turn = !white_turn;
