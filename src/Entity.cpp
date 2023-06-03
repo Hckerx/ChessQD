@@ -107,18 +107,20 @@ bool Entity::isKingInCheck(std::vector<std::shared_ptr<Entity>>& Pieces) {
         i->findMoves(Pieces);
         std::shared_ptr<King> derivedPtr = std::dynamic_pointer_cast<King>(i); //was macht das?
         if (derivedPtr != nullptr && i->white == white) {
-                kingPos = i->pos; 
+            kingPos = i->pos; 
         }
     }
     // for entity in pieces
     //     entity.findmoves
 
     for (auto& i : Pieces) {
-        for (glm::vec2 j : i->legalMoves) {
-            if (j == kingPos) {
-                return true;
-            }
-        }    
+        if (i->white != white) {
+            for (glm::vec2 j : i->legalMoves) {
+                if (j == kingPos) {
+                    return true;
+                }
+            }    
+        }
     }
     return false;
 }
