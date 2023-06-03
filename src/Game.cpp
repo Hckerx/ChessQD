@@ -103,8 +103,9 @@ void Game::handleCheckmate() {
 }
 //prolly hashmaps of all pieces' moves im too stupid for this
 void Game::handleEvents() {
-    if (counter <= 0)
-        counter = 1;
+    if (counter < 0) {
+        counter = 0;
+    }
     while (SDL_PollEvent(&event)) {
         switch (event.type) {
             case SDL_MOUSEBUTTONDOWN:
@@ -124,16 +125,16 @@ void Game::handleEvents() {
             case SDL_KEYDOWN:
                 switch (event.key.keysym.sym) {
                     case SDLK_q: gameRunning = false; break;
-                    case SDLK_LEFT: if (game_started && lastEntities.size() >= 1*counter && lastPositions.size() >= 2*counter){
-                        lastEntities[lastEntities.size() - counter]->setPos(lastPositions[lastPositions.size()-2*counter]); 
+                    case SDLK_LEFT: if (game_started && (lastEntities.size()-1) >= counter && (lastPositions.size()-1) >= 2*counter){
+                        lastEntities[(lastEntities.size() - 1)  - counter]->setPos(lastPositions[(lastPositions.size() - 1)-(2*counter)-1]); 
                         white_turn = !white_turn;
                         counter++;
                     }
                         break;
-                    case SDLK_RIGHT: if (game_started && lastEntities.size() >= 1*counter-1 && lastPositions.size() >= 1*counter-1 && counter > 1){
-                        counter--; 
-                        lastEntities[lastEntities.size() - counter]->setPos(lastPositions[lastPositions.size()-counter+1]);
+                    case SDLK_RIGHT: if (game_started && (lastEntities.size()-1) >= 1*counter-1 && lastPositions.size() >= 1*counter-1){
+                        lastEntities[(lastEntities.size() - 1) - (counter-1)]->setPos(lastPositions[(lastPositions.size() - 1) - (2*(counter-1)) ]);
                         white_turn = !white_turn; 
+                        counter--;
                     } 
                         break;
                 }

@@ -25,7 +25,7 @@ private:
     RenderWindow window;
     std::vector<glm::vec2> lastPositions = {{1000,1000}};
     std::vector<std::shared_ptr<Entity>> lastEntities;
-    int counter = 1;
+    int counter = 0;
 
     // Pieces 
     std::vector<std::shared_ptr<Entity>> Pieces = FenImport("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR");
