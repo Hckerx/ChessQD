@@ -25,7 +25,7 @@ public:
 		pos.x = posold.x;
 		pos.y = posold.y;
 	}
-    bool move(glm::vec2 newPos, glm::vec2 oldPos, std::vector<std::shared_ptr<Piece>>& Pieces, bool white_turn);
+    bool move(glm::vec2 newPos, glm::vec2 oldPos, std::vector<std::shared_ptr<Piece>>& Pieces, bool whiteTurn);
 	bool findIndMoves(std::vector<std::shared_ptr<Piece>>& Pieces, int x, int y);
 	virtual void findMovesWithoutCheck(std::vector<std::shared_ptr<Piece>>& Pieces)= 0;
     bool isKingInCheck(std::vector<std::shared_ptr<Piece>>& Pieces);

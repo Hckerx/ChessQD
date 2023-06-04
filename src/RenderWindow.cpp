@@ -64,7 +64,7 @@ void RenderWindow::clear()
 	SDL_RenderClear(renderer);
 }
 
-void RenderWindow::render(std::shared_ptr<Piece>& p_piece, bool playing_white)
+void RenderWindow::render(std::shared_ptr<Piece>& p_piece, bool whiteDown)
 {
 	SDL_Rect src; 
 	src.x = p_piece->getCurrentFrame().x;
@@ -74,7 +74,7 @@ void RenderWindow::render(std::shared_ptr<Piece>& p_piece, bool playing_white)
 	
 
 	SDL_Rect dst;
-    if (playing_white) {
+    if (whiteDown) {
         dst.x = p_piece->getPos().x * squareSize;
         dst.y = p_piece->getPos().y * squareSize;
     }
@@ -87,7 +87,7 @@ void RenderWindow::render(std::shared_ptr<Piece>& p_piece, bool playing_white)
 
 	SDL_RenderCopy(renderer, texture, &src, &dst);
 }
-void RenderWindow::renderbg(std::vector<glm::vec2> highlight = {{1000,1000}}, bool white_turn = true) {
+void RenderWindow::renderbg(std::vector<glm::vec2> highlight = {{1000,1000}}, bool whiteDown=true) {
 	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 	for (int i = 0; i < 8; i++) {
 		for (int j = 0; j < 8; j++) {
@@ -100,7 +100,7 @@ void RenderWindow::renderbg(std::vector<glm::vec2> highlight = {{1000,1000}}, bo
 			SDL_RenderFillRect(renderer, &rect);
 			for (glm::vec2 k : highlight)
 			{
-                if (white_turn) {
+                if (whiteDown) {
                     if (k == glm::vec2(j,i) && k != glm::vec2(1000, 1000)){
                         SDL_SetRenderDrawColor(renderer, 255,255,0, 200);
                         SDL_RenderFillRect(renderer, &rect);
@@ -125,11 +125,11 @@ void RenderWindow::display()
 }
 
 
-void RenderWindow::fullRender(std::vector<glm::vec2> highlight, std::vector<std::shared_ptr<Piece>>& Pieces, bool playing_white) {
+void RenderWindow::fullRender(std::vector<glm::vec2> highlight, std::vector<std::shared_ptr<Piece>>& Pieces, bool whiteDown) {
     clear();
-	renderbg(highlight, playing_white);
+	renderbg(highlight, whiteDown);
 	for (int i = 0; i < (int)Pieces.size(); i++) {
-        render(Pieces[i], playing_white);
+        render(Pieces[i], whiteDown);
     }
 	display();
 }

@@ -108,13 +108,13 @@ std::shared_ptr<Piece> getMatchingPiece(glm::vec2 field, std::vector<std::shared
     return nullptr;
 }
 
-glm::vec2 getMousePosition(bool rotating,int squareSize){
+glm::vec2 getMousePosition(bool whiteDown,int squareSize){
     int Mouse_x, Mouse_y;
     float Mousex, Mousey;
     SDL_GetMouseState(&Mouse_x, &Mouse_y);
 
 
-    if(rotating){
+    if(whiteDown){
         Mousex =  (float)Mouse_x/(float)squareSize;
         Mousey =  (float)Mouse_y/(float)squareSize;
         Mouse_x = Mouse_x/squareSize;

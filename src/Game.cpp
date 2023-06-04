@@ -27,6 +27,7 @@ Game::Game() : window("never gonna give you up"){
 void Game::run() {
     while (gameRunning)
     {
+
         window.updateWindowSize();
         if (isPieceSelected)
         {
@@ -34,7 +35,7 @@ void Game::run() {
         }
         handleEvents();
         //std::vector<glm::vec2> temp = {{1000,1000}};
-        window.fullRender(lastPositions, Pieces, rotate_board);
+        window.fullRender(lastPositions, Pieces, whiteDown);
     }
 }
 
@@ -44,7 +45,7 @@ Game::~Game() {
 
 void Game::DragPiece() {
 
-    glm::vec2 newPos = getMousePosition(rotate_board,window.squareSize);
+    glm::vec2 newPos = getMousePosition(whiteDown,window.squareSize);
 
     
     newPos -= 0.5;
@@ -54,12 +55,11 @@ void Game::DragPiece() {
 
 void Game::selectPiece() {
     
-    glm::ivec2 MousePosition = getMousePosition(rotate_board,window.squareSize);
+    glm::ivec2 MousePosition = getMousePosition(whiteDown,window.squareSize);
      
     selectedPiece = getMatchingPiece(MousePosition, Pieces);
     if (selectedPiece != nullptr) {
-        selectedPiece->findMoves(Pieces);    
-        //selectedPiece->findMovesWithoutCheck(Pieces);    
+        selectedPiece->findMoves(Pieces);     
         lastPositions = {selectedPiece->getPos()};
         isPieceSelected = true;
        
@@ -68,17 +68,20 @@ void Game::selectPiece() {
 
 void Game::placePiece() {
 
-    glm::ivec2 MousePosition = getMousePosition(rotate_board,window.squareSize);
+    glm::ivec2 MousePosition = getMousePosition(whiteDown,window.squareSize);
 
     /* if (!lastPieces.empty()) {
         if (lastPieces[lastPieces.size()-1]->white) {
-            white_turn = false;
+            whiteTurn = false;
         } else {
-            white_turn = true;
+            whiteTurn = true;
         }
     } */
-    if (selectedPiece->move(MousePosition, lastPositions[0], Pieces, white_turn)) {
-        white_turn = !white_turn;
+    if (selectedPiece->move(MousePosition, lastPositions[0], Pieces, whiteTurn)) {
+        if (rotate_board) {
+        whiteDown=!whiteDown;
+        }
+        whiteTurn = !whiteTurn;
         handleCheckmate();
         lastPieces.push_back(selectedPiece);
         lastPositions.push_back(selectedPiece->getPos());
@@ -128,13 +131,13 @@ void Game::handleEvents() {
                     case SDLK_q: gameRunning = false; break;
                     case SDLK_LEFT: if ( (lastPieces.size()-1) >= counter && (lastPositions.size()-1) >= 2*counter){
                         lastPieces[(lastPieces.size() - 1)  - counter]->setPos(lastPositions[(lastPositions.size() - 1)-(2*counter)-1]); 
-                        white_turn = !white_turn;
+                        whiteTurn = !whiteTurn;
                         counter++;
                     }
                         break;
                     case SDLK_RIGHT: if ( (lastPieces.size()-1) >= 1*counter-1 && lastPositions.size() >= 1*counter-1){
                         lastPieces[(lastPieces.size() - 1) - (counter-1)]->setPos(lastPositions[(lastPositions.size() - 1) - (2*(counter-1)) ]);
-                        white_turn = !white_turn; 
+                        whiteTurn = !whiteTurn; 
                         counter--;
                     } 
                         break;

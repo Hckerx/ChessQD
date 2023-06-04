@@ -15,9 +15,9 @@ private:
     //Game Logic
     bool gameRunning = true;
     bool isPieceSelected = false;
-    bool white_turn = true;
-    bool playing_white = true;
-    bool rotate_board = false; // set to playing white if you want behaviour of rotating board on move
+    bool whiteTurn = true;
+    bool whiteDown = true; // defines which color is on the bottom of the board when game is startes
+    bool rotate_board = false; // defines if the board should rotate after every move or not
 
     // RenderWindow stuff
     RenderWindow window;
