@@ -33,8 +33,8 @@ void Game::run() {
            DragPiece();
         }
         handleEvents();
-        std::vector<glm::vec2> temp = {{1000,1000}};
-        window.fullRender((!hasClickedPiece ? temp : std::vector<glm::vec2>(lastPositions.end() - 2, lastPositions.end())), Pieces, rotate_board);
+        //std::vector<glm::vec2> temp = {{1000,1000}};
+        window.fullRender(lastPositions, Pieces, rotate_board);
     }
 }
 
@@ -60,20 +60,9 @@ void Game::selectPiece() {
     if (selectedPiece != nullptr) {
         selectedPiece->findMovesWithCheck(Pieces);    
         //selectedPiece->findMoves(Pieces);    
-
-        if (!lastPieces.empty()) {
-            if (lastPieces[lastPieces.size()-1]->white != selectedPiece->white) {
-                lastPositions.push_back(selectedPiece->getPos());
-            } 
-        } else {
-                lastPositions.push_back(selectedPiece->getPos());
-        }
         //lastPositions = {selectedPiece->getPos()};
         isPieceSelected = true;
-        hasClickedPiece = true;
-    }
-    else {
-        hasClickedPiece = false;
+       
     }
 }
 
@@ -81,23 +70,14 @@ void Game::placePiece() {
 
     glm::ivec2 MousePosition = getMousePosition(rotate_board,window.squareSize);
 
-    if (!isOverridable) {
-        while (counter > 0) {
-            std::cout << "entered loop for what ever reason" << std::endl;
-            lastPieces[(lastPieces.size() - 1) - (counter-1)]->setPos(lastPositions[(lastPositions.size() - 1) - (2*(counter-1)+1) ]);
-            counter--;
-        }
-        counter = 0;
-    }
-    if (!lastPieces.empty()) {
+    /* if (!lastPieces.empty()) {
         if (lastPieces[lastPieces.size()-1]->white) {
             white_turn = false;
         } else {
             white_turn = true;
         }
-    }
-    if (selectedPiece->move(MousePosition, lastPositions[lastPositions.size()-1], Pieces, white_turn)) {
-        std::cout << "------------------------------------------------------------" << std::endl;
+    } */
+    if (selectedPiece->move(MousePosition, lastPositions[-1], Pieces, white_turn)) {
         white_turn = !white_turn;
         handleCheckmate();
         lastPieces.push_back(selectedPiece);
@@ -105,7 +85,6 @@ void Game::placePiece() {
     } 
     lastPositions.push_back(selectedPiece->getPos());
     isPieceSelected = false;
-    std::cout << "------------------------------------------------------------" << std::endl;
 }
 void Game::handleCheckmate() {
         bool checkmate_white = true;

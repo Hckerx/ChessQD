@@ -14,12 +14,10 @@ private:
 
     //Game Logic
     bool gameRunning = true;
-    bool isPieceSelected;
+    bool isPieceSelected = false;
     bool white_turn = true;
     bool playing_white = true;
-    bool rotate_board = true; // set to playing white if you want behaviour of rotating board on move
-    bool hasClickedPiece = false;
-    bool isOverridable = false;
+    bool rotate_board = false; // set to playing white if you want behaviour of rotating board on move
 
     // RenderWindow stuff
     RenderWindow window;
