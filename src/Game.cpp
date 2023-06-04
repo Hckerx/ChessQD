@@ -61,7 +61,14 @@ void Game::selectPiece() {
     if (selectedEntity != nullptr) {
         selectedEntity->findMovesWithCheck(Pieces);    
         //selectedEntity->findMoves(Pieces);    
-        lastPositions.push_back(selectedEntity->getPos());
+
+        if (!lastEntities.empty()) {
+            if (lastEntities[lastEntities.size()-1]->white != selectedEntity->white) {
+                lastPositions.push_back(selectedEntity->getPos());
+            } 
+        } else {
+            lastPositions.push_back(selectedEntity->getPos());
+        }
         //lastPositions = {selectedEntity->getPos()};
         isPieceSelected = true;
         hasClickedPiece = true;
@@ -90,13 +97,13 @@ void Game::placePiece() {
             white_turn = true;
         }
     }
-    if (selectedEntity->move(MousePosition, lastPositions[lastPositions.size()-1], Pieces, white_turn)) {
+    if (selectedEntity->move(MousePosition, selectedEntity->getPos(), Pieces, white_turn)) {
         std::cout << "------------------------------------------------------------" << std::endl;
         white_turn = !white_turn;
         handleCheckmate();
         lastEntities.push_back(selectedEntity);
+        lastPositions.push_back(selectedEntity->getPos());
     } 
-    lastPositions.push_back(selectedEntity->getPos());
     isPieceSelected = false;
     std::cout << "------------------------------------------------------------" << std::endl;
 }
