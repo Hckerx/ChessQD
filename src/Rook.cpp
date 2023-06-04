@@ -1,5 +1,5 @@
 #include "rook.hpp"
-#include "entity.hpp"
+#include "piece.hpp"
 
 #include "glm/glm.hpp"
 #include "glm/gtx/string_cast.hpp"
@@ -9,7 +9,7 @@
 #include <iostream>
 #include <vector>
 Rook::Rook(glm::vec2 p_pos, bool white)
-:Entity(p_pos, white){
+:Piece(p_pos, white){
         if (white) {
                 currentFrame.y = 128;
         }
@@ -21,7 +21,7 @@ Rook::Rook(glm::vec2 p_pos, bool white)
         currentFrame.h = 128;
 }
 
-void Rook::findMoves(std::vector<std::shared_ptr<Entity>>& Pieces) {
+void Rook::findMoves(std::vector<std::shared_ptr<Piece>>& Pieces) {
     legalMoves.clear();
     // erst x
     int pos_x = pos[0]+1;

@@ -7,7 +7,7 @@
 #include <string>
 
 #include "renderWindow.hpp"
-#include "entity.hpp"
+#include "piece.hpp"
 
 RenderWindow::RenderWindow(const char* p_title)
 {
@@ -64,23 +64,23 @@ void RenderWindow::clear()
 	SDL_RenderClear(renderer);
 }
 
-void RenderWindow::render(std::shared_ptr<Entity>& p_entity, bool playing_white)
+void RenderWindow::render(std::shared_ptr<Piece>& p_piece, bool playing_white)
 {
 	SDL_Rect src; 
-	src.x = p_entity->getCurrentFrame().x;
-	src.y = p_entity->getCurrentFrame().y;
-	src.w = p_entity->getCurrentFrame().w;
-	src.h = p_entity->getCurrentFrame().h;
+	src.x = p_piece->getCurrentFrame().x;
+	src.y = p_piece->getCurrentFrame().y;
+	src.w = p_piece->getCurrentFrame().w;
+	src.h = p_piece->getCurrentFrame().h;
 	
 
 	SDL_Rect dst;
     if (playing_white) {
-        dst.x = p_entity->getPos().x * squareSize;
-        dst.y = p_entity->getPos().y * squareSize;
+        dst.x = p_piece->getPos().x * squareSize;
+        dst.y = p_piece->getPos().y * squareSize;
     }
     else {
-        dst.x = windowx - (p_entity->getPos().x * squareSize + squareSize);
-        dst.y = windowy - (p_entity->getPos().y * squareSize + squareSize);
+        dst.x = windowx - (p_piece->getPos().x * squareSize + squareSize);
+        dst.y = windowy - (p_piece->getPos().y * squareSize + squareSize);
     }
 	dst.w = squareSize;
 	dst.h = squareSize;
@@ -125,7 +125,7 @@ void RenderWindow::display()
 }
 
 
-void RenderWindow::fullRender(std::vector<glm::vec2> highlight, std::vector<std::shared_ptr<Entity>>& Pieces, bool playing_white) {
+void RenderWindow::fullRender(std::vector<glm::vec2> highlight, std::vector<std::shared_ptr<Piece>>& Pieces, bool playing_white) {
     clear();
 	renderbg(highlight, playing_white);
 	for (int i = 0; i < (int)Pieces.size(); i++) {

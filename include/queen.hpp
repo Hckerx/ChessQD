@@ -1,11 +1,11 @@
 #include <glm/glm.hpp>
 #include <iostream>
 
-#include "entity.hpp"
-class Queen: public Entity
+#include "piece.hpp"
+class Queen: public Piece
 {
 public:
     Queen(glm::vec2 p_pos, bool white);
-    void findMoves(std::vector<std::shared_ptr<Entity>>& Pieces); 
+    void findMoves(std::vector<std::shared_ptr<Piece>>& Pieces); 
 private:
 };

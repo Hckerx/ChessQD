@@ -1,11 +1,11 @@
 #include "pawn.hpp"
-#include "entity.hpp"
+#include "piece.hpp"
 
 #include "util.hpp"
 #include "glm/glm.hpp"
 #include <iostream>
 Pawn::Pawn(glm::vec2 p_pos, bool white)
-:Entity(p_pos, white){
+:Piece(p_pos, white){
 
         if (white) {
                 currentFrame.y = 128;
@@ -20,7 +20,7 @@ Pawn::Pawn(glm::vec2 p_pos, bool white)
 }
 
 
-void Pawn::findMoves(std::vector<std::shared_ptr<Entity>>& Pieces){
+void Pawn::findMoves(std::vector<std::shared_ptr<Piece>>& Pieces){
         legalMoves.clear();
         int step;
         if(white){
@@ -39,7 +39,7 @@ void Pawn::findMoves(std::vector<std::shared_ptr<Entity>>& Pieces){
                 }
         } 
         
-        std::shared_ptr<Entity> hypoPiece = getMatchingPiece(glm::vec2{pos[0]-1, pos[1]-step}, Pieces); 
+        std::shared_ptr<Piece> hypoPiece = getMatchingPiece(glm::vec2{pos[0]-1, pos[1]-step}, Pieces); 
         if (hypoPiece != nullptr) {
                 if (hypoPiece->white != white && !(pos[0]-1 > 7 || pos[0]-1 < 0 || pos[1]-step > 7 || pos[1]-step < 0)) {
                         legalMoves.push_back(glm::vec2(pos[0]-1, pos[1]-step));
