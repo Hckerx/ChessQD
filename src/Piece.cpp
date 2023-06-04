@@ -62,10 +62,10 @@ bool Piece::move(glm::vec2 newPos, glm::vec2 oldPos, std::vector<std::shared_ptr
                 //     i->legalMoves.clear();
                 // }
                 // for (auto& i : Pieces) {
-                //     i->findMoves(Pieces);
+                //     i->findMovesWithoutCheck(Pieces);
                 // }
                 // for (auto& i : Pieces) {
-                //     i->findMoves(Pieces);
+                //     i->findMovesWithoutCheck(Pieces);
                 // }
                 return true;
 
@@ -78,8 +78,8 @@ bool Piece::move(glm::vec2 newPos, glm::vec2 oldPos, std::vector<std::shared_ptr
 
 
 
-bool Piece::findMovesWithCheck(std::vector<std::shared_ptr<Piece>>& Pieces) {
-    findMoves(Pieces);
+bool Piece::findMoves(std::vector<std::shared_ptr<Piece>>& Pieces) {
+    findMovesWithoutCheck(Pieces);
     std::vector<glm::vec2> legalMovescopy = legalMoves;
     std::vector<glm::vec2> newLegalMoves;
 
@@ -116,7 +116,7 @@ bool Piece::findMovesWithCheck(std::vector<std::shared_ptr<Piece>>& Pieces) {
 bool Piece::isKingInCheck(std::vector<std::shared_ptr<Piece>>& Pieces) {
     glm::vec2 kingPos;
     for (auto& i : Pieces) {
-        i->findMoves(Pieces);
+        i->findMovesWithoutCheck(Pieces);
         std::shared_ptr<King> derivedPtr = std::dynamic_pointer_cast<King>(i); //was macht das?
         if (derivedPtr != nullptr && i->white == white) {
             kingPos = i->pos; 

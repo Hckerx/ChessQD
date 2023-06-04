@@ -27,9 +27,9 @@ public:
 	}
     bool move(glm::vec2 newPos, glm::vec2 oldPos, std::vector<std::shared_ptr<Piece>>& Pieces, bool white_turn);
 	bool findIndMoves(std::vector<std::shared_ptr<Piece>>& Pieces, int x, int y);
-	virtual void findMoves(std::vector<std::shared_ptr<Piece>>& Pieces)= 0;
+	virtual void findMovesWithoutCheck(std::vector<std::shared_ptr<Piece>>& Pieces)= 0;
     bool isKingInCheck(std::vector<std::shared_ptr<Piece>>& Pieces);
-    bool findMovesWithCheck(std::vector<std::shared_ptr<Piece>>& Pieces);
+    bool findMoves(std::vector<std::shared_ptr<Piece>>& Pieces);
 	std::vector<glm::vec2> legalMoves;	
 	SDL_Rect getCurrentFrame();
 	SDL_Rect currentFrame;

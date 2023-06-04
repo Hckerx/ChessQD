@@ -17,7 +17,7 @@ King::King(glm::vec2 p_pos, bool white)
         currentFrame.h = 128;
 }
 
-void King::findMoves(std::vector<std::shared_ptr<Piece>>& Pieces) {
+void King::findMovesWithoutCheck(std::vector<std::shared_ptr<Piece>>& Pieces) {
         //FIXME add special Rules rochade schach schachmatt?????
         legalMoves.clear();
         findIndMoves(Pieces, pos[0] + 1, pos[1] + 1);

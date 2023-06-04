@@ -20,7 +20,7 @@ Pawn::Pawn(glm::vec2 p_pos, bool white)
 }
 
 
-void Pawn::findMoves(std::vector<std::shared_ptr<Piece>>& Pieces){
+void Pawn::findMovesWithoutCheck(std::vector<std::shared_ptr<Piece>>& Pieces){
         legalMoves.clear();
         int step;
         if(white){

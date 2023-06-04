@@ -21,7 +21,7 @@ Rook::Rook(glm::vec2 p_pos, bool white)
         currentFrame.h = 128;
 }
 
-void Rook::findMoves(std::vector<std::shared_ptr<Piece>>& Pieces) {
+void Rook::findMovesWithoutCheck(std::vector<std::shared_ptr<Piece>>& Pieces) {
     legalMoves.clear();
     // erst x
     int pos_x = pos[0]+1;

@@ -17,7 +17,7 @@ Queen::Queen(glm::vec2 p_pos, bool white)
         currentFrame.h = 128;
 }
 
-void Queen::findMoves(std::vector<std::shared_ptr<Piece>>& Pieces) {
+void Queen::findMovesWithoutCheck(std::vector<std::shared_ptr<Piece>>& Pieces) {
     legalMoves.clear();
     for (int8_t i = pos.x+1; i<8; i++) {
         if (!findIndMoves(Pieces, i, pos.y+(i-pos.x))) {

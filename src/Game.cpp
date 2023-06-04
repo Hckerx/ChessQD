@@ -58,9 +58,9 @@ void Game::selectPiece() {
      
     selectedPiece = getMatchingPiece(MousePosition, Pieces);
     if (selectedPiece != nullptr) {
-        selectedPiece->findMovesWithCheck(Pieces);    
-        //selectedPiece->findMoves(Pieces);    
-        //lastPositions = {selectedPiece->getPos()};
+        selectedPiece->findMoves(Pieces);    
+        //selectedPiece->findMovesWithoutCheck(Pieces);    
+        lastPositions = {selectedPiece->getPos()};
         isPieceSelected = true;
        
     }
@@ -77,23 +77,23 @@ void Game::placePiece() {
             white_turn = true;
         }
     } */
-    if (selectedPiece->move(MousePosition, lastPositions[-1], Pieces, white_turn)) {
+    if (selectedPiece->move(MousePosition, lastPositions[0], Pieces, white_turn)) {
         white_turn = !white_turn;
         handleCheckmate();
         lastPieces.push_back(selectedPiece);
         lastPositions.push_back(selectedPiece->getPos());
     } 
-    lastPositions.push_back(selectedPiece->getPos());
+    //lastPositions.push_back(selectedPiece->getPos());
     isPieceSelected = false;
 }
 void Game::handleCheckmate() {
         bool checkmate_white = true;
         bool checkmate_black = true;
         for (auto i : Pieces) {
-            if (i->white && !i->findMovesWithCheck(Pieces)) {
+            if (i->white && !i->findMoves(Pieces)) {
                 checkmate_white = false;
             }
-            if (!i->white && !i->findMovesWithCheck(Pieces)) {
+            if (!i->white && !i->findMoves(Pieces)) {
                 checkmate_black = false;
             }
         }

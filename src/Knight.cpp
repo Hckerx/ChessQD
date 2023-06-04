@@ -17,7 +17,7 @@ Knight::Knight(glm::vec2 p_pos, bool white)
         currentFrame.h = 128;
 }
 
-void Knight::findMoves(std::vector<std::shared_ptr<Piece>>& Pieces) {
+void Knight::findMovesWithoutCheck(std::vector<std::shared_ptr<Piece>>& Pieces) {
         legalMoves.clear();
         findIndMoves(Pieces, pos[0] + 2, pos[1] + 1);
         findIndMoves(Pieces, pos[0] + 2, pos[1] - 1);

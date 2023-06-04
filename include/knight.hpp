@@ -6,7 +6,7 @@ class Knight: public Piece
 {
 public:
     Knight(glm::vec2 p_pos, bool white);
-    void findMoves(std::vector<std::shared_ptr<Piece>>& Pieces);
+    void findMovesWithoutCheck(std::vector<std::shared_ptr<Piece>>& Pieces);
 
 private:
 };
