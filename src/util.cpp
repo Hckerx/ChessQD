@@ -11,10 +11,10 @@
 #include "king.hpp"
 #include "queen.hpp"
 #include "knight.hpp"
-#include "entity.hpp"
+#include "piece.hpp"
 
-std::vector<std::shared_ptr<Entity>> FenImport(std::string FenString) {
-    std::vector<std::shared_ptr<Entity>> Pieces;
+std::vector<std::shared_ptr<Piece>> FenImport(std::string FenString) {
+    std::vector<std::shared_ptr<Piece>> Pieces;
     int countx = 0;
     int county = 0;
     for (char c : FenString) {
@@ -54,8 +54,8 @@ std::vector<std::shared_ptr<Entity>> FenImport(std::string FenString) {
     }
     return Pieces;
 }
-// std::vector<std::shared_ptr<Entity>> FenImport(std::string FenString) {
-//   std::vector<std::shared_ptr<Entity>> Pieces;
+// std::vector<std::shared_ptr<Piece>> FenImport(std::string FenString) {
+//   std::vector<std::shared_ptr<Piece>> Pieces;
 //   int countx = 0;
 //   int county = 0;
 //   for (char c: FenString) {
@@ -97,7 +97,7 @@ std::vector<std::shared_ptr<Entity>> FenImport(std::string FenString) {
 //   return Pieces; 
 // }   
    
-std::shared_ptr<Entity> getMatchingPiece(glm::vec2 field, std::vector<std::shared_ptr<Entity>>& Pieces) {
+std::shared_ptr<Piece> getMatchingPiece(glm::vec2 field, std::vector<std::shared_ptr<Piece>>& Pieces) {
     
     for (auto& i: Pieces)
     {

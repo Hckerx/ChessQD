@@ -1,4 +1,4 @@
-#include "entity.hpp"
+#include "piece.hpp"
 #include "util.hpp"
 #define SDL_MAIN_HANDLED
 #include <SDL2/SDL.h>
@@ -15,18 +15,18 @@
 #include <algorithm>
 #include <king.hpp>
 
-Entity::Entity(glm::vec2 p_pos, bool white)
+Piece::Piece(glm::vec2 p_pos, bool white)
 :pos(p_pos), white(white)
 {
 }
 
-SDL_Rect Entity::getCurrentFrame()
+SDL_Rect Piece::getCurrentFrame()
 {
 	return currentFrame;
 }
 
-bool Entity::findIndMoves(std::vector<std::shared_ptr<Entity>>& Pieces, int x, int y){
-    std::shared_ptr<Entity> hypotheticalPiece = getMatchingPiece(glm::vec2{x, y}, Pieces);
+bool Piece::findIndMoves(std::vector<std::shared_ptr<Piece>>& Pieces, int x, int y){
+    std::shared_ptr<Piece> hypotheticalPiece = getMatchingPiece(glm::vec2{x, y}, Pieces);
     if (x > 7 || x < 0 || y > 7 || y < 0) {
         return false;
     }
@@ -46,13 +46,13 @@ bool Entity::findIndMoves(std::vector<std::shared_ptr<Entity>>& Pieces, int x, i
     }
 }
 
-bool Entity::move(glm::vec2 newPos, glm::vec2 oldPos, std::vector<std::shared_ptr<Entity>>& Pieces, bool white_turn) {
+bool Piece::move(glm::vec2 newPos, glm::vec2 oldPos, std::vector<std::shared_ptr<Piece>>& Pieces, bool white_turn) {
     if (white_turn == white) {
         for (glm::vec2 i: legalMoves) {
             if (i == newPos)	{
-                std::shared_ptr<Entity> hypoPiece = getMatchingPiece(glm::vec2{newPos.x, newPos.y}, Pieces);
+                std::shared_ptr<Piece> hypoPiece = getMatchingPiece(glm::vec2{newPos.x, newPos.y}, Pieces);
                 if (hypoPiece != nullptr) {
-                    std::vector<std::shared_ptr<Entity>>::iterator position = std::find(Pieces.begin(), Pieces.end(), hypoPiece);
+                    std::vector<std::shared_ptr<Piece>>::iterator position = std::find(Pieces.begin(), Pieces.end(), hypoPiece);
                     if (position != Pieces.end()){ // == myVector.end() means the element was not found
                         Pieces.erase(position);
                     }
@@ -78,7 +78,7 @@ bool Entity::move(glm::vec2 newPos, glm::vec2 oldPos, std::vector<std::shared_pt
 
 
 
-bool Entity::findMovesWithCheck(std::vector<std::shared_ptr<Entity>>& Pieces) {
+bool Piece::findMovesWithCheck(std::vector<std::shared_ptr<Piece>>& Pieces) {
     findMoves(Pieces);
     std::vector<glm::vec2> legalMovescopy = legalMoves;
     std::vector<glm::vec2> newLegalMoves;
@@ -89,7 +89,7 @@ bool Entity::findMovesWithCheck(std::vector<std::shared_ptr<Entity>>& Pieces) {
     for (auto move : legalMovescopy)
     {
         
-        std::shared_ptr<Entity> hypoPiece = getMatchingPiece(glm::vec2{move.x, move.y}, Pieces);
+        std::shared_ptr<Piece> hypoPiece = getMatchingPiece(glm::vec2{move.x, move.y}, Pieces);
         if (hypoPiece != nullptr) {
             glm::vec2 PfuschKoordinaten = hypoPiece->getPos(); // Dies sollte man niemals machen. Wir machen es trotzdem LMFAO
             hypoPiece->setPos({2000,2000});
@@ -113,7 +113,7 @@ bool Entity::findMovesWithCheck(std::vector<std::shared_ptr<Entity>>& Pieces) {
 
 
 
-bool Entity::isKingInCheck(std::vector<std::shared_ptr<Entity>>& Pieces) {
+bool Piece::isKingInCheck(std::vector<std::shared_ptr<Piece>>& Pieces) {
     glm::vec2 kingPos;
     for (auto& i : Pieces) {
         i->findMoves(Pieces);
@@ -122,8 +122,8 @@ bool Entity::isKingInCheck(std::vector<std::shared_ptr<Entity>>& Pieces) {
             kingPos = i->pos; 
         }
     }
-    // for entity in pieces
-    //     entity.findmoves
+    // for piece in pieces
+    //     piece.findmoves
 
     for (auto& i : Pieces) {
         if (i->white != white) {

@@ -1,11 +1,11 @@
 #include "knight.hpp"
-#include "entity.hpp"
+#include "piece.hpp"
 
 
 #include "glm/glm.hpp"
 #include <iostream>
 Knight::Knight(glm::vec2 p_pos, bool white)
-:Entity(p_pos, white){
+:Piece(p_pos, white){
         if (white) {
                 currentFrame.y = 128;
         }
@@ -17,7 +17,7 @@ Knight::Knight(glm::vec2 p_pos, bool white)
         currentFrame.h = 128;
 }
 
-void Knight::findMoves(std::vector<std::shared_ptr<Entity>>& Pieces) {
+void Knight::findMoves(std::vector<std::shared_ptr<Piece>>& Pieces) {
         legalMoves.clear();
         findIndMoves(Pieces, pos[0] + 2, pos[1] + 1);
         findIndMoves(Pieces, pos[0] + 2, pos[1] - 1);

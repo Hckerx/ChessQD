@@ -67,7 +67,7 @@ void Game::selectPiece() {
                 lastPositions.push_back(selectedEntity->getPos());
             } 
         } else {
-            lastPositions.push_back(selectedEntity->getPos());
+                lastPositions.push_back(selectedEntity->getPos());
         }
         //lastPositions = {selectedEntity->getPos()};
         isPieceSelected = true;
@@ -97,7 +97,7 @@ void Game::placePiece() {
             white_turn = true;
         }
     }
-    if (selectedEntity->move(MousePosition, selectedEntity->getPos(), Pieces, white_turn)) {
+    if (selectedEntity->move(MousePosition, lastPositions[lastPositions.size()-1], Pieces, white_turn)) {
         std::cout << "------------------------------------------------------------" << std::endl;
         white_turn = !white_turn;
         handleCheckmate();
