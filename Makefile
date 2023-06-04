@@ -8,7 +8,12 @@ release:
 cleanwin:
 	del *.o
 clean:
+ifeq ($(OS),Windows_NT)
+	del *.o
+	
+else 
 	rm *.o
+endif
 test:
 	./bin/debug/main
 
