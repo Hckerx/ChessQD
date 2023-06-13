@@ -9,6 +9,12 @@
 #include "renderWindow.hpp"
 #include "piece.hpp"
 
+#include "knight.hpp"
+#include "queen.hpp"
+#include "rook.hpp"
+#include "bishop.hpp"
+// Todo line width of rect
+
 RenderWindow::RenderWindow(const char* p_title)
 {
     if (SDL_Init(SDL_INIT_VIDEO) > 0) std::cout << "HEY.. SDL_Init HAS FAILED. SDL_ERROR: " << SDL_GetError() << std::endl;
@@ -127,10 +133,12 @@ void RenderWindow::display()
 
 void RenderWindow::fullRender(std::vector<glm::vec2> highlight, std::vector<std::shared_ptr<Piece>>& Pieces, bool whiteDown) {
     clear();
+
 	renderbg(highlight, whiteDown);
 	for (int i = 0; i < (int)Pieces.size(); i++) {
         render(Pieces[i], whiteDown);
     }
+    displayPromotionOptions(glm::vec2(2,2), true);
 	display();
 }
 
@@ -208,4 +216,48 @@ int RenderWindow::displayWelcomeMessage(TTF_Font* font128, TTF_Font* comment, in
   SDL_DestroyTexture(textTexture);
   SDL_FreeSurface(textSurface);
   return 0;
+}
+
+int RenderWindow::displayPromotionOptions(glm::vec2 pos, bool white) {
+    // we have to display a bot where are 4 options are displayed and the number returned represents the piece    
+    // 1 = queen, 2 = rook, 3 = bishop, 4 = knight
+    // we have to render the background first
+    // create a box that is evenly spaced and display all pieces depending of is bool is set to white or not white or black
+
+    
+
+    SDL_SetRenderDrawColor(renderer, 166, 168, 171, 255);
+    SDL_Rect rect = {(int)pos.x*squareSize, (int)pos.y*squareSize, (squareSize ), (squareSize * 4)};
+    SDL_RenderFillRect(renderer, &rect);
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+    SDL_Rect outline = {(int)pos.x*squareSize, (int)pos.y*squareSize, (squareSize ), (squareSize * 4)};
+    SDL_RenderDrawRect(renderer, &outline);
+    int y;
+    if (white) {
+        y = 128;
+    }
+    else {
+        y = 0;
+    }
+    for (int i = 128; i<=128*4; i+=128) {
+    	SDL_Rect src; 
+        src.h = 128;
+        src.w = 128;
+        src.y = y;
+        src.x = i;
+        SDL_Rect dst;
+        dst.x = pos.x* squareSize;
+        if (white) {
+            dst.y = (pos.y+(int)((i-128)/128)) * squareSize;
+        } else {
+            dst.y = (pos.y-(int)((i-128)/128)) * squareSize;
+        }
+        dst.w = squareSize;
+        dst.h = squareSize;
+
+        SDL_RenderCopy(renderer, texture, &src, &dst);
+    }
+
+
+    return 0;
 }

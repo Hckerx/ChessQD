@@ -16,6 +16,7 @@ public:
 	int displayWelcomeMessage(TTF_Font* font128, TTF_Font* comment, int height, int width, const char* text);
 	void cleanUp();
 	void fullRender(std::vector<glm::vec2> highlight, std::vector<std::shared_ptr<Piece>>& Pieces, bool whiteDown);
+    int displayPromotionOptions(glm::vec2 pos, bool white);
     int squareSize;
 	void updateWindowSize() {
 		SDL_GetWindowSize(window, &windowx, &windowy);
