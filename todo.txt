@@ -1,2 +1,3 @@
 cmake for files to increase build time
-check, checkmate, queening, online, en passsant, ai
+ queening, online, en passsantin a nice way, ai, move forward/backward time
+ 
