@@ -61,8 +61,13 @@ void Game::selectPiece() {
     if (selectedPiece != nullptr) {
         selectedPiece->findMoves(Pieces);     
         lastPositions = {selectedPiece->getPos()};
+        for (auto i: selectedPiece->legalMoves) {
+            lastPositions.push_back(i);
+        }
         isPieceSelected = true;
        
+    } else {
+    //    lastPositions = {};
     }
 }
 
@@ -77,14 +82,15 @@ void Game::placePiece() {
             whiteTurn = true;
         }
     } */
+    glm::vec2 oldPos = lastPositions[0];
     if (selectedPiece->move(MousePosition, lastPositions[0], Pieces, whiteTurn)) {
         if (rotate_board) {
-        whiteDown=!whiteDown;
+            whiteDown=!whiteDown;
         }
         whiteTurn = !whiteTurn;
         handleCheckmate();
         lastPieces.push_back(selectedPiece);
-        lastPositions.push_back(selectedPiece->getPos());
+        lastPositions = {oldPos, selectedPiece->getPos()};
     } 
     //lastPositions.push_back(selectedPiece->getPos());
     isPieceSelected = false;

@@ -39,6 +39,8 @@ bool Piece::findIndMoves(std::vector<std::shared_ptr<Piece>>& Pieces, int x, int
     {
         return false;
     }
+        
+
     else
     {
         legalMoves.push_back(glm::vec2(x, y));
