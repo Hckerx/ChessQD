@@ -58,7 +58,7 @@ void Pawn::findMovesWithoutCheck(std::vector<std::shared_ptr<Piece>>& Pieces){
         std::shared_ptr<Pawn> derivedPtr = std::dynamic_pointer_cast<Pawn>(hypoPiece); // was macht das?
         if (derivedPtr != nullptr) {
                 if (derivedPtr->isEnPassantVulnerable) {
-                        legalMoves.push_back(glm::vec2{pos[0] -step, pos[1]-step});
+                        legalMoves.push_back(glm::vec2{pos[0] - 1, pos[1]-step});
                 }
         }
 
@@ -66,10 +66,11 @@ void Pawn::findMovesWithoutCheck(std::vector<std::shared_ptr<Piece>>& Pieces){
         derivedPtr = std::dynamic_pointer_cast<Pawn>(hypoPiece); // was macht das?
         if (derivedPtr != nullptr) {
                 if (derivedPtr->isEnPassantVulnerable) {
-                        legalMoves.push_back(glm::vec2{pos[0] + step, pos[1]-step});
+                        legalMoves.push_back(glm::vec2{pos[0] + 1, pos[1]-step});
                 }
         }
 }
+
 
 bool Pawn::move(glm::vec2 newPos, glm::vec2 oldPos, std::vector<std::shared_ptr<Piece>>& Pieces, bool whiteTurn) {
     int step;
@@ -84,8 +85,8 @@ bool Pawn::move(glm::vec2 newPos, glm::vec2 oldPos, std::vector<std::shared_ptr<
     if (whiteTurn == white) {
         for (glm::vec2 i: legalMoves) {
             if (i == newPos)	{
-                if ((white && oldPos.y == 7 && newPos.y == 5) || (!white && oldPos.y == 1 && newPos.y == 3))
-                    isEnPassantVulnerable = true;
+                if ((white && oldPos.y == 6 && newPos.y == 4) || (!white && oldPos.y == 1 && newPos.y == 3)) {
+                    isEnPassantVulnerable = true; }
 
                 if (oldPos.x != newPos.x) {
                     hypoPiece = getMatchingPiece(glm::vec2{newPos.x, newPos.y}, Pieces); 
@@ -98,11 +99,15 @@ bool Pawn::move(glm::vec2 newPos, glm::vec2 oldPos, std::vector<std::shared_ptr<
                         Pieces.erase(position);
                     }
 
-                }
+                    }
                     for (auto &i : Pieces)
                     {
+                        if (this == i.get()) {
+                            continue;
+                        }
                         std::shared_ptr<Pawn> derivedPtr = std::dynamic_pointer_cast<Pawn>(i);
                         if (derivedPtr != nullptr) {
+                            
                             derivedPtr->isEnPassantVulnerable = false;
                         }
                     }
@@ -117,4 +122,4 @@ bool Pawn::move(glm::vec2 newPos, glm::vec2 oldPos, std::vector<std::shared_ptr<
     }
     setPos(oldPos);
     return false;
-    }
+}

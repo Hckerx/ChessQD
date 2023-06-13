@@ -92,6 +92,14 @@ bool Piece::move(glm::vec2 newPos, glm::vec2 oldPos, std::vector<std::shared_ptr
 
 
 bool Piece::findMoves(std::vector<std::shared_ptr<Piece>>& Pieces) {
+    int step;
+    if (white) {
+        step = 1;
+    } 
+    else {
+        step = -1;
+    }
+    std::shared_ptr<Piece> hypoPiece;
     findMovesWithoutCheck(Pieces);
     std::vector<glm::vec2> legalMovescopy = legalMoves;
     std::vector<glm::vec2> newLegalMoves;
@@ -101,8 +109,13 @@ bool Piece::findMoves(std::vector<std::shared_ptr<Piece>>& Pieces) {
     glm::vec2 PfuschKoordinaten;
     for (auto move : legalMovescopy)
     {
-        
-        std::shared_ptr<Piece> hypoPiece = getMatchingPiece(glm::vec2{move.x, move.y}, Pieces);
+        // check if myself is a pawn
+        hypoPiece = getMatchingPiece(glm::vec2{move.x, move.y}, Pieces);
+        if (hypoPiece == nullptr) {
+            if (typeid(*this) == typeid(Pawn)) {
+                hypoPiece = getMatchingPiece(glm::vec2{move.x, move.y+step}, Pieces);
+            }
+        }
         if (hypoPiece != nullptr) {
             PfuschKoordinaten = hypoPiece->getPos(); // Dies sollte man niemals machen. Wir machen es trotzdem LMFAO
             hypoPiece->setPos({2000,2000});
