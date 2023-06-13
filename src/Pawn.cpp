@@ -3,6 +3,8 @@
 
 #include "util.hpp"
 #include "glm/glm.hpp"
+
+#include <algorithm>
 #include <iostream>
 Pawn::Pawn(glm::vec2 p_pos, bool white)
 :Piece(p_pos, white){
@@ -18,6 +20,7 @@ Pawn::Pawn(glm::vec2 p_pos, bool white)
         currentFrame.h = 128;
 
 }
+
 
 
 void Pawn::findMovesWithoutCheck(std::vector<std::shared_ptr<Piece>>& Pieces){
@@ -50,8 +53,68 @@ void Pawn::findMovesWithoutCheck(std::vector<std::shared_ptr<Piece>>& Pieces){
                 if (hypoPiece->white != white && !(pos[0]+1 > 7 || pos[0]+1 < 0 || pos[1]+step > 7 || pos[1]+step < 0)) {
                         legalMoves.push_back(glm::vec2(pos[0]+1, pos[1]-step));
                 }
-        }                         
-        // Implement En passant
-        
-    //
+        }
+        hypoPiece = getMatchingPiece(glm::vec2{pos[0] - 1, pos[1]}, Pieces);
+        std::shared_ptr<Pawn> derivedPtr = std::dynamic_pointer_cast<Pawn>(hypoPiece); // was macht das?
+        if (derivedPtr != nullptr) {
+                if (derivedPtr->isEnPassantVulnerable) {
+                        legalMoves.push_back(glm::vec2{pos[0] -step, pos[1]-step});
+                }
+        }
+
+        hypoPiece = getMatchingPiece(glm::vec2{pos[0] + 1, pos[1]}, Pieces);
+        derivedPtr = std::dynamic_pointer_cast<Pawn>(hypoPiece); // was macht das?
+        if (derivedPtr != nullptr) {
+                if (derivedPtr->isEnPassantVulnerable) {
+                        legalMoves.push_back(glm::vec2{pos[0] + step, pos[1]-step});
+                }
+        }
 }
+
+bool Pawn::move(glm::vec2 newPos, glm::vec2 oldPos, std::vector<std::shared_ptr<Piece>>& Pieces, bool whiteTurn) {
+    int step;
+    std::shared_ptr<Piece> hypoPiece;
+    if (white) {
+        step = 1;
+    } 
+    else {
+        step = -1;
+    }
+
+    if (whiteTurn == white) {
+        for (glm::vec2 i: legalMoves) {
+            if (i == newPos)	{
+                if ((white && oldPos.y == 7 && newPos.y == 5) || (!white && oldPos.y == 1 && newPos.y == 3))
+                    isEnPassantVulnerable = true;
+
+                if (oldPos.x != newPos.x) {
+                    hypoPiece = getMatchingPiece(glm::vec2{newPos.x, newPos.y}, Pieces); 
+                    if (hypoPiece == nullptr) {
+                        hypoPiece = getMatchingPiece(glm::vec2{newPos.x, newPos.y+step}, Pieces);
+                    }
+
+                    std::vector<std::shared_ptr<Piece>>::iterator position = std::find(Pieces.begin(), Pieces.end(), hypoPiece);
+                    if (position != Pieces.end()){ // == myVector.end() means the element was not found
+                        Pieces.erase(position);
+                    }
+
+                }
+                    for (auto &i : Pieces)
+                    {
+                        std::shared_ptr<Pawn> derivedPtr = std::dynamic_pointer_cast<Pawn>(i);
+                        if (derivedPtr != nullptr) {
+                            derivedPtr->isEnPassantVulnerable = false;
+                        }
+                    }
+                    setPos(newPos);
+                    return true;
+                }
+            }
+        
+        setPos(oldPos);
+        return false;
+        
+    }
+    setPos(oldPos);
+    return false;
+    }

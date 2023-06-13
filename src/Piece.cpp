@@ -14,6 +14,7 @@
 #include "glm/ext.hpp"
 #include <algorithm>
 #include <king.hpp>
+#include <pawn.hpp>
 
 Piece::Piece(glm::vec2 p_pos, bool white)
 :pos(p_pos), white(white)
@@ -59,6 +60,7 @@ bool Piece::move(glm::vec2 newPos, glm::vec2 oldPos, std::vector<std::shared_ptr
                         Pieces.erase(position);
                     }
                 }
+                
                 setPos(newPos);
                 // for (auto& i : Pieces) {
                 //     i->legalMoves.clear();
@@ -69,6 +71,15 @@ bool Piece::move(glm::vec2 newPos, glm::vec2 oldPos, std::vector<std::shared_ptr
                 // for (auto& i : Pieces) {
                 //     i->findMovesWithoutCheck(Pieces);
                 // }
+
+                for (auto &i : Pieces)
+                {
+                    std::shared_ptr<Pawn> derivedPtr = std::dynamic_pointer_cast<Pawn>(i);
+                    if (derivedPtr != nullptr)
+                    {
+                        derivedPtr->isEnPassantVulnerable = false;
+                    }
+                }
                 return true;
 
             }

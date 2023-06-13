@@ -31,7 +31,7 @@ void Game::run() {
         window.updateWindowSize();
         if (isPieceSelected)
         {
-           DragPiece();
+            DragPiece();
         }
         handleEvents();
         //std::vector<glm::vec2> temp = {{1000,1000}};
@@ -47,16 +47,16 @@ void Game::DragPiece() {
 
     glm::vec2 newPos = getMousePosition(whiteDown,window.squareSize);
 
-    
+
     newPos -= 0.5;
     selectedPiece->setPos(newPos);
-        
+
 }
 
 void Game::selectPiece() {
-    
+
     glm::ivec2 MousePosition = getMousePosition(whiteDown,window.squareSize);
-     
+
     selectedPiece = getMatchingPiece(MousePosition, Pieces);
     if (selectedPiece != nullptr) {
         selectedPiece->findMoves(Pieces);     
@@ -65,9 +65,9 @@ void Game::selectPiece() {
             lastPositions.push_back(i);
         }
         isPieceSelected = true;
-       
+
     } else {
-    //    lastPositions = {};
+        //    lastPositions = {};
     }
 }
 
@@ -96,20 +96,20 @@ void Game::placePiece() {
     isPieceSelected = false;
 }
 void Game::handleCheckmate() {
-        bool checkmate_white = true;
-        bool checkmate_black = true;
-        for (auto i : Pieces) {
-            if (i->white && !i->findMoves(Pieces)) {
-                checkmate_white = false;
-            }
-            if (!i->white && !i->findMoves(Pieces)) {
-                checkmate_black = false;
-            }
+    bool checkmate_white = true;
+    bool checkmate_black = true;
+    for (auto i : Pieces) {
+        if (i->white && !i->findMoves(Pieces)) {
+            checkmate_white = false;
         }
-        if (checkmate_black || checkmate_white) {
-            std::cout << "checkmate either of them" << std::endl;
-            gameRunning = false;
+        if (!i->white && !i->findMoves(Pieces)) {
+            checkmate_black = false;
         }
+    }
+    if (checkmate_black || checkmate_white) {
+        std::cout << "checkmate either of them" << std::endl;
+        gameRunning = false;
+    }
 }
 //prolly hashmaps of all pieces' moves im too stupid for this
 void Game::handleEvents() {
