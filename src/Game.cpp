@@ -28,7 +28,6 @@ Game::Game() : window("never gonna give you up"){
 void Game::run() {
     while (gameRunning)
     {
-        
         window.updateWindowSize();
         if (isPieceSelected)
         {

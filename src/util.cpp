@@ -3,6 +3,7 @@
 #include <iostream>
 #include <memory>
 #include <vector>
+#include <string>
 
 #include "renderWindow.hpp"
 #include "pawn.hpp"
@@ -14,13 +15,16 @@
 #include "piece.hpp"
 
 std::vector<std::shared_ptr<Piece>> FenImport(std::string FenString) {
+    std::cout << FenString << std::endl;
     std::vector<std::shared_ptr<Piece>> Pieces;
     int countx = 0;
     int county = 0;
     for (char c : FenString) {
-        std::cout << c;
         if (std::isdigit(c)) {
-            countx += atoi(&c);
+            std::cout << "c: " << c << std::endl;
+            int i = c - '0';
+            std::cout << "i: " << i << std::endl;
+            countx += i;
         } else if (c == '/') {
             county += 1;
             countx = 0;
@@ -28,7 +32,6 @@ std::vector<std::shared_ptr<Piece>> FenImport(std::string FenString) {
             switch (tolower(c)) {
                 case 'k':
                     Pieces.push_back(std::make_shared<King>(glm::vec2{countx, county}, isupper(c)));
-                    std::cout << "bbbbbbbbbbbbbbbbbbbbbbb";
                     countx += 1;
                     break;
                 case 'n':
