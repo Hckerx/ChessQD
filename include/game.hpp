@@ -6,17 +6,11 @@
 #include "renderWindow.hpp"
 #include "piece.hpp"
 #include "util.hpp"
-class Game
-{
-private:
-    // SDL specific stuff
-    SDL_Event event;
-
     //Game Logic
     bool gameRunning = true;
     bool isPieceSelected = false;
     bool whiteTurn = true;
-    bool whiteDown = true; // defines which color is on the bottom of the board when game is startes
+    bool whiteDown = false; // defines which color is on the bottom of the board when game is startes
     bool rotate_board = false; // defines if the board should rotate after every move or not
 
     // RenderWindow stuff
