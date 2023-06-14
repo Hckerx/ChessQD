@@ -138,8 +138,6 @@ void RenderWindow::fullRender(std::vector<glm::vec2> highlight, std::vector<std:
 	for (int i = 0; i < (int)Pieces.size(); i++) {
         render(Pieces[i], whiteDown);
     }
-    displayPromotionOptions(glm::vec2(2,2), true);
-	display();
 }
 
 
@@ -227,10 +225,11 @@ int RenderWindow::displayPromotionOptions(glm::vec2 pos, bool white) {
     
 
     SDL_SetRenderDrawColor(renderer, 166, 168, 171, 255);
-    SDL_Rect rect = {(int)pos.x*squareSize, (int)pos.y*squareSize, (squareSize ), (squareSize * 4)};
+    int calculations = (int)pos.y*squareSize - (white ? 0 : 3*squareSize);
+    SDL_Rect rect = {(int)pos.x*squareSize, calculations, (squareSize ), (squareSize * 4)};
     SDL_RenderFillRect(renderer, &rect);
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-    SDL_Rect outline = {(int)pos.x*squareSize, (int)pos.y*squareSize, (squareSize ), (squareSize * 4)};
+    SDL_Rect outline = {(int)pos.x*squareSize, calculations, (squareSize ), (squareSize * 4)};
     SDL_RenderDrawRect(renderer, &outline);
     int y;
     if (white) {
@@ -243,8 +242,8 @@ int RenderWindow::displayPromotionOptions(glm::vec2 pos, bool white) {
     	SDL_Rect src; 
         src.h = 128;
         src.w = 128;
-        src.y = y;
-        src.x = i;
+        src.y = y; 
+        src.x = 128*5-i; 
         SDL_Rect dst;
         dst.x = pos.x* squareSize;
         if (white) {

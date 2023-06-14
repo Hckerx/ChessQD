@@ -1,10 +1,10 @@
 #include <cmath>
 #include <glm/fwd.hpp>
 #include <glm/gtx/string_cast.hpp>
+#include <memory>
 #define SDL_MAIN_HANDLED
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
-
 #include <iostream>
 #include <vector>
 
@@ -24,10 +24,11 @@
 Game::Game() : window("never gonna give you up"){
     run();
 }
+
 void Game::run() {
     while (gameRunning)
     {
-
+        
         window.updateWindowSize();
         if (isPieceSelected)
         {
@@ -36,6 +37,10 @@ void Game::run() {
         handleEvents();
         //std::vector<glm::vec2> temp = {{1000,1000}};
         window.fullRender(lastPositions, Pieces, whiteDown);
+        if (isPromoting) {
+            window.displayPromotionOptions(lastPositions[lastPositions.size() - 1], whiteTurn);
+        }
+        window.display();
     }
 }
 
@@ -57,6 +62,7 @@ void Game::selectPiece() {
 
     glm::ivec2 MousePosition = getMousePosition(whiteDown,window.squareSize);
 
+
     selectedPiece = getMatchingPiece(MousePosition, Pieces);
     if (selectedPiece != nullptr) {
         selectedPiece->findMoves(Pieces);     
@@ -66,9 +72,7 @@ void Game::selectPiece() {
         }
         isPieceSelected = true;
 
-    } else {
-        //    lastPositions = {};
-    }
+    } 
 }
 
 void Game::placePiece() {
@@ -78,7 +82,7 @@ void Game::placePiece() {
     /* if (!lastPieces.empty()) {
         if (lastPieces[lastPieces.size()-1]->white) {
             whiteTurn = false;
-        } else {
+            } else {
             whiteTurn = true;
         }
     } */
@@ -87,7 +91,9 @@ void Game::placePiece() {
         if (rotate_board) {
             whiteDown=!whiteDown;
         }
-        whiteTurn = !whiteTurn;
+        if (!handleProtomotion(selectedPiece)) {
+            whiteTurn = !whiteTurn;
+        }
         handleCheckmate();
         lastPieces.push_back(selectedPiece);
         lastPositions = {oldPos, selectedPiece->getPos()};
@@ -95,6 +101,18 @@ void Game::placePiece() {
     //lastPositions.push_back(selectedPiece->getPos());
     isPieceSelected = false;
 }
+
+bool Game::handleProtomotion(std::shared_ptr<Piece> selectedPiece)
+{
+    std::shared_ptr<Pawn> derivedPtr = std::dynamic_pointer_cast<Pawn>(selectedPiece);
+    if (derivedPtr != nullptr && ((selectedPiece->getPos().y == 0 && whiteTurn) || (selectedPiece->getPos().y == 7 && !whiteTurn)))
+    {
+        isPromoting = true;
+        return true;
+    }
+    return false;
+}
+
 void Game::handleCheckmate() {
     bool checkmate_white = true;
     bool checkmate_black = true;
@@ -107,49 +125,86 @@ void Game::handleCheckmate() {
         }
     }
     if (checkmate_black || checkmate_white) {
-        std::cout << "checkmate either of them" << std::endl;
         gameRunning = false;
     }
 }
 //prolly hashmaps of all pieces' moves im too stupid for this
-void Game::handleEvents() {
-    if (counter < 0) {
-        counter = 0;
-    }
-    while (SDL_PollEvent(&event)) {
-        switch (event.type) {
+void Game::handleEvents()
+{
+    while (SDL_PollEvent(&event))
+    {
+        switch (event.type)
+        {
             case SDL_MOUSEBUTTONDOWN:
-                if (event.button.button == SDL_BUTTON_LEFT){
-                    selectPiece();
-                    break;
+                if (event.button.button == SDL_BUTTON_LEFT)
+                {
+
+                    if (!isPromoting)
+                        {
+                            selectPiece();
+                        }
+                    else
+                    {
+                        handlePromotionPieceSelection(getMousePosition(whiteDown, window.squareSize));
+
+                    }
                 }
                 break;
             case SDL_QUIT:
                 gameRunning = false;
                 return;
             case SDL_MOUSEBUTTONUP:
-                if (event.button.button == SDL_BUTTON_LEFT && selectedPiece != nullptr) {
+                if (event.button.button == SDL_BUTTON_LEFT && selectedPiece != nullptr && !isPromoting)
+                {
                     placePiece();
-                }
-                break;
-            case SDL_KEYDOWN:
-                switch (event.key.keysym.sym) {
-                    case SDLK_q: gameRunning = false; break;
-                    case SDLK_LEFT: if ( (lastPieces.size()-1) >= counter && (lastPositions.size()-1) >= 2*counter){
-                        lastPieces[(lastPieces.size() - 1)  - counter]->setPos(lastPositions[(lastPositions.size() - 1)-(2*counter)-1]); 
-                        whiteTurn = !whiteTurn;
-                        counter++;
-                    }
-                        break;
-                    case SDLK_RIGHT: if ( (lastPieces.size()-1) >= 1*counter-1 && lastPositions.size() >= 1*counter-1){
-                        lastPieces[(lastPieces.size() - 1) - (counter-1)]->setPos(lastPositions[(lastPositions.size() - 1) - (2*(counter-1)) ]);
-                        whiteTurn = !whiteTurn; 
-                        counter--;
-                    } 
-                        break;
+                    break;
+                    case SDL_KEYDOWN:
+                        switch (event.key.keysym.sym)
+                        {
+                            case SDLK_q:
+                                gameRunning = false;
+                                break;
+                        }
                 }
         }
     }
 }
 
+void Game::handlePromotionPieceSelection(glm::vec2 selection){
+    std::shared_ptr<Piece> lastPiece = lastPieces[lastPieces.size()-1];
+    if ((int)selection.x == lastPositions[lastPositions.size() -1].x) {
+        switch (whiteTurn ? (int)selection.y : 7 - (int)selection.y) {
+            case 0: 
+                Pieces.erase(std::remove(Pieces.begin(), Pieces.end(), lastPiece), Pieces.end());
+                Pieces.push_back(std::make_shared<Queen>(lastPositions[lastPositions.size()-1], whiteTurn));
+                isPromoting = false;
+                whiteTurn = !whiteTurn;
+                handleCheckmate();
+                break;
+            case 1: 
+                Pieces.erase(std::remove(Pieces.begin(), Pieces.end(), lastPiece), Pieces.end());
+                Pieces.push_back(std::make_shared<Rook>(lastPositions[lastPositions.size()-1], whiteTurn));
+                isPromoting = false;
+                whiteTurn = !whiteTurn;
+                handleCheckmate();
+                break;
+            case 2: 
+                Pieces.erase(std::remove(Pieces.begin(), Pieces.end(), lastPiece), Pieces.end());
+                Pieces.push_back(std::make_shared<Bishop>(lastPositions[lastPositions.size()-1], whiteTurn));
+                isPromoting = false;
+                whiteTurn = !whiteTurn;
+                handleCheckmate();
+                break;
+            case 3: 
+                Pieces.erase(std::remove(Pieces.begin(), Pieces.end(), lastPiece), Pieces.end());
+                Pieces.push_back(std::make_shared<Knight>(lastPositions[lastPositions.size()-1], whiteTurn));
+                isPromoting = false;
+                whiteTurn = !whiteTurn;
+                handleCheckmate();
+                break;
+            default: 
+                break;
+        } 
+    } 
+}
 

@@ -22,6 +22,7 @@ public:
 		SDL_GetWindowSize(window, &windowx, &windowy);
         squareSize = std::min(windowx, windowy)/8;
 	}
+	void display();
 		
 
 private:
@@ -33,6 +34,5 @@ private:
 	void clear();
 	void render(std::shared_ptr<Piece>& p_piece, bool whiteDown);
 	void renderbg(std::vector<glm::vec2> highlight, bool whiteDown);
-	void display();
 	SDL_Texture* loadTexture(const char* p_filePath);
 };

@@ -18,6 +18,7 @@ std::vector<std::shared_ptr<Piece>> FenImport(std::string FenString) {
     int countx = 0;
     int county = 0;
     for (char c : FenString) {
+        std::cout << c;
         if (std::isdigit(c)) {
             countx += atoi(&c);
         } else if (c == '/') {
@@ -27,6 +28,7 @@ std::vector<std::shared_ptr<Piece>> FenImport(std::string FenString) {
             switch (tolower(c)) {
                 case 'k':
                     Pieces.push_back(std::make_shared<King>(glm::vec2{countx, county}, isupper(c)));
+                    std::cout << "bbbbbbbbbbbbbbbbbbbbbbb";
                     countx += 1;
                     break;
                 case 'n':
