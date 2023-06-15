@@ -21,9 +21,7 @@ std::vector<std::shared_ptr<Piece>> FenImport(std::string FenString) {
     int county = 0;
     for (char c : FenString) {
         if (std::isdigit(c)) {
-            std::cout << "c: " << c << std::endl;
             int i = c - '0';
-            std::cout << "i: " << i << std::endl;
             countx += i;
         } else if (c == '/') {
             county += 1;

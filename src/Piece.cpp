@@ -142,11 +142,16 @@ bool Piece::findMoves(std::vector<std::shared_ptr<Piece>>& Pieces) {
 bool Piece::isKingInCheck(std::vector<std::shared_ptr<Piece>>& Pieces) {
     glm::vec2 kingPos;
     for (auto& i : Pieces) {
-        i->findMovesWithoutCheck(Pieces);
         std::shared_ptr<King> derivedPtr = std::dynamic_pointer_cast<King>(i); //was macht das?
         if (derivedPtr != nullptr && i->white == white) {
             kingPos = i->pos; 
         }
+        else if (derivedPtr == nullptr)
+        {
+         i->findMovesWithoutCheck(Pieces);
+        }
+        
+       
     }
     // for piece in pieces
     //     piece.findmoves

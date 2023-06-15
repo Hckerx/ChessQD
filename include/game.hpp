@@ -26,7 +26,7 @@ private:
     std::vector<std::shared_ptr<Piece>> lastPieces;
 
     // Pieces 
-    std::vector<std::shared_ptr<Piece>> Pieces = FenImport("3r4/3p4/8/8/8/8/8/R3K2R");
+    std::vector<std::shared_ptr<Piece>> Pieces = FenImport("r3k2r/8/8/8/8/8/8/R3K2R");
     std::shared_ptr<Piece> selectedPiece;
 
 
