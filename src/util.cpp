@@ -14,49 +14,49 @@
 #include "knight.hpp"
 #include "piece.hpp"
 
-std::vector<std::shared_ptr<Piece>> FenImport(std::string FenString) {
-    std::cout << FenString << std::endl;
-    std::vector<std::shared_ptr<Piece>> Pieces;
-    int countx = 0;
-    int county = 0;
-    for (char c : FenString) {
-        if (std::isdigit(c)) {
-            int i = c - '0';
-            countx += i;
-        } else if (c == '/') {
-            county += 1;
-            countx = 0;
-        } else if (std::isalpha(c)) {
-            switch (tolower(c)) {
-                case 'k':
-                    Pieces.push_back(std::make_shared<King>(glm::vec2{countx, county}, isupper(c)));
-                    countx += 1;
-                    break;
-                case 'n':
-                    Pieces.push_back(std::make_shared<Knight>(glm::vec2{countx, county}, isupper(c)));
-                    countx += 1;
-                    break;
-                case 'p':
-                    Pieces.push_back(std::make_shared<Pawn>(glm::vec2{countx, county}, isupper(c)));
-                    countx += 1;
-                    break;
-                case 'r':
-                    Pieces.push_back(std::make_shared<Rook>(glm::vec2{countx, county}, isupper(c)));
-                    countx += 1;
-                    break;
-                case 'b':
-                    Pieces.push_back(std::make_shared<Bishop>(glm::vec2{countx, county}, isupper(c)));
-                    countx += 1;
-                    break;
-                case 'q':
-                    Pieces.push_back(std::make_shared<Queen>(glm::vec2{countx, county}, isupper(c)));
-                    countx += 1;
-                    break;
-            }
-        }
-    }
-    return Pieces;
-}
+// std::vector<std::shared_ptr<Piece>> FenImport(std::string FenString) {
+//     std::cout << FenString << std::endl;
+//     std::vector<std::shared_ptr<Piece>> Pieces;
+//     int countx = 0;
+//     int county = 0;
+//     for (char c : FenString) {
+//         if (std::isdigit(c)) {
+//             int i = c - '0';
+//             countx += i;
+//         } else if (c == '/') {
+//             county += 1;
+//             countx = 0;
+//         } else if (std::isalpha(c)) {
+//             switch (tolower(c)) {
+//                 case 'k':
+//                     Pieces.push_back(std::make_shared<King>(glm::vec2{countx, county}, isupper(c)));
+//                     countx += 1;
+//                     break;
+//                 case 'n':
+//                     Pieces.push_back(std::make_shared<Knight>(glm::vec2{countx, county}, isupper(c)));
+//                     countx += 1;
+//                     break;
+//                 case 'p':
+//                     Pieces.push_back(std::make_shared<Pawn>(glm::vec2{countx, county}, isupper(c)));
+//                     countx += 1;
+//                     break;
+//                 case 'r':
+//                     Pieces.push_back(std::make_shared<Rook>(glm::vec2{countx, county}, isupper(c)));
+//                     countx += 1;
+//                     break;
+//                 case 'b':
+//                     Pieces.push_back(std::make_shared<Bishop>(glm::vec2{countx, county}, isupper(c)));
+//                     countx += 1;
+//                     break;
+//                 case 'q':
+//                     Pieces.push_back(std::make_shared<Queen>(glm::vec2{countx, county}, isupper(c)));
+//                     countx += 1;
+//                     break;
+//             }
+//         }
+//     }
+//     return Pieces;
+// }
 // std::vector<std::shared_ptr<Piece>> FenImport(std::string FenString) {
 //   std::vector<std::shared_ptr<Piece>> Pieces;
 //   int countx = 0;

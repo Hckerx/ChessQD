@@ -15,10 +15,12 @@ private:
     //Game Logic
     bool gameRunning = true;
     bool isPieceSelected = false;
-    bool whiteTurn = true;
+    bool whiteTurn;
     bool whiteDown = true; // defines which color is on the bottom of the board when game is startes
     bool rotate_board = false; // defines if the board should rotate after every move or not
     bool isPromoting = false;
+    int halfMoveNumber = 0;
+    int fullMoveNumber = 0;
 
     // RenderWindow stuff
     RenderWindow window;
@@ -26,11 +28,12 @@ private:
     std::vector<std::shared_ptr<Piece>> lastPieces;
 
     // Pieces 
-    std::vector<std::shared_ptr<Piece>> Pieces = FenImport("r3k2r/8/8/8/8/8/8/R3K2R");
     std::shared_ptr<Piece> selectedPiece;
-
+    std::vector<std::shared_ptr<Piece>> Pieces;
 
     void run();
+
+    std::vector<std::shared_ptr<Piece>> FenImport(std::string FenString);
     void handleEvents();
     void handleCheckmate();
     bool handleProtomotion(std::shared_ptr<Piece> selectedPiece);
@@ -38,6 +41,8 @@ private:
     void handlePromotionPieceSelection(glm::vec2 selection);
     void DragPiece();
     void placePiece();
+
+
 public:
     Game(/* args */); 
     ~Game();

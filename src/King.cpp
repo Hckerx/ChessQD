@@ -29,33 +29,41 @@ void King::findMovesWithoutCheck(std::vector<std::shared_ptr<Piece>> &Pieces)
     findIndMoves(Pieces, pos[0] - 1, pos[1] - 1);
     findIndMoves(Pieces, pos[0], pos[1] - 1);
     findIndMoves(Pieces, pos[0], pos[1] + 1);
-    // findIndMoves(Pieces, pos[0] + 1, pos[1]);
-    // findIndMoves(Pieces, pos[0] - 1, pos[1]);
+    if (hasMoved || isCastling) {
+        findIndMoves(Pieces, pos[0] + 1, pos[1]);
+        findIndMoves(Pieces, pos[0] - 1, pos[1]);
+        if (isCastling) { 
+            isCastling = false;
+        }
+        return;
+    }
     std::shared_ptr<Piece> pieceTemp;
+    // maybe without castling 
     std::shared_ptr<Rook> rookPiece;
-    pos.x = pos[0] - 1;
-    if (!Piece::isKingInCheck(Pieces)) {
-        pos.x = pos.x + 1;
-        if (findIndMoves(Pieces, pos[0] - 1, pos[1]))
-        {
-            if (!hasMoved)
+        pos.x = pos[0] - 1;
+        if (!isKingInCheck(Pieces)) {
+            pos.x = pos.x + 1;
+            if (findIndMoves(Pieces, pos[0] - 1, pos[1]))
             {
-                pieceTemp = getMatchingPiece(glm::vec2{pos[0] - 4, pos[1]}, Pieces);
-                rookPiece = std::dynamic_pointer_cast<Rook>(pieceTemp);
-                if (rookPiece != nullptr)
+                if (!hasMoved)
                 {
-
-                    if (findIndMoves(Pieces, pos[0] - 2, pos[1]))
+                    pieceTemp = getMatchingPiece(glm::vec2{pos[0] - 4, pos[1]}, Pieces);
+                    rookPiece = std::dynamic_pointer_cast<Rook>(pieceTemp);
+                    if (rookPiece != nullptr)
                     {
 
-                        if (!rookPiece->hasMoved)
+                        if (findIndMoves(Pieces, pos[0] - 2, pos[1]))
                         {
-                            rookPiece->findMovesWithoutCheck(Pieces);
-                            for (auto i : rookPiece->legalMoves)
+
+                            if (!rookPiece->hasMoved)
                             {
-                                if (i == glm::vec2{pos[0] - 3, pos[1]})
+                                rookPiece->findMovesWithoutCheck(Pieces);
+                                for (auto i : rookPiece->legalMoves)
                                 {
-                                    legalMoves.push_back(glm::vec2{pos[0] - 2, pos[1]});
+                                    if (i == glm::vec2{pos[0] - 3, pos[1]})
+                                    {
+                                        legalMoves.push_back(glm::vec2{pos[0] - 2, pos[1]});
+                                    }
                                 }
                             }
                         }
@@ -63,40 +71,38 @@ void King::findMovesWithoutCheck(std::vector<std::shared_ptr<Piece>> &Pieces)
                 }
             }
         }
-    }
-    else
-    {
-        pos.x = pos[0] + 1;
-    }
-    pos.x = pos[0] + 1;
-    if (!Piece::isKingInCheck(Pieces)) {
-        pos.x = pos[0] - 1;
-        if (findIndMoves(Pieces, pos[0]+1, pos[1]))
+        else
         {
-            if (!hasMoved)
+            pos.x = pos[0] + 1;
+        }
+        pos.x = pos[0] + 1;
+        if (!isKingInCheck(Pieces)) {
+            pos.x = pos[0] - 1;
+            if (findIndMoves(Pieces, pos[0]+1, pos[1]))
             {
-                pieceTemp = getMatchingPiece(glm::vec2{pos[0] + 3, pos[1]}, Pieces);
-                rookPiece = std::dynamic_pointer_cast<Rook>(pieceTemp);
-                if (rookPiece != nullptr) {
+                if (!hasMoved)
+                {
+                    pieceTemp = getMatchingPiece(glm::vec2{pos[0] + 3, pos[1]}, Pieces);
+                    rookPiece = std::dynamic_pointer_cast<Rook>(pieceTemp);
+                    if (rookPiece != nullptr) {
 
-                    if (!rookPiece->hasMoved) {
+                        if (!rookPiece->hasMoved) {
 
-                        if (findIndMoves(Pieces, pos[0] + 2, pos[1]))
-                        {
+                            if (findIndMoves(Pieces, pos[0] + 2, pos[1]))
                             {
-                                legalMoves.push_back(glm::vec2{pos[0] + 2, pos[1]});
+                                {
+                                    legalMoves.push_back(glm::vec2{pos[0] + 2, pos[1]});
+                                }
                             }
                         }
                     }
                 }
             }
         }
-    }
-    else
-    {
-        pos.x = pos[0] - 1;
-    }
-
+        else
+        {
+            pos.x = pos[0] - 1;
+        }
 }
 
 bool King::move(glm::vec2 newPos, glm::vec2 oldPos, std::vector<std::shared_ptr<Piece>>& Pieces, bool whiteTurn) {
@@ -115,4 +121,33 @@ bool King::move(glm::vec2 newPos, glm::vec2 oldPos, std::vector<std::shared_ptr<
     } else {
         return false;
     }
+}
+
+bool King::isKingInCheck(std::vector<std::shared_ptr<Piece>>& Pieces) {
+    glm::vec2 kingPos;
+    for (auto i : Pieces) {
+        std::shared_ptr<King> derivedPtr = std::dynamic_pointer_cast<King>(i); 
+        if (derivedPtr != nullptr && i->white == white) {
+            kingPos = i->pos; 
+        }
+        else if (derivedPtr != nullptr && i->white != white) 
+        {
+            derivedPtr->isCastling = true;
+            i->findMovesWithoutCheck(Pieces);
+        }
+ 
+    }
+    // for piece in pieces
+    //     piece.findmoves
+
+    for (auto& i : Pieces) {
+        if (i->white != white) {
+            for (glm::vec2 j : i->legalMoves) {
+                if (j == kingPos) {
+                    return true;
+                }
+            }    
+        }
+    }
+    return false;
 }
