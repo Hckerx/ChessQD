@@ -58,7 +58,6 @@ void Rook::findMovesWithoutCheck(std::vector<std::shared_ptr<Piece>>& Pieces) {
 bool Rook::move(glm::vec2 newPos, glm::vec2 oldPos, std::vector<std::shared_ptr<Piece>>& Pieces, bool whiteTurn) {
         if (Piece::move(newPos, oldPos, Pieces, whiteTurn)) {
                 hasMoved = true;
-                std::cout << hasMoved << std::endl;
                 return true;
         } else {
                 return false;

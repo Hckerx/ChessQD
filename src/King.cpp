@@ -1,4 +1,5 @@
 #include "king.hpp"
+#include "glm/gtx/string_cast.hpp"
 #include "piece.hpp"
 #include "glm/glm.hpp"
 #include "util.hpp"
@@ -35,6 +36,7 @@ void King::findMovesWithoutCheck(std::vector<std::shared_ptr<Piece>> &Pieces)
         if (isCastling) { 
             isCastling = false;
         }
+
         return;
     }
     std::shared_ptr<Piece> pieceTemp;
@@ -63,6 +65,7 @@ void King::findMovesWithoutCheck(std::vector<std::shared_ptr<Piece>> &Pieces)
                                     if (i == glm::vec2{pos[0] - 3, pos[1]})
                                     {
                                         legalMoves.push_back(glm::vec2{pos[0] - 2, pos[1]});
+
                                     }
                                 }
                             }

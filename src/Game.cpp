@@ -23,8 +23,8 @@
 
 #include "game.hpp"
 
-Game::Game() : window("never gonna give you up"){
-    Pieces = FenImport("5k2/8/8/8/8/8/8/4K2R w K - 0 1");
+Game::Game(std::string fen) : window("never gonna give you up"){
+    Pieces = FenImport(fen);
     run();
 }
 
@@ -263,7 +263,6 @@ std::vector<std::shared_ptr<Piece>> Game::FenImport(std::string FenString) {
 
     // Process the captured metadata if needed
     // Example: Parse and use the metadata as per your requirements
-    std::cout << "Metadata: " << metadataFen << std::endl;
     std::istringstream iss(metadataFen);
     std::string element;
     bool white;
@@ -279,11 +278,12 @@ std::vector<std::shared_ptr<Piece>> Game::FenImport(std::string FenString) {
             count++;
         }
         else if (count == 1) {
-            if (element.size() == 1) {
-                for (auto i : Pieces) {
-
+            if (element.length() == 1) {
+                for (auto i : piecesVector) {
+                    std::cout << "check" << std::endl;
                     std::shared_ptr<King> Kings = std::dynamic_pointer_cast<King>(i);
                     if (Kings != nullptr) {
+                        std::cout << "set to true" << std::endl;
                         Kings->hasMoved = true;
                     }
                 }
@@ -348,7 +348,6 @@ std::vector<std::shared_ptr<Piece>> Game::FenImport(std::string FenString) {
                 int posx = abc.find(element[0]);
                 int posy = 8 - ((char)element[1] - '0');
                 std::shared_ptr<Piece> derivedPtr = getMatchingPiece({posx, whiteTurn ? posy+1 : posy - 1}, piecesVector);
-                std::cout << posx << (whiteTurn ? posy+1 : posy - 1) << std::endl;
                 std::shared_ptr<Pawn> enPawnssant = std::dynamic_pointer_cast<Pawn>(derivedPtr);
                 if (enPawnssant != nullptr) {
                     enPawnssant->isEnPassantVulnerable = true;

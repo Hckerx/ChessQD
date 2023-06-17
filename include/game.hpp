@@ -44,7 +44,7 @@ private:
 
 
 public:
-    Game(/* args */); 
+    Game(std::string fen); 
     ~Game();
 
 };
