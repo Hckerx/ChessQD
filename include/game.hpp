@@ -6,6 +6,12 @@
 #include "renderWindow.hpp"
 #include "piece.hpp"
 #include "util.hpp"
+class Game
+{
+private:
+    // SDL specific stuff
+    SDL_Event event;
+
     //Game Logic
     bool gameRunning = true;
     bool isPieceSelected = false;
