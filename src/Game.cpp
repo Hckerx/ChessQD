@@ -285,7 +285,7 @@ std::vector<std::shared_ptr<Piece>> Game::FenImport(std::string FenString) {
     }
     else {
         if (metadataFen[count] == 'K') {
-            std::shared_ptr<Piece> pieceTemp = getMatchingPiece(glm::vec2{7, 7}, Pieces);
+            std::shared_ptr<Piece> pieceTemp = getMatchingPiece(glm::vec2{7, 7}, piecesVector);
             std::shared_ptr<Rook> derivedPtr = std::dynamic_pointer_cast<Rook>(pieceTemp);
             if (derivedPtr != nullptr) {
                 if (derivedPtr->white) {
@@ -296,7 +296,7 @@ std::vector<std::shared_ptr<Piece>> Game::FenImport(std::string FenString) {
         }
 
         if (metadataFen[count] == 'Q') {
-            std::shared_ptr<Piece> pieceTemp = getMatchingPiece(glm::vec2{0, 7}, Pieces);
+            std::shared_ptr<Piece> pieceTemp = getMatchingPiece(glm::vec2{0, 7}, piecesVector);
             std::shared_ptr<Rook> derivedPtr = std::dynamic_pointer_cast<Rook>(pieceTemp);
             if (derivedPtr != nullptr) {
                 if (derivedPtr->white) {
@@ -307,24 +307,20 @@ std::vector<std::shared_ptr<Piece>> Game::FenImport(std::string FenString) {
         }
 
         if (metadataFen[count] == 'k') {
-            std::shared_ptr<Piece> pieceTemp = getMatchingPiece(glm::vec2{7, 0}, Pieces);
+            std::shared_ptr<Piece> pieceTemp = getMatchingPiece(glm::vec2{7, 0}, piecesVector);
             std::shared_ptr<Rook> derivedPtr = std::dynamic_pointer_cast<Rook>(pieceTemp);
-                    std::cout << "bk s m" << std::endl;
             if (derivedPtr != nullptr) {
                 if (!derivedPtr->white) {
-                    std::cout << "bk s m" << std::endl;
                     derivedPtr->hasMoved = false;
                 }
             }
             count++;
         }
         if (metadataFen[count] == 'q') {
-            std::shared_ptr<Piece> pieceTemp = getMatchingPiece(glm::vec2{0, 0}, Pieces);
+            std::shared_ptr<Piece> pieceTemp = getMatchingPiece(glm::vec2{0, 0}, piecesVector);
             std::shared_ptr<Rook> derivedPtr = std::dynamic_pointer_cast<Rook>(pieceTemp);
-            std::cout << "bk s m" << std::endl;
             if (derivedPtr != nullptr) {
                 if (!derivedPtr->white) {
-                    std::cout << "bk s m" << std::endl;
                     derivedPtr->hasMoved = false;
                 }
             }
