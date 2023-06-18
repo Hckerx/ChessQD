@@ -24,9 +24,10 @@
 #include "game.hpp"
 
 Game::Game(std::string fen) : window("never gonna give you up"){
-    //window.displayWelcomeMessage();
-    Pieces = FenImport(fen);
-    run();
+    if (window.displayWelcomeMessage()){
+        Pieces = FenImport(fen);
+        run();
+    }
 }
 
 void Game::run() {

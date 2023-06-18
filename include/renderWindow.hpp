@@ -13,7 +13,7 @@ class RenderWindow
 {
 public:
 	RenderWindow(const char* p_title);
-	int displayWelcomeMessage();
+	bool displayWelcomeMessage();
 	void cleanUp();
 	void fullRender(std::vector<glm::vec2> highlight, std::vector<std::shared_ptr<Piece>>& Pieces, bool whiteDown);
     int displayPromotionOptions(glm::vec2 pos, bool white);
