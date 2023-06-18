@@ -1,4 +1,4 @@
-#include <algorithm>
+
 #include <cmath>
 #include <glm/fwd.hpp>
 #include <glm/gtx/string_cast.hpp>
@@ -25,7 +25,7 @@
 
 Game::Game(std::string fen) : window("never gonna give you up"){
     //window.displayWelcomeMessage();
-    Pieces = FenImport("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+    Pieces = FenImport(fen);
     run();
 }
 
@@ -262,12 +262,11 @@ std::vector<std::shared_ptr<Piece>> Game::FenImport(std::string FenString) {
         } 
     }
     // Process the captured metadata if needed
-    std::string element = metadataFen;
     int count = 0;
 
-    if (element[count] == 'w') {
+    if (metadataFen[count] == 'w') {
         whiteTurn = true;
-    } else if (element[count] == 'b') {
+    } else if (metadataFen[count] == 'b') {
         whiteTurn = false;
     } else {
         throw std::invalid_argument( "Invalid Fen" );
@@ -275,7 +274,7 @@ std::vector<std::shared_ptr<Piece>> Game::FenImport(std::string FenString) {
     count++;
     count++;
 
-    if (element[count] == '-') {
+    if (metadataFen[count] == '-') {
         for (auto i : piecesVector) {
             std::shared_ptr<King> Kings = std::dynamic_pointer_cast<King>(i);
             if (Kings != nullptr) {
@@ -285,7 +284,7 @@ std::vector<std::shared_ptr<Piece>> Game::FenImport(std::string FenString) {
         count++;
     }
     else {
-        if (element[count] == 'K') {
+        if (metadataFen[count] == 'K') {
             std::shared_ptr<Piece> pieceTemp = getMatchingPiece(glm::vec2{7, 7}, Pieces);
             std::shared_ptr<Rook> derivedPtr = std::dynamic_pointer_cast<Rook>(pieceTemp);
             if (derivedPtr != nullptr) {
@@ -296,7 +295,7 @@ std::vector<std::shared_ptr<Piece>> Game::FenImport(std::string FenString) {
             count++;
         }
 
-        if (element[count] == 'Q') {
+        if (metadataFen[count] == 'Q') {
             std::shared_ptr<Piece> pieceTemp = getMatchingPiece(glm::vec2{0, 7}, Pieces);
             std::shared_ptr<Rook> derivedPtr = std::dynamic_pointer_cast<Rook>(pieceTemp);
             if (derivedPtr != nullptr) {
@@ -307,21 +306,25 @@ std::vector<std::shared_ptr<Piece>> Game::FenImport(std::string FenString) {
             count++;
         }
 
-        if (element[count] == 'k') {
+        if (metadataFen[count] == 'k') {
             std::shared_ptr<Piece> pieceTemp = getMatchingPiece(glm::vec2{7, 0}, Pieces);
             std::shared_ptr<Rook> derivedPtr = std::dynamic_pointer_cast<Rook>(pieceTemp);
+                    std::cout << "bk s m" << std::endl;
             if (derivedPtr != nullptr) {
-                if (derivedPtr->white) {
+                if (!derivedPtr->white) {
+                    std::cout << "bk s m" << std::endl;
                     derivedPtr->hasMoved = false;
                 }
             }
             count++;
         }
-        if (element[count] == 'q') {
+        if (metadataFen[count] == 'q') {
             std::shared_ptr<Piece> pieceTemp = getMatchingPiece(glm::vec2{0, 0}, Pieces);
             std::shared_ptr<Rook> derivedPtr = std::dynamic_pointer_cast<Rook>(pieceTemp);
+            std::cout << "bk s m" << std::endl;
             if (derivedPtr != nullptr) {
-                if (derivedPtr->white) {
+                if (!derivedPtr->white) {
+                    std::cout << "bk s m" << std::endl;
                     derivedPtr->hasMoved = false;
                 }
             }
@@ -331,9 +334,10 @@ std::vector<std::shared_ptr<Piece>> Game::FenImport(std::string FenString) {
     count++;
 
     std::string abc = "abcdefgh12345678";
-    if (std::find(abc.begin(), abc.end(), element[count]) != abc.end() && std::find(abc.begin(), abc.end(), element[count+1]) != abc.end()) {
-        int posy = 8 - (element[count] - '0');
-        std::shared_ptr<Piece> derivedPtr = getMatchingPiece({element[count+1], whiteTurn ? posy+1 : posy - 1}, piecesVector);
+    if (std::find(abc.begin(), abc.end(), metadataFen[count]) != abc.end() && std::find(abc.begin(), abc.end(), metadataFen[count+1]) != abc.end()) {
+        int posx = abc.find(metadataFen[count]);
+        int posy = 8 - (metadataFen[count+1] - '0');
+        std::shared_ptr<Piece> derivedPtr = getMatchingPiece({posx, whiteTurn ? posy+1 : posy - 1}, piecesVector);
         std::shared_ptr<Pawn> enPassant = std::dynamic_pointer_cast<Pawn>(derivedPtr);
         if (enPassant != nullptr) {
             enPassant->isEnPassantVulnerable = true;
@@ -344,13 +348,13 @@ std::vector<std::shared_ptr<Piece>> Game::FenImport(std::string FenString) {
         count++;
     }
     count++;
-    if (element[count]) {
-        //fullMoveNumber = (char)element[0] - '0'; TODO: 50 halfMoveNumber
+    if (metadataFen[count]) {
+        //fullMoveNumber = (char)metadataFen[0] - '0'; TODO: 50 halfMoveNumber
         ++count;
     }
     count++;
-    if (element[count]) {
-        fullMoveNumber = stoi(element);
+    if (metadataFen[count]) {
+        //fullMoveNumber = stoi(metadataFen[count]);
     }
     return piecesVector;
 }

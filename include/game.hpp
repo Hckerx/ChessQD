@@ -16,7 +16,7 @@ private:
     bool gameRunning = true;
     bool isPieceSelected = false;
     bool whiteTurn;
-    bool whiteDown = false; // defines which color is on the bottom of the board when game is startes
+    bool whiteDown = true; // defines which color is on the bottom of the board when game is startes
     bool rotate_board = false; // defines if the board should rotate after every move or not
     bool isPromoting = false;
 //    int halfMoveNumber = 0;
