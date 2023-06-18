@@ -261,110 +261,96 @@ std::vector<std::shared_ptr<Piece>> Game::FenImport(std::string FenString) {
             }
         } 
     }
-
     // Process the captured metadata if needed
     std::string element = metadataFen;
-
-
     int count = 0;
 
-       
-            if (element[count] == 'w') {
-                whiteTurn = true;
-            } else if (element[count] == 'b') {
-                whiteTurn = false;
+    if (element[count] == 'w') {
+        whiteTurn = true;
+    } else if (element[count] == 'b') {
+        whiteTurn = false;
+    } else {
+        throw std::invalid_argument( "Invalid Fen" );
+    }
+    count++;
+    count++;
+
+    if (element[count] == '-') {
+        for (auto i : piecesVector) {
+            std::shared_ptr<King> Kings = std::dynamic_pointer_cast<King>(i);
+            if (Kings != nullptr) {
+                Kings->hasMoved = true;
             }
-            else {
+        }
+        count++;
+    }
+    else {
+        if (element[count] == 'K') {
+            std::shared_ptr<Piece> pieceTemp = getMatchingPiece(glm::vec2{7, 7}, Pieces);
+            std::shared_ptr<Rook> derivedPtr = std::dynamic_pointer_cast<Rook>(pieceTemp);
+            if (derivedPtr != nullptr) {
+                if (derivedPtr->white) {
+                    derivedPtr->hasMoved = false;
+                }
+            }
+            count++;
+        }
+
+        if (element[count] == 'Q') {
+            std::shared_ptr<Piece> pieceTemp = getMatchingPiece(glm::vec2{0, 7}, Pieces);
+            std::shared_ptr<Rook> derivedPtr = std::dynamic_pointer_cast<Rook>(pieceTemp);
+            if (derivedPtr != nullptr) {
+                if (derivedPtr->white) {
+                    derivedPtr->hasMoved = false;
+                }
+            }
+            count++;
+        }
+
+        if (element[count] == 'k') {
+            std::shared_ptr<Piece> pieceTemp = getMatchingPiece(glm::vec2{7, 0}, Pieces);
+            std::shared_ptr<Rook> derivedPtr = std::dynamic_pointer_cast<Rook>(pieceTemp);
+            if (derivedPtr != nullptr) {
+                if (derivedPtr->white) {
+                    derivedPtr->hasMoved = false;
+                }
+            }
+            count++;
+        }
+        if (element[count] == 'q') {
+            std::shared_ptr<Piece> pieceTemp = getMatchingPiece(glm::vec2{0, 0}, Pieces);
+            std::shared_ptr<Rook> derivedPtr = std::dynamic_pointer_cast<Rook>(pieceTemp);
+            if (derivedPtr != nullptr) {
+                if (derivedPtr->white) {
+                    derivedPtr->hasMoved = false;
+                }
+            }
+            ++count;
+        } 
+    }
+    count++;
+
+    std::string abc = "abcdefgh12345678";
+    if (std::find(abc.begin(), abc.end(), element[count]) != abc.end() && std::find(abc.begin(), abc.end(), element[count+1]) != abc.end()) {
+        int posy = 8 - (element[count] - '0');
+        std::shared_ptr<Piece> derivedPtr = getMatchingPiece({element[count+1], whiteTurn ? posy+1 : posy - 1}, piecesVector);
+        std::shared_ptr<Pawn> enPassant = std::dynamic_pointer_cast<Pawn>(derivedPtr);
+        if (enPassant != nullptr) {
+            enPassant->isEnPassantVulnerable = true;
+        } else {
             throw std::invalid_argument( "Invalid Fen" );
-            }
-            count++;
-            count++;
-
-
-       
-            if (element[count] == '-') {
-                for (auto i : piecesVector) {
-                    std::shared_ptr<King> Kings = std::dynamic_pointer_cast<King>(i);
-                    if (Kings != nullptr) {
-                        Kings->hasMoved = true;
-                    }
-                }
-               count++;
-            }
-            else {
-            
-           
-            
-            if (element[count] == 'K') {
-                    std::shared_ptr<Piece> pieceTemp = getMatchingPiece(glm::vec2{7, 7}, Pieces);
-                    std::shared_ptr<Rook> derivedPtr = std::dynamic_pointer_cast<Rook>(pieceTemp);
-                    if (derivedPtr != nullptr) {
-                        if (derivedPtr->white) {
-                            derivedPtr->hasMoved = false;
-                        }
-                }
-                count++;
-            }
-            if (element[count] == 'Q') {
-                    std::shared_ptr<Piece> pieceTemp = getMatchingPiece(glm::vec2{0, 7}, Pieces);
-                    std::shared_ptr<Rook> derivedPtr = std::dynamic_pointer_cast<Rook>(pieceTemp);
-                    if (derivedPtr != nullptr) {
-                        if (derivedPtr->white) {
-                            derivedPtr->hasMoved = false;
-                        }
-                }
-                count++;
-            }
-
-            if (element[count] == 'k') {
-                    std::shared_ptr<Piece> pieceTemp = getMatchingPiece(glm::vec2{7, 0}, Pieces);
-                    std::shared_ptr<Rook> derivedPtr = std::dynamic_pointer_cast<Rook>(pieceTemp);
-                    if (derivedPtr != nullptr) {
-                        if (derivedPtr->white) {
-                            derivedPtr->hasMoved = false;
-                        }
-                }
-                count++;
-            }
-            if (element[count] == 'q') {
-                    std::shared_ptr<Piece> pieceTemp = getMatchingPiece(glm::vec2{0, 0}, Pieces);
-                    std::shared_ptr<Rook> derivedPtr = std::dynamic_pointer_cast<Rook>(pieceTemp);
-                    if (derivedPtr != nullptr) {
-                        if (derivedPtr->white) {
-                            derivedPtr->hasMoved = false;
-                        }
-                }
-            ++count;
-            } 
-            }
-            count++;
-        
-
-        std::string abc = "abcdefgh12345678";
-        
-         if (std::find(abc.begin(), abc.end(), element[count]) != abc.end() && std::find(abc.begin(), abc.end(), element[count+1]) != abc.end()) {
-                int posy = 8 - (element[count] - '0');
-                std::shared_ptr<Piece> derivedPtr = getMatchingPiece({element[count+1], whiteTurn ? posy+1 : posy - 1}, piecesVector);
-                std::shared_ptr<Pawn> enPassant = std::dynamic_pointer_cast<Pawn>(derivedPtr);
-                if (enPassant != nullptr) {
-                    enPassant->isEnPassantVulnerable = true;
-                } else {
-                    throw std::invalid_argument( "Invalid Fen" );
-                }
-            
-            count++;
         }
+
         count++;
-        if (element[count]) {
-            //fullMoveNumber = (char)element[0] - '0';
-            ++count;
-        }
-        count++;
-         if (element[count]) {
-           fullMoveNumber = stoi(element);
-        }
-
-    
-
+    }
+    count++;
+    if (element[count]) {
+        //fullMoveNumber = (char)element[0] - '0'; TODO: 50 halfMoveNumber
+        ++count;
+    }
+    count++;
+    if (element[count]) {
+        fullMoveNumber = stoi(element);
+    }
     return piecesVector;
 }
