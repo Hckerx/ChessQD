@@ -159,29 +159,27 @@ int RenderWindow::displayWelcomeMessage() {
 		fprintf(stderr, "Failed to render text surface: %s\n", TTF_GetError());
 		return 1;
 	}
-	// SDL_Surface* textSurfaceComment = TTF_RenderText_Blended(comment, "Press anywhere on Screen to play!", textColorComment);
-	// if (!textSurfaceComment) {
-	// 	fprintf(stderr, "Failed to render text surface: %s\n", TTF_GetError());
-	// 	return 1;
- //  }
 
   // Create a texture from the rendered text surface and set its blend mode to alpha blending
   textTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
   SDL_SetTextureBlendMode(textTexture, SDL_BLENDMODE_BLEND);
 
   // Calculate the position of the text so it is centered on the screen
-  textRect.w = textSurface->w;
-  textRect.h = textSurface->h;
-  textRect.x = (windowx - textRect.w) / 2;
-  textRect.y = (windowy - textRect.h) / 2;
 
-  SDL_RenderCopy(renderer, textTexture, NULL, &textRect);
-    SDL_RenderPresent(renderer);
   // Set the flag to false initially
   bool playButtonPressed = false;
 
   // Loop until the "PLAY" button is pressed
   while (!playButtonPressed) {
+  updateWindowSize();
+  textRect.w = textSurface->w;
+  textRect.h = textSurface->h;
+  textRect.x = (windowx - textRect.w) / 2;
+  textRect.y = (windowy - textRect.h) / 2;
+
+  SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+  SDL_RenderCopy(renderer, textTexture, NULL, &textRect);
+  SDL_RenderPresent(renderer);
     SDL_Event event;
     while (SDL_PollEvent(&event)) {
       if (event.type == SDL_QUIT) {
