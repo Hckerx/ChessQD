@@ -46,6 +46,11 @@ RenderWindow::RenderWindow(const char* p_title)
  
     squareSize = std::min(windowy, windowx)/8;
     loadTexture("bin/debug/res/gfx/pieces.png");
+
+    ChessQLDfont = TTF_OpenFont("bin/debug/res/font/REFOLTER.otf", 128);
+    if (ChessQLDfont == NULL) {
+       throw "Font's not working"; 
+    }
 	}
 
 SDL_Texture* RenderWindow::loadTexture(const char* p_filePath)
@@ -60,6 +65,9 @@ SDL_Texture* RenderWindow::loadTexture(const char* p_filePath)
 
 void RenderWindow::cleanUp()
 {
+
+    TTF_CloseFont(ChessQLDfont);
+    TTF_Quit();
 	SDL_DestroyWindow(window);
     SDL_Quit();
 }
@@ -85,8 +93,8 @@ void RenderWindow::render(std::shared_ptr<Piece>& p_piece, bool whiteDown)
         dst.y = p_piece->getPos().y * squareSize;
     }
     else {
-        dst.x = windowx - (p_piece->getPos().x * squareSize + squareSize);
-        dst.y = windowy - (p_piece->getPos().y * squareSize + squareSize);
+        dst.x = squareSize*8 - (p_piece->getPos().x * squareSize + squareSize);
+        dst.y = squareSize*8 - (p_piece->getPos().y * squareSize + squareSize);
     }
 	dst.w = squareSize;
 	dst.h = squareSize;
@@ -141,42 +149,33 @@ void RenderWindow::fullRender(std::vector<glm::vec2> highlight, std::vector<std:
 }
 
 
-int RenderWindow::displayWelcomeMessage(TTF_Font* font128, TTF_Font* comment, int height, int width, const char* text) {
+int RenderWindow::displayWelcomeMessage() {
+    std::string welcomeText = "Welcome to ChessQLD!";
 	SDL_Rect textRect;
 	SDL_Texture* textTexture;
-	SDL_Rect textRectComment;
-	SDL_Texture* textTextureComment;
 	SDL_Color textColor = {255, 0, 0};
-	SDL_Color textColorComment = {0, 0, 0};
-	SDL_Surface* textSurface = TTF_RenderText_Blended(font128, text, textColor);
+	SDL_Surface* textSurface = TTF_RenderText_Blended(ChessQLDfont, welcomeText.c_str(), textColor);
 	if (!textSurface) {
 		fprintf(stderr, "Failed to render text surface: %s\n", TTF_GetError());
 		return 1;
 	}
-	SDL_Surface* textSurfaceComment = TTF_RenderText_Blended(comment, "Press anywhere on Screen to play!", textColorComment);
-	if (!textSurfaceComment) {
-		fprintf(stderr, "Failed to render text surface: %s\n", TTF_GetError());
-		return 1;
-  }
+	// SDL_Surface* textSurfaceComment = TTF_RenderText_Blended(comment, "Press anywhere on Screen to play!", textColorComment);
+	// if (!textSurfaceComment) {
+	// 	fprintf(stderr, "Failed to render text surface: %s\n", TTF_GetError());
+	// 	return 1;
+ //  }
 
   // Create a texture from the rendered text surface and set its blend mode to alpha blending
   textTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
   SDL_SetTextureBlendMode(textTexture, SDL_BLENDMODE_BLEND);
 
-  textTextureComment = SDL_CreateTextureFromSurface(renderer, textSurfaceComment);
-  SDL_SetTextureBlendMode(textTextureComment, SDL_BLENDMODE_BLEND);
   // Calculate the position of the text so it is centered on the screen
   textRect.w = textSurface->w;
   textRect.h = textSurface->h;
-  textRect.x = (width - textRect.w) / 2;
-  textRect.y = (height - textRect.h) / 2;
+  textRect.x = (windowx - textRect.w) / 2;
+  textRect.y = (windowy - textRect.h) / 2;
 
-  textRectComment.w = textSurfaceComment->w;
-  textRectComment.h = textSurfaceComment->h;
-  textRectComment.x = (width - textRectComment.w) / 2;
-  textRectComment.y = (height - textRectComment.h) / 2 + height/10;
   SDL_RenderCopy(renderer, textTexture, NULL, &textRect);
-  SDL_RenderCopy(renderer, textTextureComment, NULL, &textRectComment);
     SDL_RenderPresent(renderer);
   // Set the flag to false initially
   bool playButtonPressed = false;

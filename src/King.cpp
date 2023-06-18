@@ -30,7 +30,7 @@ void King::findMovesWithoutCheck(std::vector<std::shared_ptr<Piece>> &Pieces)
     findIndMoves(Pieces, pos[0] - 1, pos[1] - 1);
     findIndMoves(Pieces, pos[0], pos[1] - 1);
     findIndMoves(Pieces, pos[0], pos[1] + 1);
-    if (hasMoved || isCastling) {
+    if (isCastling) {
         findIndMoves(Pieces, pos[0] + 1, pos[1]);
         findIndMoves(Pieces, pos[0] - 1, pos[1]);
         if (isCastling) { 
@@ -42,6 +42,7 @@ void King::findMovesWithoutCheck(std::vector<std::shared_ptr<Piece>> &Pieces)
     std::shared_ptr<Piece> pieceTemp;
     // maybe without castling 
     std::shared_ptr<Rook> rookPiece;
+    if (canCastleQueen) {
         pos.x = pos[0] - 1;
         if (!isKingInCheck(Pieces)) {
             pos.x = pos.x + 1;
@@ -78,6 +79,13 @@ void King::findMovesWithoutCheck(std::vector<std::shared_ptr<Piece>> &Pieces)
         {
             pos.x = pos[0] + 1;
         }
+    }
+    else {
+
+        findIndMoves(Pieces, pos[0] - 1, pos[1]);
+    }
+    if (canCastleKing) {
+
         pos.x = pos[0] + 1;
         if (!isKingInCheck(Pieces)) {
             pos.x = pos[0] - 1;
@@ -106,6 +114,10 @@ void King::findMovesWithoutCheck(std::vector<std::shared_ptr<Piece>> &Pieces)
         {
             pos.x = pos[0] - 1;
         }
+    } else {
+
+        findIndMoves(Pieces, pos[0] + 1, pos[1]);
+    }
 }
 
 bool King::move(glm::vec2 newPos, glm::vec2 oldPos, std::vector<std::shared_ptr<Piece>>& Pieces, bool whiteTurn) {

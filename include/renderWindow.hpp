@@ -13,7 +13,7 @@ class RenderWindow
 {
 public:
 	RenderWindow(const char* p_title);
-	int displayWelcomeMessage(TTF_Font* font128, TTF_Font* comment, int height, int width, const char* text);
+	int displayWelcomeMessage();
 	void cleanUp();
 	void fullRender(std::vector<glm::vec2> highlight, std::vector<std::shared_ptr<Piece>>& Pieces, bool whiteDown);
     int displayPromotionOptions(glm::vec2 pos, bool white);
@@ -29,6 +29,7 @@ private:
 	SDL_Texture* texture;
 	SDL_Window* window;
 	SDL_Renderer* renderer;
+    TTF_Font* ChessQLDfont;
 	int windowx;
 	int windowy;
 	void clear();

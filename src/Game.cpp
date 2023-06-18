@@ -24,7 +24,8 @@
 #include "game.hpp"
 
 Game::Game(std::string fen) : window("never gonna give you up"){
-    Pieces = FenImport(fen);
+    window.displayWelcomeMessage();
+    Pieces = FenImport("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
     run();
 }
 
@@ -95,7 +96,7 @@ void Game::placePiece() {
         }
         if (!handleProtomotion(selectedPiece)) {
             whiteTurn = !whiteTurn;
-            ++halfMoveNumber;
+   //         ++halfMoveNumber;
         }
         handleCheckmate();
         lastPieces.push_back(selectedPiece);
@@ -203,7 +204,7 @@ void Game::handlePromotionPieceSelection(glm::vec2 selection){
                 Pieces.push_back(std::make_shared<Knight>(lastPositions[lastPositions.size()-1], whiteTurn));
                 isPromoting = false;
                 whiteTurn = !whiteTurn;
-                ++halfMoveNumber;
+                //++halfMoveNumber;
                 handleCheckmate();
                 break;
             default: 
@@ -265,8 +266,6 @@ std::vector<std::shared_ptr<Piece>> Game::FenImport(std::string FenString) {
     // Example: Parse and use the metadata as per your requirements
     std::istringstream iss(metadataFen);
     std::string element;
-    bool white;
-    bool black;
     int count = 0;
     while (iss >> element) {
         if (count == 0) {
@@ -280,10 +279,8 @@ std::vector<std::shared_ptr<Piece>> Game::FenImport(std::string FenString) {
         else if (count == 1) {
             if (element.length() == 1) {
                 for (auto i : piecesVector) {
-                    std::cout << "check" << std::endl;
                     std::shared_ptr<King> Kings = std::dynamic_pointer_cast<King>(i);
                     if (Kings != nullptr) {
-                        std::cout << "set to true" << std::endl;
                         Kings->hasMoved = true;
                     }
                 }
@@ -291,49 +288,42 @@ std::vector<std::shared_ptr<Piece>> Game::FenImport(std::string FenString) {
                 continue;
             }
             if (element.find("K") == std::string::npos) {
-                std::shared_ptr<Rook> derivedPtr = std::dynamic_pointer_cast<Rook>(getMatchingPiece({7, 7}, Pieces));
-                if (derivedPtr != nullptr) {
-                    derivedPtr->hasMoved = true;
-                }
-                white = true;
-            }
-            if (element.find("k") == std::string::npos) {
-                std::shared_ptr<Rook> derivedPtr = std::dynamic_pointer_cast<Rook>(getMatchingPiece({7, 0}, Pieces));
-                if (derivedPtr != nullptr) {
-                    derivedPtr->hasMoved = true;
-                }
-                black = true;
-
-            }
-            if (element.find("Q") == std::string::npos) {
-                std::shared_ptr<Rook> derivedPtr = std::dynamic_pointer_cast<Rook>(getMatchingPiece({0, 7}, Pieces));
-                if (derivedPtr != nullptr) {
-                    derivedPtr->hasMoved = true;
-                }
-                if (white) {
-
-                    for (auto i : Pieces) {
-                        std::shared_ptr<King> King_white = std::dynamic_pointer_cast<King>(i);
-                        if (King_white != nullptr) {
-                            if (King_white->white) {
-                                King_white->hasMoved = true;
-                            }
+                for (auto i : piecesVector) {
+                    std::shared_ptr<King> derivedPtr = std::dynamic_pointer_cast<King>(i);
+                    if (derivedPtr != nullptr) {
+                        if (derivedPtr->white) {
+                            derivedPtr->canCastleKing = false;
                         }
                     }
                 }
             }
-            if (element.find("q") == std::string::npos) {
-                std::shared_ptr<Rook> derivedPtr = std::dynamic_pointer_cast<Rook>(getMatchingPiece({0, 0}, Pieces));
-                if (derivedPtr != nullptr) {
-                    derivedPtr->hasMoved = true;
+            if (element.find("k") == std::string::npos) {
+                for (auto i : piecesVector) {
+                    std::shared_ptr<King> derivedPtr = std::dynamic_pointer_cast<King>(i);
+                    if (derivedPtr != nullptr) {
+                        if (!derivedPtr->white) {
+                            derivedPtr->canCastleKing = false;
+                        }
+                    }
                 }
-                if (black) {
-                    for (auto i : Pieces) {
-                        std::shared_ptr<King> King_white = std::dynamic_pointer_cast<King>(i);
-                        if (King_white != nullptr) {
-                            if (!King_white->white) {
-                                King_white->hasMoved = true;
-                            }
+            }
+            if (element.find("Q") == std::string::npos) {
+                for (auto i : piecesVector) {
+                    std::shared_ptr<King> derivedPtr = std::dynamic_pointer_cast<King>(i);
+                    if (derivedPtr != nullptr) {
+                        if (derivedPtr->white) {
+                            derivedPtr->canCastleQueen = false;
+                        }
+                    }
+
+                }
+            }
+            if (element.find("q") == std::string::npos) {
+                for (auto i : piecesVector) {
+                    std::shared_ptr<King> derivedPtr = std::dynamic_pointer_cast<King>(i);
+                    if (derivedPtr != nullptr) {
+                        if (!derivedPtr->white) {
+                            derivedPtr->canCastleQueen = false;
                         }
                     }
                 }
@@ -341,9 +331,7 @@ std::vector<std::shared_ptr<Piece>> Game::FenImport(std::string FenString) {
             ++count;
         }
         else if (count == 2) {
-            if (element.length() == 1) {
-            }
-            else {
+            if (!(element.length() == 1)) {
                 std::string abc = "abcdefgh";
                 int posx = abc.find(element[0]);
                 int posy = 8 - ((char)element[1] - '0');
@@ -358,11 +346,11 @@ std::vector<std::shared_ptr<Piece>> Game::FenImport(std::string FenString) {
             count++;
         }
         else if (count == 3) {
-            fullMoveNumber = (char)element[0] - '0';
+            //fullMoveNumber = (char)element[0] - '0';
             ++count;
         }
         else if (count == 4) {
-            halfMoveNumber = (char)element[0] - '0';
+            fullMoveNumber = stoi(element);
         }
 
     }

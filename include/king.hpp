@@ -11,6 +11,8 @@ public:
     bool move(glm::vec2 newPos, glm::vec2 oldPos, std::vector<std::shared_ptr<Piece>>& Pieces, bool whiteTurn);
     bool hasMoved = false;
     bool isCastling = false;
+    bool canCastleKing = true;
+    bool canCastleQueen = true;
 private:
 };
 
