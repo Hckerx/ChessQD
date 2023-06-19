@@ -29,7 +29,7 @@ Game::Game(std::string fen) : window("never gonna give you up"){
     if (window.displayWelcomeMessage("Welcome to ChessQLD")){
 
         Pieces = FenImport(fen);
-        FenExport(Pieces);
+        std::cout << FenExport(Pieces) << std::endl;
         run();
         window.displayWelcomeMessage(whiteTurn ? "White lost" : "Black lost");
     }
@@ -377,22 +377,43 @@ std::vector<std::shared_ptr<Piece>> Game::FenImport(std::string FenString) {
 
 
 std::string Game::FenExport(std::vector<std::shared_ptr<Piece>> piecesVector) {
-    std::map<std::string, std::shared_ptr<Piece>> map;
+    std::map<std::string, std::shared_ptr<Piece>> posMap;
     std::string FenExportString = "";
     for (auto i : Pieces) {
-        map[glm::to_string(i->getPos())] = i; 
+        posMap[glm::to_string(i->getPos())] = i; 
     }
     int count = 0;
     while (count < 64) {
         int y = (int)count/8;
         int x = count%8;
 
-        std::cout << glm::to_string(glm::ivec2(x, y)) << std::endl;
+        std::cout << y << x << std::endl;
         if (y == 0) {
            FenExportString += "/"; 
+        }
+        auto i = posMap.find(glm::to_string(glm::vec2{x, y}));
+        if (i != posMap.end()) {
+            if (std::shared_ptr<Pawn> pawnPointerDerived = std::dynamic_pointer_cast<Pawn>(i->second)) {
+                FenExportString += i->second->white ? "P" : "p";
+            }
+            else if (std::shared_ptr<Rook> rookPointerDerived = std::dynamic_pointer_cast<Rook>(i->second)) {
+                FenExportString += i->second->white ? "R" : "r";
+            }
+            else if (std::shared_ptr<King> kingPointerDerived = std::dynamic_pointer_cast<King>(i->second)) {
+                FenExportString += i->second->white ? "K" : "k";
+            }
+            else if (std::shared_ptr<Bishop> bishopPointerDerived = std::dynamic_pointer_cast<Bishop>(i->second)) {
+                FenExportString += i->second->white ? "B" : "b";
+            }
+            else if (std::shared_ptr<Knight> knightPointerDerived = std::dynamic_pointer_cast<Knight>(i->second)) {
+                FenExportString += i->second->white ? "N" : "n";
+            }
+            else if (std::shared_ptr<Queen> queenPointerDerived = std::dynamic_pointer_cast<Queen>(i->second)) {
+                FenExportString += i->second->white ? "Q" : "q";
+            }
         }
 
         count++;
     }
-    return "nothing";
+    return FenExportString;
 }
