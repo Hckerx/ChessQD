@@ -24,8 +24,8 @@ private:
 
     // RenderWindow stuff
     RenderWindow window;
-    std::vector<glm::vec2> highlightMoves = {{1000,1000}};
-    std::vector<glm::vec2> lastMoves = {{1000, 1000}};
+    std::vector<glm::ivec2> highlightMoves = {{1000,1000}};
+    std::vector<glm::ivec2> lastMoves = {{1000, 1000}};
 
     std::vector<std::shared_ptr<Piece>> lastPieces;
 
@@ -44,7 +44,6 @@ private:
     void handlePromotionPieceSelection(glm::vec2 selection);
     void DragPiece();
     void placePiece();
-
 
 public:
     Game(std::string fen); 

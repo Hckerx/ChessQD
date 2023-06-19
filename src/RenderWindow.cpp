@@ -102,7 +102,7 @@ void RenderWindow::render(std::shared_ptr<Piece>& p_piece, bool whiteDown)
 
     SDL_RenderCopy(renderer, texture, &src, &dst);
 }
-void RenderWindow::renderbg(std::vector<glm::vec2> highlight = {{1000,1000}}, std::vector<glm::vec2> lastMoves = {{1000, 1000}}, bool whiteDown=true) {
+void RenderWindow::renderbg(std::vector<glm::ivec2> highlight = {{1000,1000}}, std::vector<glm::ivec2> lastMoves = {{1000, 1000}}, bool whiteDown=true) {
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     for (int i = 0; i < 8; i++) {
         for (int j = 0; j < 8; j++) {
@@ -113,32 +113,32 @@ void RenderWindow::renderbg(std::vector<glm::vec2> highlight = {{1000,1000}}, st
                 SDL_SetRenderDrawColor(renderer, 139,69,19, 255);
             }
             SDL_RenderFillRect(renderer, &rect);
-            for (glm::vec2 k : highlight)
+            for (glm::ivec2 k : highlight)
             {
                 if (whiteDown) {
-                    if (k == glm::vec2(j,i) && k != glm::vec2(1000, 1000)){
+                    if (k == glm::ivec2(j,i) && k != glm::ivec2(1000, 1000)){
                         SDL_SetRenderDrawColor(renderer, 255,0,0, 200);
                         SDL_RenderFillRect(renderer, &rect);
                     }
 
                 } else {
-                    if (k == glm::vec2(8-(j+1), 8-(i+1)) && k != glm::vec2(1000, 1000)){
+                    if (k == glm::ivec2(8-(j+1), 8-(i+1)) && k != glm::ivec2(1000, 1000)){
                         SDL_SetRenderDrawColor(renderer, 255,0,0, 200);
                         SDL_RenderFillRect(renderer, &rect);
                     }
                 }
 
             }
-            for (glm::vec2 k : lastMoves)
+            for (glm::ivec2 k : lastMoves)
             {
                 if (whiteDown) {
-                    if (k == glm::vec2(j,i) && k != glm::vec2(1000, 1000)){
+                    if (k == glm::ivec2(j,i) && k != glm::ivec2(1000, 1000)){
                         SDL_SetRenderDrawColor(renderer, 255,255,0, 200);
                         SDL_RenderFillRect(renderer, &rect);
                     }
 
                 } else {
-                    if (k == glm::vec2(8-(j+1), 8-(i+1)) && k != glm::vec2(1000, 1000)){
+                    if (k == glm::ivec2(8-(j+1), 8-(i+1)) && k != glm::ivec2(1000, 1000)){
                         SDL_SetRenderDrawColor(renderer, 255,255,0, 200);
                         SDL_RenderFillRect(renderer, &rect);
                     }
@@ -158,7 +158,7 @@ void RenderWindow::display()
 }
 
 
-void RenderWindow::fullRender(std::vector<glm::vec2> highlight, std::vector<glm::vec2> lastMoves, std::vector<std::shared_ptr<Piece>>& Pieces, bool whiteDown) {
+void RenderWindow::fullRender(std::vector<glm::ivec2> highlight, std::vector<glm::ivec2> lastMoves, std::vector<std::shared_ptr<Piece>>& Pieces, bool whiteDown) {
     clear();
 
     renderbg(highlight, lastMoves,  whiteDown);

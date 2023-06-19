@@ -1,4 +1,6 @@
 
+#include <algorithm>
+#include <map>
 #include <cmath>
 #include <glm/fwd.hpp>
 #include <glm/gtx/string_cast.hpp>
@@ -25,7 +27,9 @@
 
 Game::Game(std::string fen) : window("never gonna give you up"){
     if (window.displayWelcomeMessage("Welcome to ChessQLD")){
+
         Pieces = FenImport(fen);
+        FenExport(Pieces);
         run();
         window.displayWelcomeMessage(whiteTurn ? "White lost" : "Black lost");
     }
@@ -105,6 +109,7 @@ void Game::placePiece() {
         lastPieces.push_back(selectedPiece);
         lastMoves.push_back(oldPos);
         lastMoves.push_back(selectedPiece->getPos());
+        highlightMoves = {{1000,1000}};
     } 
     //highlightMoves.push_back(selectedPiece->getPos());
     isPieceSelected = false;
@@ -155,6 +160,16 @@ void Game::handleEvents()
                     {
                         handlePromotionPieceSelection(getMousePosition(whiteDown, window.squareSize));
 
+                    }
+                } else if (event.button.button == SDL_BUTTON_RIGHT) {
+                    std::cout << "Enteres this" << std::endl;
+                    glm::ivec2 mousePos = getMousePosition(whiteDown, window.squareSize);
+                    std::vector<glm::ivec2>::iterator position = std::find(highlightMoves.begin(), highlightMoves.end(), mousePos);
+                    if (position == highlightMoves.end()) {
+                        std::cout << glm::to_string(mousePos);
+                        highlightMoves.push_back(mousePos);
+                    } else {
+                        highlightMoves.erase(position);
                     }
                 }
                 break;
@@ -362,5 +377,22 @@ std::vector<std::shared_ptr<Piece>> Game::FenImport(std::string FenString) {
 
 
 std::string Game::FenExport(std::vector<std::shared_ptr<Piece>> piecesVector) {
+    std::map<std::string, std::shared_ptr<Piece>> map;
+    std::string FenExportString = "";
+    for (auto i : Pieces) {
+        map[glm::to_string(i->getPos())] = i; 
+    }
+    int count = 0;
+    while (count < 64) {
+        int y = (int)count/8;
+        int x = count%8;
+
+        std::cout << glm::to_string(glm::ivec2(x, y)) << std::endl;
+        if (y == 0) {
+           FenExportString += "/"; 
+        }
+
+        count++;
+    }
     return "nothing";
 }
