@@ -41,9 +41,9 @@ void Game::run() {
         }
         handleEvents();
         //std::vector<glm::vec2> temp = {{1000,1000}};
-        window.fullRender(lastPositions, Pieces, whiteDown);
+        window.fullRender(highlightMoves, lastMoves, Pieces, whiteDown);
         if (isPromoting) {
-            window.displayPromotionOptions(lastPositions[lastPositions.size() - 1], whiteTurn);
+            window.displayPromotionOptions(lastMoves[lastMoves.size() - 1], whiteTurn);
         }
         window.display();
     }
@@ -71,9 +71,9 @@ void Game::selectPiece() {
     selectedPiece = getMatchingPiece(MousePosition, Pieces);
     if (selectedPiece != nullptr) {
         selectedPiece->findMoves(Pieces);     
-        lastPositions = {selectedPiece->getPos()};
+        highlightMoves = {selectedPiece->getPos()};
         for (auto i: selectedPiece->legalMoves) {
-            lastPositions.push_back(i);
+            highlightMoves.push_back(i);
         }
         isPieceSelected = true;
 
@@ -91,8 +91,9 @@ void Game::placePiece() {
             whiteTurn = true;
         }
     } */
-    glm::vec2 oldPos = lastPositions[0];
-    if (selectedPiece->move(MousePosition, lastPositions[0], Pieces, whiteTurn)) {
+    glm::vec2 oldPos = highlightMoves[0];
+    
+    if (selectedPiece->move(MousePosition, highlightMoves[0], Pieces, whiteTurn)) {
         if (rotate_board) {
             whiteDown=!whiteDown;
         }
@@ -102,9 +103,10 @@ void Game::placePiece() {
         }
         handleCheckmate();
         lastPieces.push_back(selectedPiece);
-        lastPositions = {oldPos, selectedPiece->getPos()};
+        lastMoves.push_back(oldPos);
+        lastMoves.push_back(selectedPiece->getPos());
     } 
-    //lastPositions.push_back(selectedPiece->getPos());
+    //highlightMoves.push_back(selectedPiece->getPos());
     isPieceSelected = false;
 }
 
@@ -178,32 +180,32 @@ void Game::handleEvents()
 
 void Game::handlePromotionPieceSelection(glm::vec2 selection){
     std::shared_ptr<Piece> lastPiece = lastPieces[lastPieces.size()-1];
-    if ((int)selection.x == lastPositions[lastPositions.size() -1].x) {
+    if ((int)selection.x == lastMoves[lastMoves.size() -1].x) {
         switch (whiteTurn ? (int)selection.y : 7 - (int)selection.y) {
             case 0: 
                 Pieces.erase(std::remove(Pieces.begin(), Pieces.end(), lastPiece), Pieces.end());
-                Pieces.push_back(std::make_shared<Queen>(lastPositions[lastPositions.size()-1], whiteTurn));
+                Pieces.push_back(std::make_shared<Queen>(lastMoves[lastMoves.size()-1], whiteTurn));
                 isPromoting = false;
                 whiteTurn = !whiteTurn;
                 handleCheckmate();
                 break;
             case 1: 
                 Pieces.erase(std::remove(Pieces.begin(), Pieces.end(), lastPiece), Pieces.end());
-                Pieces.push_back(std::make_shared<Rook>(lastPositions[lastPositions.size()-1], whiteTurn));
+                Pieces.push_back(std::make_shared<Rook>(lastMoves[lastMoves.size()-1], whiteTurn));
                 isPromoting = false;
                 whiteTurn = !whiteTurn;
                 handleCheckmate();
                 break;
             case 2: 
                 Pieces.erase(std::remove(Pieces.begin(), Pieces.end(), lastPiece), Pieces.end());
-                Pieces.push_back(std::make_shared<Bishop>(lastPositions[lastPositions.size()-1], whiteTurn));
+                Pieces.push_back(std::make_shared<Bishop>(lastMoves[lastMoves.size()-1], whiteTurn));
                 isPromoting = false;
                 whiteTurn = !whiteTurn;
                 handleCheckmate();
                 break;
             case 3: 
                 Pieces.erase(std::remove(Pieces.begin(), Pieces.end(), lastPiece), Pieces.end());
-                Pieces.push_back(std::make_shared<Knight>(lastPositions[lastPositions.size()-1], whiteTurn));
+                Pieces.push_back(std::make_shared<Knight>(lastMoves[lastMoves.size()-1], whiteTurn));
                 isPromoting = false;
                 whiteTurn = !whiteTurn;
                 //++halfMoveNumber;
@@ -355,4 +357,10 @@ std::vector<std::shared_ptr<Piece>> Game::FenImport(std::string FenString) {
         //fullMoveNumber = stoi(metadataFen[count]);
     }
     return piecesVector;
+}
+
+
+
+std::string Game::FenExport(std::vector<std::shared_ptr<Piece>> piecesVector) {
+    return "nothing";
 }

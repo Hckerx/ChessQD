@@ -24,7 +24,9 @@ private:
 
     // RenderWindow stuff
     RenderWindow window;
-    std::vector<glm::vec2> lastPositions = {{1000,1000}};
+    std::vector<glm::vec2> highlightMoves = {{1000,1000}};
+    std::vector<glm::vec2> lastMoves = {{1000, 1000}};
+
     std::vector<std::shared_ptr<Piece>> lastPieces;
 
     // Pieces 
@@ -34,6 +36,7 @@ private:
     void run();
 
     std::vector<std::shared_ptr<Piece>> FenImport(std::string FenString);
+    std::string FenExport(std::vector<std::shared_ptr<Piece>> piecesVector);
     void handleEvents();
     void handleCheckmate();
     bool handleProtomotion(std::shared_ptr<Piece> selectedPiece);
