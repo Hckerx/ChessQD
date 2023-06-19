@@ -24,9 +24,10 @@
 #include "game.hpp"
 
 Game::Game(std::string fen) : window("never gonna give you up"){
-    if (window.displayWelcomeMessage()){
+    if (window.displayWelcomeMessage("Welcome to ChessQLD")){
         Pieces = FenImport(fen);
         run();
+        window.displayWelcomeMessage(whiteTurn ? "White lost" : "Black lost");
     }
 }
 

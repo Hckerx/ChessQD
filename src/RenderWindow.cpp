@@ -150,8 +150,8 @@ void RenderWindow::fullRender(std::vector<glm::vec2> highlight, std::vector<std:
 }
 
 
-bool RenderWindow::displayWelcomeMessage() {
-    std::string welcomeText = "Welcome to ChessQLD!";
+bool RenderWindow::displayWelcomeMessage(std::string text) {
+    std::string welcomeText = text;
     SDL_Rect textRect;
     SDL_Rect textdstRect;
     SDL_Texture* textTexture;
