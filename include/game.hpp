@@ -21,6 +21,7 @@ private:
     bool isPromoting = false;
     int halfMoveNumber = 0;
     int fullMoveNumber = 0;
+    bool draw = false;
 
     // RenderWindow stuff
     RenderWindow window;
@@ -33,13 +34,13 @@ private:
     std::shared_ptr<Piece> selectedPiece;
     std::vector<std::shared_ptr<Piece>> Pieces;
 
-    void run();
+    bool run();
 
     std::vector<std::shared_ptr<Piece>> FenImport(std::string FenString);
     std::string FenExport(std::vector<std::shared_ptr<Piece>> piecesVector);
     void handleEvents();
     void handleCheckmate();
-    bool handleProtomotion(std::shared_ptr<Piece> selectedPiece);
+    bool handleProtomotion(std::shared_ptr<Piece> selectedPiece, bool Captured);
     void selectPiece();
     void handlePromotionPieceSelection(glm::vec2 selection);
     void DragPiece();

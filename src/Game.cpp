@@ -1,4 +1,3 @@
-
 #include <algorithm>
 #include <map>
 #include <cmath>
@@ -36,13 +35,17 @@ Game::Game(std::string fen) : window("never gonna give you up"){
     }
 }
 
-void Game::run() {
+bool Game::run() {
     while (gameRunning)
     {
         window.updateWindowSize();
         if (isPieceSelected)
         {
             DragPiece();
+        }
+        if (halfMoveNumber >= 50) {
+            draw = true;
+            break;
         }
         handleEvents();
         //std::vector<glm::vec2> temp = {{1000,1000}};
@@ -52,6 +55,7 @@ void Game::run() {
         }
         window.display();
     }
+    return draw;
 }
 
 Game::~Game() {
@@ -97,12 +101,12 @@ void Game::placePiece() {
         }
     } */
     glm::vec2 oldPos = highlightMoves[0];
-    
+    int sizeOfPieces = Pieces.size();
     if (selectedPiece->move(MousePosition, highlightMoves[0], Pieces, whiteTurn)) {
         if (rotate_board) {
             whiteDown=!whiteDown;
         }
-        if (!handleProtomotion(selectedPiece)) {
+        if (!handleProtomotion(selectedPiece, sizeOfPieces != Pieces.size())) {
             whiteTurn = !whiteTurn;
    //         ++halfMoveNumber;
         }
@@ -125,8 +129,8 @@ bool Game::handleProtomotion(std::shared_ptr<Piece> selectedPiece, bool Captured
             isPromoting = true;
         }
         return true;
-    } else {
-        
+    } else if (derivedPtr == nullptr || !Captured) {
+       halfMoveNumber += 1; 
     }
     return false;
 }
@@ -141,6 +145,11 @@ void Game::handleCheckmate() {
         if (!i->white && !i->findMoves(Pieces)) {
             checkmate_black = false;
         }
+        std::shared_ptr<King> kingPointerDerived = std::dynamic_pointer_cast<King>(i);
+        // TODO DRAW WHEN NO MOVE. FENINOIRT AMF EXPORT NOT TESTED PROPTERLY
+        // if (kingPointerDerived != nullptr) {
+
+        // }
     }
     if (checkmate_black || checkmate_white) {
         gameRunning = false;
@@ -381,7 +390,7 @@ std::vector<std::shared_ptr<Piece>> Game::FenImport(std::string FenString) {
    count+=2;
    
     if (metadataFen[count]) {
-        fullMoveNumber = stoi(metadataFen[count]);
+        fullMoveNumber = stoi(metadataFen.substr(count));
     }
     return piecesVector;
 }
