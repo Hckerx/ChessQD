@@ -5,6 +5,7 @@
 #include <glm/fwd.hpp>
 #include <glm/gtx/string_cast.hpp>
 #include <memory>
+#include <string>
 #define SDL_MAIN_HANDLED
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
@@ -379,22 +380,38 @@ std::vector<std::shared_ptr<Piece>> Game::FenImport(std::string FenString) {
 std::string Game::FenExport(std::vector<std::shared_ptr<Piece>> piecesVector) {
     std::map<std::string, std::shared_ptr<Piece>> posMap;
     std::string FenExportString = "";
+    std::string enPassantSquare;
     for (auto i : Pieces) {
         posMap[glm::to_string(i->getPos())] = i; 
     }
     int count = 0;
+    int whiteSpaces = 0;
     while (count < 64) {
         int y = (int)count/8;
         int x = count%8;
 
+        
         std::cout << y << x << std::endl;
-        if (y == 0) {
-           FenExportString += "/"; 
+        if (x == 0 && count != 0 && FenExportString[FenExportString.size()-1] == '/') {
+           FenExportString += "8/"; 
+           whiteSpaces = 0;
+
+        } else if (x == 0 && count != 0) {
+            FenExportString += "/";
+                whiteSpaces = 0;
         }
         auto i = posMap.find(glm::to_string(glm::vec2{x, y}));
         if (i != posMap.end()) {
-            if (std::shared_ptr<Pawn> pawnPointerDerived = std::dynamic_pointer_cast<Pawn>(i->second)) {
+            if (whiteSpaces != 0) {
+                FenExportString += std::to_string(whiteSpaces);
+                whiteSpaces = 0;
+            }
+            std::shared_ptr<Pawn> pawnPointerDerived = std::dynamic_pointer_cast<Pawn>(i->second);
+            if (pawnPointerDerived != nullptr) {
                 FenExportString += i->second->white ? "P" : "p";
+                if (pawnPointerDerived->isEnPassantVulnerable) {
+                    
+                }
             }
             else if (std::shared_ptr<Rook> rookPointerDerived = std::dynamic_pointer_cast<Rook>(i->second)) {
                 FenExportString += i->second->white ? "R" : "r";
@@ -411,9 +428,14 @@ std::string Game::FenExport(std::vector<std::shared_ptr<Piece>> piecesVector) {
             else if (std::shared_ptr<Queen> queenPointerDerived = std::dynamic_pointer_cast<Queen>(i->second)) {
                 FenExportString += i->second->white ? "Q" : "q";
             }
+        } else {
+               whiteSpaces += 1;
         }
 
         count++;
     }
+    FenExportString += ' '; 
+    FenExportString += whiteTurn ? 'w' : 'b';
+    FenExportString += ;
     return FenExportString;
 }
