@@ -116,13 +116,17 @@ void Game::placePiece() {
     isPieceSelected = false;
 }
 
-bool Game::handleProtomotion(std::shared_ptr<Piece> selectedPiece)
+bool Game::handleProtomotion(std::shared_ptr<Piece> selectedPiece, bool Captured)
 {
     std::shared_ptr<Pawn> derivedPtr = std::dynamic_pointer_cast<Pawn>(selectedPiece);
-    if (derivedPtr != nullptr && ((selectedPiece->getPos().y == 0 && whiteTurn) || (selectedPiece->getPos().y == 7 && !whiteTurn)))
+    if (derivedPtr != nullptr )
     {
-        isPromoting = true;
+        if (((selectedPiece->getPos().y == 0 && whiteTurn) || (selectedPiece->getPos().y == 7 && !whiteTurn))) {
+            isPromoting = true;
+        }
         return true;
+    } else {
+        
     }
     return false;
 }
@@ -364,13 +368,20 @@ std::vector<std::shared_ptr<Piece>> Game::FenImport(std::string FenString) {
         count++;
     }
     count++;
-    if (metadataFen[count]) {
-        //fullMoveNumber = (char)metadataFen[0] - '0'; TODO: 50 halfMoveNumber
-        ++count;
+    if (std::isdigit(metadataFen[count]) && std::isdigit(metadataFen[count+1])) {
+        std::string digits = "";
+        digits += metadataFen[count];
+        digits += metadataFen[count+1];
+        halfMoveNumber = std::stoi(digits);
+        count++;
     }
-    count++;
+    else if (std::isdigit(metadataFen[count])&& metadataFen[count+1] == ' '){
+        halfMoveNumber = metadataFen[count] - '0';
+    }
+   count+=2;
+   
     if (metadataFen[count]) {
-        //fullMoveNumber = stoi(metadataFen[count]);
+        fullMoveNumber = stoi(metadataFen[count]);
     }
     return piecesVector;
 }
@@ -380,8 +391,8 @@ std::vector<std::shared_ptr<Piece>> Game::FenImport(std::string FenString) {
 std::string Game::FenExport(std::vector<std::shared_ptr<Piece>> piecesVector) {
     std::map<std::string, std::shared_ptr<Piece>> posMap;
     std::string FenExportString = "";
-    std::string enPassantSquare;
-    for (auto i : Pieces) {
+    std::string enPassantSquare = "- ";
+    for (auto i : piecesVector) {
         posMap[glm::to_string(i->getPos())] = i; 
     }
     int count = 0;
@@ -409,8 +420,10 @@ std::string Game::FenExport(std::vector<std::shared_ptr<Piece>> piecesVector) {
             std::shared_ptr<Pawn> pawnPointerDerived = std::dynamic_pointer_cast<Pawn>(i->second);
             if (pawnPointerDerived != nullptr) {
                 FenExportString += i->second->white ? "P" : "p";
+                std::string abc = "abcdefgh";
                 if (pawnPointerDerived->isEnPassantVulnerable) {
-                    
+                    enPassantSquare = abc[x];
+                    enPassantSquare += std::to_string(y);
                 }
             }
             else if (std::shared_ptr<Rook> rookPointerDerived = std::dynamic_pointer_cast<Rook>(i->second)) {
@@ -436,6 +449,46 @@ std::string Game::FenExport(std::vector<std::shared_ptr<Piece>> piecesVector) {
     }
     FenExportString += ' '; 
     FenExportString += whiteTurn ? 'w' : 'b';
-    FenExportString += ;
+    FenExportString += ' '; 
+    auto i = posMap.find(glm::to_string(glm::vec2{7, 7}));
+    if (i != posMap.end()) {
+        std::shared_ptr<Rook> rookPointerDerived = std::dynamic_pointer_cast<Rook>(i->second);
+        if (rookPointerDerived != nullptr) {
+            if (rookPointerDerived->white && !rookPointerDerived->hasMoved) {
+                FenExportString += 'K';
+            }
+        }
+    }
+    i = posMap.find(glm::to_string(glm::vec2{0, 7}));
+    if (i != posMap.end()) {
+        std::shared_ptr<Rook> rookPointerDerived = std::dynamic_pointer_cast<Rook>(i->second);
+        if (rookPointerDerived != nullptr) {
+            if (rookPointerDerived->white && !rookPointerDerived->hasMoved) {
+                FenExportString += 'Q';
+            }
+        }
+    }
+    i = posMap.find(glm::to_string(glm::vec2{0, 0}));
+    if (i != posMap.end()) {
+        std::shared_ptr<Rook> rookPointerDerived = std::dynamic_pointer_cast<Rook>(i->second);
+        if (rookPointerDerived != nullptr) {
+            if (!rookPointerDerived->white && !rookPointerDerived->hasMoved) {
+                FenExportString += 'k';
+            }
+        }
+    }
+    i = posMap.find(glm::to_string(glm::vec2{7, 0}));
+    if (i != posMap.end()) {
+        std::shared_ptr<Rook> rookPointerDerived = std::dynamic_pointer_cast<Rook>(i->second);
+        if (rookPointerDerived != nullptr) {
+            if (!rookPointerDerived->white && !rookPointerDerived->hasMoved) {
+                FenExportString += 'q';
+            }
+        }
+    }
+    if (FenExportString[FenExportString.size()] == ' ') {
+        FenExportString += "- ";
+    }
+    FenExportString += enPassantSquare;
     return FenExportString;
 }
