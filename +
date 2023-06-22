@@ -48,7 +48,7 @@ bool Game::run() {
         }
         handleEvents();
         //std::vector<glm::vec2> temp = {{1000,1000}};
-        window.fullRender(highlightMoves, std::vector<glm::ivec2>(lastMoves.end() - 2, lastMoves.end()), Pieces, whiteDown);
+        window.fullRender(highlightMoves, lastMoves, Pieces, whiteDown);
         if (isPromoting) {
             window.displayPromotionOptions(lastMoves[lastMoves.size() - 1], whiteTurn);
         }
@@ -68,6 +68,7 @@ void Game::DragPiece() {
 
     newPos -= 0.5;
     selectedPiece->setPos(newPos);
+
 }
 
 void Game::selectPiece() {
@@ -152,7 +153,7 @@ void Game::handleCheckmate() {
     }
     if (checkmate_black || checkmate_white) {
         gameRunning = false;
-        if ((checkmate_black && !check_black) || (checkmate_white && !check_white)) {
+        if ((checkmate_black && !check_black) || (checkmate_white && !check_black)) {
             draw = true;
         }
     }
@@ -178,6 +179,7 @@ void Game::handleEvents()
 
                     }
                 } else if (event.button.button == SDL_BUTTON_RIGHT) {
+                    std::cout << "Enteres this" << std::endl;
                     glm::ivec2 mousePos = getMousePosition(whiteDown, window.squareSize);
                     std::vector<glm::ivec2>::iterator position = std::find(highlightMoves.begin(), highlightMoves.end(), mousePos);
                     if (position == highlightMoves.end()) {
@@ -417,11 +419,14 @@ std::string Game::FenExport(std::vector<std::shared_ptr<Piece>> piecesVector) {
 
         
         std::cout << y << x << std::endl;
-        if (x == 0 && count != 0) {
-           FenExportString += std::to_string(whiteSpaces) + "/"; 
+        if (x == 0 && count != 0 && FenExportString[FenExportString.size()-1] == '/') {
+           FenExportString += "8/"; 
            whiteSpaces = 0;
 
-        }         
+        } else if (x == 0 && count != 0) {
+            FenExportString += "/";
+                whiteSpaces = 0;
+        }
         auto i = posMap.find(glm::to_string(glm::vec2{x, y}));
         if (i != posMap.end()) {
             if (whiteSpaces != 0) {
@@ -434,7 +439,7 @@ std::string Game::FenExport(std::vector<std::shared_ptr<Piece>> piecesVector) {
                 std::string abc = "abcdefgh";
                 if (pawnPointerDerived->isEnPassantVulnerable) {
                     enPassantSquare = abc[x];
-                    enPassantSquare += i->second->white ? std::to_string(y-1) : std::to_string(y+1) ;
+                    enPassantSquare += i->second->white ? std::to_string(y-2) : std::to_string(y+2) ;
                 }
             }
             else if (std::shared_ptr<Rook> rookPointerDerived = std::dynamic_pointer_cast<Rook>(i->second)) {
