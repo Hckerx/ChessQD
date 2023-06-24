@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <iterator>
 #include <map>
 #include <cmath>
 #include <glm/fwd.hpp>
@@ -98,7 +99,6 @@ void Game::placePiece() {
             whiteDown=!whiteDown;
         }
         if (!handleProtomotion(selectedPiece, sizeOfPieces != Pieces.size())) {
-            std::cout << "what is happening" << std::endl;
             whiteTurn = !whiteTurn;
    //         ++halfMoveNumber;
             std::cout << FenExport(Pieces) << std::endl;
@@ -183,9 +183,9 @@ void Game::handleEvents()
                     if (position == highlightMoves.end()) {
                         std::cout << glm::to_string(mousePos);
                         highlightMoves.push_back(mousePos);
-                    } else {
+                    } else if (std::distance(highlightMoves.begin(), position) != 0){
                         highlightMoves.erase(position);
-                    }
+                    } 
                 }
                 break;
             case SDL_QUIT:
