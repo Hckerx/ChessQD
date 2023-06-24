@@ -101,7 +101,7 @@ void Game::placePiece() {
         if (!handleProtomotion(selectedPiece, sizeOfPieces != Pieces.size())) {
             whiteTurn = !whiteTurn;
    //         ++halfMoveNumber;
-            std::cout << FenExport(Pieces) << std::endl;
+            moveHistory.push_back(FenExport(Pieces));
         }
         handleCheckmate();
         lastPieces.push_back(selectedPiece);
@@ -218,7 +218,7 @@ void Game::handlePromotionPieceSelection(glm::vec2 selection){
                 isPromoting = false;
                 whiteTurn = !whiteTurn;
                 handleCheckmate();
-                std::cout << FenExport(Pieces) << std::endl;
+                moveHistory.push_back(FenExport(Pieces));
                 break;
             case 1: 
                 Pieces.erase(std::remove(Pieces.begin(), Pieces.end(), lastPiece), Pieces.end());
@@ -226,7 +226,7 @@ void Game::handlePromotionPieceSelection(glm::vec2 selection){
                 isPromoting = false;
                 whiteTurn = !whiteTurn;
                 handleCheckmate();
-                std::cout << FenExport(Pieces) << std::endl;
+                moveHistory.push_back(FenExport(Pieces));
                 break;
             case 2: 
                 Pieces.erase(std::remove(Pieces.begin(), Pieces.end(), lastPiece), Pieces.end());
@@ -234,7 +234,7 @@ void Game::handlePromotionPieceSelection(glm::vec2 selection){
                 isPromoting = false;
                 whiteTurn = !whiteTurn;
                 handleCheckmate();
-                std::cout << FenExport(Pieces) << std::endl;
+                moveHistory.push_back(FenExport(Pieces));
                 break;
             case 3: 
                 Pieces.erase(std::remove(Pieces.begin(), Pieces.end(), lastPiece), Pieces.end());
@@ -243,7 +243,7 @@ void Game::handlePromotionPieceSelection(glm::vec2 selection){
                 whiteTurn = !whiteTurn;
                 //++halfMoveNumber;
                 handleCheckmate();
-                std::cout << FenExport(Pieces) << std::endl;
+                moveHistory.push_back(FenExport(Pieces));
                 break;
             default: 
                 break;

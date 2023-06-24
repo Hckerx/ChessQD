@@ -33,6 +33,7 @@ private:
     // Pieces 
     std::shared_ptr<Piece> selectedPiece;
     std::vector<std::shared_ptr<Piece>> Pieces;
+    std::vector<std::string> moveHistory;
 
     bool run();
 
