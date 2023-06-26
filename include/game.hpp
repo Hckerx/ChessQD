@@ -22,6 +22,7 @@ private:
     int halfMoveNumber = 0;
     int fullMoveNumber = 0;
     bool draw = false;
+    int counter = 1;
 
     // RenderWindow stuff
     RenderWindow window;

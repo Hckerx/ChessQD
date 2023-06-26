@@ -30,6 +30,7 @@ Game::Game(std::string fen) : window("never gonna give you up"){
     if (window.displayWelcomeMessage("Welcome to ChessQLD")){
 
         Pieces = FenImport(fen);
+        moveHistory.push_back(fen);
         run();
         window.displayWelcomeMessage(whiteTurn ? "White lost" : "Black lost");
     }
@@ -202,6 +203,14 @@ void Game::handleEvents()
                             case SDLK_q:
                                 gameRunning = false;
                                 break;
+                            case SDLK_LEFT:
+                                if (counter < moveHistory.size()) {
+                                    std::string lastFen = moveHistory[moveHistory.size() - (1 + counter)];
+                                    std::cout << lastFen << std::endl;
+                                    Pieces = FenImport(lastFen);
+
+                                }
+                                counter++;
                         }
                 }
         }
