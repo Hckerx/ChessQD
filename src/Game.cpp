@@ -161,6 +161,9 @@ void Game::handleCheckmate() {
 //prolly hashmaps of all pieces' moves im too stupid for this
 void Game::handleEvents()
 {
+    if (counter <= 0) {
+        counter = 0;
+    }
     while (SDL_PollEvent(&event))
     {
         switch (event.type)
@@ -211,6 +214,13 @@ void Game::handleEvents()
 
                                 }
                                 counter++;
+                            case SDLK_RIGHT:
+                                if (counter >= 1) {
+                                    counter--;
+                                }
+                                std::string lastFen = moveHistory[moveHistory.size() - (1 + counter)];
+                                std::cout << lastFen << std::endl;
+                                Pieces = FenImport(lastFen);
                         }
                 }
         }
