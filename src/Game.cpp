@@ -95,21 +95,27 @@ void Game::placePiece() {
 
     glm::vec2 oldPos = highlightMoves[0];
     int sizeOfPieces = Pieces.size();
-    if (selectedPiece->move(MousePosition, highlightMoves[0], Pieces, whiteTurn)) {
-        if (rotate_board) {
-            whiteDown=!whiteDown;
-        }
-        if (!handleProtomotion(selectedPiece, sizeOfPieces != Pieces.size())) {
-            whiteTurn = !whiteTurn;
-   //         ++halfMoveNumber;
-            moveHistory.push_back(FenExport(Pieces));
-        }
-        handleCheckmate();
-        lastPieces.push_back(selectedPiece);
-        lastMoves.push_back(oldPos);
-        lastMoves.push_back(selectedPiece->getPos());
-        highlightMoves = {{1000,1000}};
-    } 
+    if (counter == 0) {
+        if (selectedPiece->move(MousePosition, highlightMoves[0], Pieces, whiteTurn)) {
+            if (rotate_board) {
+                whiteDown=!whiteDown;
+            }
+            if (!handleProtomotion(selectedPiece, sizeOfPieces != Pieces.size())) {
+                whiteTurn = !whiteTurn;
+                //         ++halfMoveNumber;
+                moveHistory.push_back(FenExport(Pieces));
+            }
+            handleCheckmate();
+            lastPieces.push_back(selectedPiece);
+            lastMoves.push_back(oldPos);
+            lastMoves.push_back(selectedPiece->getPos());
+            highlightMoves = {{1000,1000}};
+        } 
+    } else {
+        counter = 0;
+        Pieces = FenImport(moveHistory[moveHistory.size() - 1]);
+    }
+
     //highlightMoves.push_back(selectedPiece->getPos());
     isPieceSelected = false;
 }
@@ -185,7 +191,6 @@ void Game::handleEvents()
                     glm::ivec2 mousePos = getMousePosition(whiteDown, window.squareSize);
                     std::vector<glm::ivec2>::iterator position = std::find(highlightMoves.begin(), highlightMoves.end(), mousePos);
                     if (position == highlightMoves.end()) {
-                        std::cout << glm::to_string(mousePos);
                         highlightMoves.push_back(mousePos);
                     } else if (std::distance(highlightMoves.begin(), position) != 0){
                         highlightMoves.erase(position);
@@ -203,24 +208,33 @@ void Game::handleEvents()
                     case SDL_KEYDOWN:
                         switch (event.key.keysym.sym)
                         {
+                            case SDLK_DOWN:
+                                counter = 0;
+                                Pieces = FenImport(moveHistory[moveHistory.size() - 1]);
+                                break;
+                            case SDLK_UP:
+                                counter = moveHistory.size() - 1;
+                                Pieces = FenImport(moveHistory[moveHistory.size() - (1 + counter)]);
+                                break;
                             case SDLK_q:
                                 gameRunning = false;
                                 break;
                             case SDLK_LEFT:
-                                if (counter < moveHistory.size()) {
+                                if (counter < moveHistory.size() - 1) {
+                                    counter++;
                                     std::string lastFen = moveHistory[moveHistory.size() - (1 + counter)];
-                                    std::cout << lastFen << std::endl;
                                     Pieces = FenImport(lastFen);
-
+                                } else {
+                                    counter = moveHistory.size() - 1;
                                 }
-                                counter++;
+                                break;
                             case SDLK_RIGHT:
                                 if (counter >= 1) {
                                     counter--;
                                 }
                                 std::string lastFen = moveHistory[moveHistory.size() - (1 + counter)];
-                                std::cout << lastFen << std::endl;
                                 Pieces = FenImport(lastFen);
+                                break;
                         }
                 }
         }
@@ -326,7 +340,8 @@ std::vector<std::shared_ptr<Piece>> Game::FenImport(std::string FenString) {
     } else if (metadataFen[count] == 'b') {
         whiteTurn = false;
     } else {
-        throw std::invalid_argument( "Invalid Fen" );
+
+        throw std::invalid_argument( "white or black erro" );
     }
     count++;
     count++;
@@ -390,11 +405,12 @@ std::vector<std::shared_ptr<Piece>> Game::FenImport(std::string FenString) {
     if (std::find(abc.begin(), abc.end(), metadataFen[count]) != abc.end() && std::find(abc.begin(), abc.end(), metadataFen[count+1]) != abc.end()) {
         int posx = abc.find(metadataFen[count]);
         int posy = 8 - (metadataFen[count+1] - '0');
-        std::shared_ptr<Piece> derivedPtr = getMatchingPiece({posx, whiteTurn ? posy+1 : posy - 1}, piecesVector);
+        std::shared_ptr<Piece> derivedPtr = getMatchingPiece({posx, whiteTurn ? posy+1 : posy-1}, piecesVector);
         std::shared_ptr<Pawn> enPassant = std::dynamic_pointer_cast<Pawn>(derivedPtr);
         if (enPassant != nullptr) {
             enPassant->isEnPassantVulnerable = true;
         } else {
+
             throw std::invalid_argument( "Invalid Fen" );
         }
 
@@ -435,7 +451,6 @@ std::string Game::FenExport(std::vector<std::shared_ptr<Piece>> piecesVector) {
         int x = count%8;
 
         
-        std::cout << y << x << std::endl;
         if (x == 0 && count != 0) {
             if (whiteSpaces != 0) {
                 FenExportString += std::to_string(whiteSpaces) ; 
@@ -456,7 +471,8 @@ std::string Game::FenExport(std::vector<std::shared_ptr<Piece>> piecesVector) {
                 std::string abc = "abcdefgh";
                 if (pawnPointerDerived->isEnPassantVulnerable) {
                     enPassantSquare = abc[x];
-                    enPassantSquare += i->second->white ? std::to_string(y-1) : std::to_string(y+1) ;
+                    enPassantSquare += i->second->white ? std::to_string(8-(y+1)) : std::to_string(8-(y-1));
+                    std::cout << enPassantSquare << std::endl;
                 }
             }
             else if (std::shared_ptr<Rook> rookPointerDerived = std::dynamic_pointer_cast<Rook>(i->second)) {
