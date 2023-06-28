@@ -6,6 +6,8 @@
 #include "renderWindow.hpp"
 #include "piece.hpp"
 #include "util.hpp"
+#include "chessClient.hpp"
+#include "chessServer.hpp"
 class Game
 {
 private:
@@ -23,6 +25,9 @@ private:
     int fullMoveNumber = 0;
     bool draw = false;
     int counter = 0;
+    bool isServer;
+    bool isPlayingOnline = true;
+    bool isWhite;
 
     // RenderWindow stuff
     RenderWindow window;
@@ -49,7 +54,7 @@ private:
     void placePiece();
 
 public:
-    Game(std::string fen); 
+    Game(std::string fen, bool server); 
     ~Game();
 
 };

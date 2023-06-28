@@ -23,14 +23,26 @@
 #include "queen.hpp"
 #include "knight.hpp"
 #include "piece.hpp"
-
+#include <bits/stdc++.h>
 #include "game.hpp"
 
-Game::Game(std::string fen) : window("never gonna give you up"){
+Game::Game(std::string fen, bool server) : window("never gonna give you up"), isServer(server){
     if (window.displayWelcomeMessage("Welcome to ChessQLD")){
-
+        
         Pieces = FenImport(fen);
         moveHistory.push_back(fen);
+        if (isPlayingOnline && isServer) {
+            isWhite = std::rand() % 2;
+            Server server;
+            server.send(isWhite ? "black\n" : "white\n");
+        } else {
+            Client client;
+            if (client.receive() == "black\n") {
+                isWhite = false;
+            } else {
+                isWhite = true;
+            }
+        }
         run();
         window.displayWelcomeMessage(whiteTurn ? "White lost" : "Black lost");
     }
@@ -58,7 +70,6 @@ bool Game::run() {
     }
     return draw;
 }
-
 Game::~Game() {
     window.cleanUp();
 }
@@ -134,7 +145,7 @@ bool Game::handleProtomotion(std::shared_ptr<Piece> selectedPiece, bool Captured
     }
     return false;
 }
-
+// TODO
 void Game::handleCheckmate() {
     bool checkmate_white = true;
     bool checkmate_black = true;
