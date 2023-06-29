@@ -26,18 +26,18 @@
 #include <bits/stdc++.h>
 #include "game.hpp"
 
-Game::Game(std::string fen, bool server) : window("never gonna give you up"), isServer(server){
+Game::Game(std::string fen, bool server) : window("never gonna give you up"), isServer(server) {
     if (window.displayWelcomeMessage("Welcome to ChessQLD")){
         
         Pieces = FenImport(fen);
         moveHistory.push_back(fen);
         if (isPlayingOnline && isServer) {
             isWhite = std::rand() % 2;
-            Server server;
-            server.send(isWhite ? "black\n" : "white\n");
+            communication = std::make_unique<Communication>(server);
+            communication->send(isWhite ? "black\n" : "white\n");
         } else {
-            Client client;
-            if (client.receive() == "black\n") {
+            communication = std::make_unique<Communication>(!server);
+            if (communication->receive() == "black\n") {
                 isWhite = false;
             } else {
                 isWhite = true;
@@ -47,6 +47,7 @@ Game::Game(std::string fen, bool server) : window("never gonna give you up"), is
         window.displayWelcomeMessage(whiteTurn ? "White lost" : "Black lost");
     }
 }
+
 
 bool Game::run() {
     while (gameRunning)

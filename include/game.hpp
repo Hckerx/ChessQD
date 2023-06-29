@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <glm/fwd.hpp>
 #include <memory>
 #define SDL_MAIN_HANDLED
@@ -6,13 +7,15 @@
 #include "renderWindow.hpp"
 #include "piece.hpp"
 #include "util.hpp"
-#include "chessClient.hpp"
-#include "chessServer.hpp"
+#include "chessCommunication.hpp"
 class Game
 {
 private:
     // SDL specific stuff
     SDL_Event event;
+
+    // Communication
+    std::unique_ptr<Communication> communication = nullptr;
 
     //Game Logic
     bool gameRunning = true;

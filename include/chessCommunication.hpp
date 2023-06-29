@@ -1,19 +1,19 @@
 #include <boost/asio.hpp>
-using boost::asio::ip::tcp;
 
-class Client
+using boost::asio::ip::tcp;
+class Communication
 {
 public:
-    Client();
-    ~Client() {
-        // Close the socket
+    Communication(bool Server);
+    ~Communication() {
         socket.close();
     }
-
-    std::string receive();
     void send(std::string message);
+    std::string receive();
+
 private:
     boost::asio::io_context io_context;
     tcp::socket socket;
-
+    bool isServer;
 };
+
