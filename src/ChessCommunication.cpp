@@ -8,9 +8,12 @@ using boost::asio::ip::tcp;
 Communication::Communication(bool Server) 
 try : socket(io_context), isServer(Server) {
     if (isServer) {
+        std::cout << "isServer" << isServer << std::endl;
+        std::cout << "Waiting for client..." << std::endl;
         tcp::acceptor acceptor(io_context, tcp::endpoint(tcp::v4(), 12345));
         acceptor.accept(socket);
     } else {
+        std::cout << "Connecting to server..." << std::endl;
         socket.connect(tcp::endpoint(boost::asio::ip::address::from_string("127.0.0.1"), 12345));
     }
 }
@@ -20,6 +23,7 @@ catch (std::exception& e)
 }
 
 void Communication::send(std::string message) {
+    message += '\n';
     boost::asio::write(socket, boost::asio::buffer(message));
 }
 

@@ -26,26 +26,33 @@
 #include <bits/stdc++.h>
 #include "game.hpp"
 
-Game::Game(std::string fen, bool server) : window("never gonna give you up"), isServer(server) {
-    if (window.displayWelcomeMessage("Welcome to ChessQLD")){
-        
+Game::Game(std::string fen, bool server) : isServer(server), window("never gonna give you up") {
+    //if (window.displayWelcomeMessage("Welcome to ChessQLD")){
         Pieces = FenImport(fen);
         moveHistory.push_back(fen);
         if (isPlayingOnline && isServer) {
-            isWhite = std::rand() % 2;
+            isWhite = std::rand() % 2 == 0;
             communication = std::make_unique<Communication>(server);
-            communication->send(isWhite ? "black\n" : "white\n");
-        } else {
-            communication = std::make_unique<Communication>(!server);
-            if (communication->receive() == "black\n") {
+            communication->send(isWhite ? "black" : "white");
+            // isServer is kind of unnecessary but I'm leaving it here
+        } else if (isPlayingOnline && !isServer){
+            communication = std::make_unique<Communication>(isServer);
+            if (communication->receive() == "black") {
                 isWhite = false;
+                whiteDown = false;
             } else {
                 isWhite = true;
+                whiteDown = true;
             }
         }
-        run();
-        window.displayWelcomeMessage(whiteTurn ? "White lost" : "Black lost");
-    }
+        std::cout << "Entered" << std::endl;
+        if (run()) {
+            window.displayWelcomeMessage("Draw");
+        }
+        else {
+            window.displayWelcomeMessage(whiteTurn ? "White lost" : "Black lost");
+        }
+    //}
 }
 
 
@@ -108,21 +115,26 @@ void Game::placePiece() {
     glm::vec2 oldPos = highlightMoves[0];
     int sizeOfPieces = Pieces.size();
     if (counter == 0) {
-        if (selectedPiece->move(MousePosition, highlightMoves[0], Pieces, whiteTurn)) {
-            if (rotate_board) {
-                whiteDown=!whiteDown;
-            }
-            if (!handleProtomotion(selectedPiece, sizeOfPieces != Pieces.size())) {
-                whiteTurn = !whiteTurn;
-                //         ++halfMoveNumber;
-                moveHistory.push_back(FenExport(Pieces));
-            }
-            handleCheckmate();
-            lastPieces.push_back(selectedPiece);
-            lastMoves.push_back(oldPos);
-            lastMoves.push_back(selectedPiece->getPos());
-            highlightMoves = {{1000,1000}};
-        } 
+        if (whiteTurn == isWhite) {
+            if (selectedPiece->move(MousePosition, highlightMoves[0], Pieces, whiteTurn)) {
+                if (rotate_board) {
+                    whiteDown=!whiteDown;
+                }
+                if (!handleProtomotion(selectedPiece, sizeOfPieces != Pieces.size())) {
+                    whiteTurn = !whiteTurn;
+                    //         ++halfMoveNumber;
+                    moveHistory.push_back(FenExport(Pieces));
+                }
+                handleCheckmate();
+                lastPieces.push_back(selectedPiece);
+                lastMoves.push_back(oldPos);
+                lastMoves.push_back(selectedPiece->getPos());
+                highlightMoves = {{1000,1000}};
+                if (isPlayingOnline) {
+                    communication->send(FenExport(Pieces));
+                }
+            } 
+        }
     } else {
         counter = 0;
         Pieces = FenImport(moveHistory[moveHistory.size() - 1]);
@@ -181,6 +193,14 @@ void Game::handleEvents()
 {
     if (counter <= 0) {
         counter = 0;
+    }
+    // TODO: add a way to continue running code while waiting for response
+    if (whiteTurn != isWhite && isPlayingOnline) {
+        std::string temp = communication->receive(); 
+        if (temp != FenExport(Pieces)) {
+            Pieces = FenImport(temp);
+            moveHistory.push_back(FenExport(Pieces));
+        }
     }
     while (SDL_PollEvent(&event))
     {

@@ -171,7 +171,6 @@ void RenderWindow::fullRender(std::vector<glm::ivec2> highlight, std::vector<glm
 bool RenderWindow::displayWelcomeMessage(std::string text) {
     std::string welcomeText = text;
     SDL_Rect textRect;
-    SDL_Rect textdstRect;
     SDL_Texture* textTexture;
     SDL_Color textColor = {255, 0, 0};
     SDL_Surface* textSurface = TTF_RenderText_Blended(ChessQLDfont, welcomeText.c_str(), textColor);
