@@ -1,3 +1,0 @@
-cmake for files to increase build time
- queening, online, en passsantin a nice way, ai, move forward/backward time
- 
