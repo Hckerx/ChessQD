@@ -1,4 +1,5 @@
 #include <boost/asio.hpp>
+#include <boost/bind.hpp>
 
 using boost::asio::ip::tcp;
 class Communication
@@ -12,6 +13,8 @@ public:
     std::string receive();
 
 private:
+    void handle_read(const boost::system::error_code& error, size_t bytes_transferred);
+    boost::asio::streambuf receiveBuffer;  
     boost::asio::io_context io_context;
     tcp::socket socket;
     bool isServer;
