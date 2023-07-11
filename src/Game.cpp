@@ -25,7 +25,7 @@
 #include "piece.hpp"
 #include <bits/stdc++.h>
 #include "game.hpp"
-
+// TODO: Threefold FIVEFOLD seventy move rule insufficent material
 Game::Game(std::string fen, bool server) : isServer(server), window("never gonna give you up") {
     //if (window.displayWelcomeMessage("Welcome to ChessQLD")){
         Pieces = FenImport(fen);
@@ -115,7 +115,7 @@ void Game::placePiece() {
     glm::vec2 oldPos = highlightMoves[0];
     int sizeOfPieces = Pieces.size();
     if (counter == 0) {
-        if (whiteTurn == isWhite) {
+        if ((isPlayingOnline && isWhite) || !isPlayingOnline) {
             if (selectedPiece->move(MousePosition, highlightMoves[0], Pieces, whiteTurn)) {
                 if (rotate_board) {
                     whiteDown=!whiteDown;
@@ -158,7 +158,6 @@ bool Game::handleProtomotion(std::shared_ptr<Piece> selectedPiece, bool Captured
     }
     return false;
 }
-// TODO
 void Game::handleCheckmate() {
     bool checkmate_white = true;
     bool checkmate_black = true;

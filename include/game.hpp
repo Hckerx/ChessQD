@@ -29,8 +29,8 @@ private:
     bool draw = false;
     int counter = 0;
     bool isServer;
-    bool isPlayingOnline = true;
-    bool isWhite;
+    bool isPlayingOnline = false;
+    bool isWhite = false;
 
     // RenderWindow stuff
     RenderWindow window;
