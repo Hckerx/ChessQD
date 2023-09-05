@@ -58,7 +58,7 @@ private:
     void placePiece();
 
 public:
-    Game(std::string fen, bool server); 
+    Game(std::string fen); 
     ~Game();
 
 };
