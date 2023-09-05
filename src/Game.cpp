@@ -31,6 +31,7 @@ Game::Game(std::string fen) : window("never gonna give you up") {
 
     Pieces = FenImport(fen);
     moveHistory.push_back(fen);
+    
     std::cout << "online?[y/n]" << std::endl;
     std::string input;
     std::getline(std::cin,input);
@@ -56,19 +57,24 @@ Game::Game(std::string fen) : window("never gonna give you up") {
             }
         }
     }
-    bool draw = run();
-    if (!gameClosed) {
-        if (draw) {
+
+
+
+    run();
+    
+        if (state==2) {
             window.displayWelcomeMessage("Draw");
         }
-        else {
-            window.displayWelcomeMessage(whiteTurn ? "White lost" : "Black lost");
+        else if (state==0) {
+        window.displayWelcomeMessage("White lost");
         }
-    }
+        else if (state==1) {
+            window.displayWelcomeMessage("Black lost");
+        }
 }
 
 
-bool Game::run() {
+void Game::run() {
     while (gameRunning)
     {
         window.updateWindowSize();
@@ -77,7 +83,7 @@ bool Game::run() {
             DragPiece();
         }
         if (halfMoveNumber >= 50) {
-            draw = true;
+            state = 2;
             break;
         }
         handleEvents();
@@ -88,7 +94,8 @@ bool Game::run() {
         }
         window.display();
     }
-    return draw;
+    return;
+    //0=whitew lost 1=black lost 2=draw else=quit
 }
 Game::~Game() {
     window.cleanUp();
@@ -171,39 +178,40 @@ bool Game::handleProtomotion(std::shared_ptr<Piece> selectedPiece, bool Captured
     return false;
 }
 void Game::handleCheckmate() {
-    bool checkmate_white = true;
-    bool checkmate_black = true;
-    bool check_white = false;
-    bool check_black = false;
+    bool no_legal_moves = true;
+    bool check = false;
     for (auto i : Pieces) {
-        if (i->white && !i->findMoves(Pieces)) {
-            checkmate_white = false;
+        if (i->white == whiteTurn && !i->findMoves(Pieces)) {
+            no_legal_moves = false;
         }
-        if (!i->white && !i->findMoves(Pieces)) {
-            checkmate_black = false;
-        }
+
         // TODO: FIX CHECKMATE AND DRAW
         std::shared_ptr<King> kingPointerDerived = std::dynamic_pointer_cast<King>(i);
-        if (kingPointerDerived != nullptr) {
-            if (kingPointerDerived->isKingInCheck(Pieces) && kingPointerDerived->white) {
-                check_white = true;
-            }
-            else if (kingPointerDerived->isKingInCheck(Pieces) && !kingPointerDerived->white) {
-                check_black = true;
+        if (kingPointerDerived != nullptr && i->white == whiteTurn) {
+            if (i->isKingInCheck(Pieces)) {
+                check = true;
             }
         }
     }
-    if (checkmate_black || checkmate_white) {
-        gameRunning = false;
-        if ((checkmate_black && !check_black) || (checkmate_white && !check_white)) {
-            std::cout << "THE FUCK" << std::endl;
-            draw = true;
+
+    if (no_legal_moves) {
+        if (!check) {
+            state = 2;
         }
+        else if (whiteTurn) {
+        state = 0;
+        }
+        else {
+        state=1;
+        }
+        gameRunning = false;
     }
 }
+
 //prolly hashmaps of all pieces' moves im too stupid for this
 void Game::handleEvents()
 {
+
     if (counter <= 0) {
         counter = 0;
     }
@@ -243,7 +251,7 @@ void Game::handleEvents()
                 }
                 break;
             case SDL_QUIT:
-                gameClosed = true;
+                state = 3;
                 gameRunning = false;
                 window.cleanUp();
                 return;
@@ -264,7 +272,6 @@ void Game::handleEvents()
                                 Pieces = FenImport(moveHistory[moveHistory.size() - (1 + counter)]);
                                 break;
                             case SDLK_q:
-                                gameClosed = true;
                                 gameRunning = false;
                                 break;
                             case SDLK_LEFT:

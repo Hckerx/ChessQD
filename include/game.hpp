@@ -18,7 +18,6 @@ private:
     std::unique_ptr<Communication> communication = nullptr;
 
     //Game Logic
-    bool gameClosed = false;
     bool gameRunning = true;
     bool isPieceSelected = false;
     bool whiteTurn;
@@ -27,7 +26,7 @@ private:
     bool isPromoting = false;
     int halfMoveNumber = 0;
     int fullMoveNumber = 0;
-    bool draw = false;
+    int state = 5;
     int counter = 0;
     bool isServer;
     bool isPlayingOnline = false;
@@ -45,7 +44,7 @@ private:
     std::vector<std::shared_ptr<Piece>> Pieces;
     std::vector<std::string> moveHistory;
 
-    bool run();
+    void run();
 
     std::vector<std::shared_ptr<Piece>> FenImport(std::string FenString);
     std::string FenExport(std::vector<std::shared_ptr<Piece>> piecesVector);
