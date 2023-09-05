@@ -26,26 +26,36 @@
 #include <bits/stdc++.h>
 #include "game.hpp"
 // TODO: Threefold FIVEFOLD seventy move rule insufficent material
-Game::Game(std::string fen, bool server) : isServer(server), window("never gonna give you up") {
+Game::Game(std::string fen) : window("never gonna give you up") {
     //if (window.displayWelcomeMessage("Welcome to ChessQLD")){
+
     Pieces = FenImport(fen);
     moveHistory.push_back(fen);
-    if (isPlayingOnline && isServer) {
-        isWhite = std::rand() % 2 == 0;
-        communication = std::make_unique<Communication>(server);
-        communication->send(isWhite ? "black" : "white");
-        // isServer is kind of unnecessary but I'm leaving it here
-    } else if (isPlayingOnline && !isServer){
-        communication = std::make_unique<Communication>(isServer);
-        if (communication->receive() == "black") {
-            isWhite = false;
-            whiteDown = false;
+    std::cout << "online?[y/n]" << std::endl;
+    std::string input;
+    std::getline(std::cin,input);
+    isPlayingOnline = input == "y" ? true : false;
+    if (isPlayingOnline) {
+        std::cout << "host or join?" << std::endl;
+        std::getline(std::cin,input);
+        isServer = input == "host" ? true : false;
+        if (isServer) {
+            isWhite = std::rand() % 2 == 0;
+            communication = std::make_unique<Communication>(isServer);
+            communication->send(isWhite ? "black" : "white");
+            // isServer is kind of unnecessary but I'm leaving it here
         } else {
-            isWhite = true;
-            whiteDown = true;
+
+            communication = std::make_unique<Communication>(isServer);
+            if (communication->receive() == "black") {
+                isWhite = false;
+                whiteDown = false;
+            } else {
+                isWhite = true;
+                whiteDown = true;
+            }
         }
     }
-    std::cout << "Entered" << std::endl;
     bool draw = run();
     if (!gameClosed) {
         if (draw) {

@@ -30,7 +30,7 @@ private:
     bool draw = false;
     int counter = 0;
     bool isServer;
-    bool isPlayingOnline = true;
+    bool isPlayingOnline = false;
     bool isWhite = false;
 
     // RenderWindow stuff
