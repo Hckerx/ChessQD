@@ -172,12 +172,13 @@ void Game::handleCheckmate() {
         if (!i->white && !i->findMoves(Pieces)) {
             checkmate_black = false;
         }
+        // TODO: FIX CHECKMATE AND DRAW
         std::shared_ptr<King> kingPointerDerived = std::dynamic_pointer_cast<King>(i);
         if (kingPointerDerived != nullptr) {
             if (kingPointerDerived->isKingInCheck(Pieces) && kingPointerDerived->white) {
                 check_white = true;
             }
-            else if (kingPointerDerived->isKingInCheck(Pieces) && !kingPointerDerived->white) {
+            else if (kingPointerDerived->isKingInCheck(Pieces) && kingPointerDerived->black) {
                 check_black = true;
             }
         }
@@ -185,6 +186,7 @@ void Game::handleCheckmate() {
     if (checkmate_black || checkmate_white) {
         gameRunning = false;
         if ((checkmate_black && !check_black) || (checkmate_white && !check_white)) {
+            std::cout << "THE FUCK" << std::endl;
             draw = true;
         }
     }
