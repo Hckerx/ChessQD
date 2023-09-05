@@ -18,6 +18,7 @@ private:
     std::unique_ptr<Communication> communication = nullptr;
 
     //Game Logic
+    bool gameClosed = false;
     bool gameRunning = true;
     bool isPieceSelected = false;
     bool whiteTurn;

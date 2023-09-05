@@ -28,31 +28,33 @@
 // TODO: Threefold FIVEFOLD seventy move rule insufficent material
 Game::Game(std::string fen, bool server) : isServer(server), window("never gonna give you up") {
     //if (window.displayWelcomeMessage("Welcome to ChessQLD")){
-        Pieces = FenImport(fen);
-        moveHistory.push_back(fen);
-        if (isPlayingOnline && isServer) {
-            isWhite = std::rand() % 2 == 0;
-            communication = std::make_unique<Communication>(server);
-            communication->send(isWhite ? "black" : "white");
-            // isServer is kind of unnecessary but I'm leaving it here
-        } else if (isPlayingOnline && !isServer){
-            communication = std::make_unique<Communication>(isServer);
-            if (communication->receive() == "black") {
-                isWhite = false;
-                whiteDown = false;
-            } else {
-                isWhite = true;
-                whiteDown = true;
-            }
+    Pieces = FenImport(fen);
+    moveHistory.push_back(fen);
+    if (isPlayingOnline && isServer) {
+        isWhite = std::rand() % 2 == 0;
+        communication = std::make_unique<Communication>(server);
+        communication->send(isWhite ? "black" : "white");
+        // isServer is kind of unnecessary but I'm leaving it here
+    } else if (isPlayingOnline && !isServer){
+        communication = std::make_unique<Communication>(isServer);
+        if (communication->receive() == "black") {
+            isWhite = false;
+            whiteDown = false;
+        } else {
+            isWhite = true;
+            whiteDown = true;
         }
-        std::cout << "Entered" << std::endl;
-        if (run()) {
+    }
+    std::cout << "Entered" << std::endl;
+    bool draw = run();
+    if (!gameClosed) {
+        if (draw) {
             window.displayWelcomeMessage("Draw");
         }
         else {
             window.displayWelcomeMessage(whiteTurn ? "White lost" : "Black lost");
         }
-    //}
+    }
 }
 
 
@@ -229,7 +231,9 @@ void Game::handleEvents()
                 }
                 break;
             case SDL_QUIT:
+                gameClosed = true;
                 gameRunning = false;
+                window.cleanUp();
                 return;
             case SDL_MOUSEBUTTONUP:
                 if (event.button.button == SDL_BUTTON_LEFT && selectedPiece != nullptr && !isPromoting)
@@ -248,6 +252,7 @@ void Game::handleEvents()
                                 Pieces = FenImport(moveHistory[moveHistory.size() - (1 + counter)]);
                                 break;
                             case SDLK_q:
+                                gameClosed = true;
                                 gameRunning = false;
                                 break;
                             case SDLK_LEFT:
