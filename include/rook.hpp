@@ -1,7 +1,3 @@
-#include <glm/glm.hpp>
-#include <iostream>
-#include <vector>
-
 #include "piece.hpp"
 class Rook: public Piece
 {

@@ -1,8 +1,6 @@
 #include "bishop.hpp"
 #include "piece.hpp"
-#include "glm/glm.hpp"
 
-#include <glm/fwd.hpp>
 #include <iostream>
 
 Bishop::Bishop(glm::vec2 p_pos, bool white)

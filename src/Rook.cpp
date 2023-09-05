@@ -1,13 +1,10 @@
 #include "rook.hpp"
 #include "piece.hpp"
 
-#include "glm/glm.hpp"
 #include "glm/gtx/string_cast.hpp"
 #include "glm/ext.hpp"
 #include "util.hpp"
-#include <glm/fwd.hpp>
 #include <iostream>
-#include <vector>
 Rook::Rook(glm::vec2 p_pos, bool white)
 :Piece(p_pos, white){
         if (white) {

@@ -1,12 +1,9 @@
-#include <algorithm>
-#include <glm/fwd.hpp>
-#include <memory>
 #define SDL_MAIN_HANDLED
-#include <SDL2/SDL.h>
+
+#include <memory>
 #include <vector>
 #include "renderWindow.hpp"
 #include "piece.hpp"
-#include "util.hpp"
 #include "chessCommunication.hpp"
 class Game
 {
@@ -19,25 +16,25 @@ private:
 
     //Game Logic
     bool gameRunning = true;
-    bool isPieceSelected = false;
+    bool isPieceSelected = false; //?
     bool whiteTurn;
     bool whiteDown = true; // defines which color is on the bottom of the board when game is startes
     bool rotate_board = false; // defines if the board should rotate after every move or not
-    bool isPromoting = false;
+    bool isPromoting = false; //needed?
     int halfMoveNumber = 0;
-    int fullMoveNumber = 0;
-    int state = 5;
-    int counter = 0;
-    bool isServer;
-    bool isPlayingOnline = false;
-    bool isWhite = false;
+    int fullMoveNumber = 0; //needed?
+    int state = 5; //state of the game (draw, checkmate, closed)
+    int counter = 0; //needed?
+    bool isServer; //bullshit
+    bool isPlayingOnline = false; //maybe other place?
+    bool isWhite = false; //DUUMMMM!!!
 
     // RenderWindow stuff
-    RenderWindow window;
-    std::vector<glm::ivec2> highlightMoves = {{1000,1000}};
-    std::vector<glm::ivec2> lastMoves = {{1000, 1000}};
+    RenderWindow window; //displayed main window
+    std::vector<glm::ivec2> highlightMoves = {{1000,1000}}; //vector of moves to highlight
+    std::vector<glm::ivec2> lastMoves = {{1000, 1000}}; //vector of last moves??
 
-    std::vector<std::shared_ptr<Piece>> lastPieces;
+    std::shared_ptr<Piece> lastPiece;
 
     // Pieces 
     std::shared_ptr<Piece> selectedPiece;

@@ -1,8 +1,6 @@
 #include "knight.hpp"
 #include "piece.hpp"
 
-
-#include "glm/glm.hpp"
 #include <iostream>
 Knight::Knight(glm::vec2 p_pos, bool white)
 :Piece(p_pos, white){

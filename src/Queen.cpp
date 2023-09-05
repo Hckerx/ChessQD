@@ -1,6 +1,5 @@
 #include "queen.hpp"
 #include "piece.hpp"
-#include "glm/glm.hpp"
 
 #include <iostream>
 

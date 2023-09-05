@@ -1,6 +1,4 @@
-#include <glm/glm.hpp>
 #include "piece.hpp"
-#include <iostream>
 class Pawn: public Piece
 {
 public:

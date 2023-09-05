@@ -4,9 +4,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>
-#include <glm/fwd.hpp>
 #include <iostream>
-#include <string>
 
 #include "renderWindow.hpp"
 #include "piece.hpp"
@@ -232,7 +230,7 @@ int RenderWindow::displayPromotionOptions(glm::vec2 pos, bool white) {
 
 
 
-    SDL_SetRenderDrawColor(renderer, 166, 168, 171, 255);
+    SDL_SetRenderDrawColor(renderer, 166, 168, 171, 100);
     int calculations = (int)pos.y*squareSize - (white ? 0 : 3*squareSize);
     SDL_Rect rect = {(int)pos.x*squareSize, calculations, (squareSize ), (squareSize * 4)};
     SDL_RenderFillRect(renderer, &rect);

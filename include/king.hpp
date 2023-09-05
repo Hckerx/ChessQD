@@ -1,6 +1,3 @@
-#include <glm/glm.hpp>
-#include <iostream>
-
 #include "piece.hpp"
 class King: public Piece
 {

@@ -1,9 +1,7 @@
-#pragma once
+#pragma once //???
 #define SDL_MAIN_HANDLED
 #include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
 #include <vector>
-#include <iostream>
 #include <memory>
 #include <glm/glm.hpp>
 

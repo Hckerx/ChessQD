@@ -1,3 +1,7 @@
+//necessary for windows
+#define SDL_MAIN_HANDLED
+
+//includes
 #include <algorithm>
 #include <iterator>
 #include <map>
@@ -6,7 +10,6 @@
 #include <glm/gtx/string_cast.hpp>
 #include <memory>
 #include <string>
-#define SDL_MAIN_HANDLED
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <iostream>
@@ -25,11 +28,16 @@
 #include "piece.hpp"
 #include <bits/stdc++.h>
 #include "game.hpp"
-// TODO: Threefold FIVEFOLD seventy move rule insufficent material
+
+
+// TODO: Threefold FIVEFOLD seventy move rule insufficent material?
+//constructor of class Game (the main class)
 Game::Game(std::string fen) : window("never gonna give you up") {
     //if (window.displayWelcomeMessage("Welcome to ChessQLD")){
-
+    
+    //importing given FEN-notation in the pieces array
     Pieces = FenImport(fen);
+    
     moveHistory.push_back(fen);
     
     std::cout << "online?[y/n]" << std::endl;
@@ -95,7 +103,7 @@ void Game::run() {
         window.display();
     }
     return;
-    //0=whitew lost 1=black lost 2=draw else=quit
+    //0=white lost 1=black lost 2=draw else=quit
 }
 Game::~Game() {
     window.cleanUp();
@@ -145,7 +153,7 @@ void Game::placePiece() {
                     moveHistory.push_back(FenExport(Pieces));
                 }
                 handleCheckmate();
-                lastPieces.push_back(selectedPiece);
+                lastPiece = selectedPiece;
                 lastMoves.push_back(oldPos);
                 lastMoves.push_back(selectedPiece->getPos());
                 highlightMoves = {{1000,1000}};
@@ -185,7 +193,6 @@ void Game::handleCheckmate() {
             no_legal_moves = false;
         }
 
-        // TODO: FIX CHECKMATE AND DRAW
         std::shared_ptr<King> kingPointerDerived = std::dynamic_pointer_cast<King>(i);
         if (kingPointerDerived != nullptr && i->white == whiteTurn) {
             if (i->isKingInCheck(Pieces)) {
@@ -297,7 +304,6 @@ void Game::handleEvents()
 }
 
 void Game::handlePromotionPieceSelection(glm::vec2 selection){
-    std::shared_ptr<Piece> lastPiece = lastPieces[lastPieces.size()-1];
     if ((int)selection.x == lastMoves[lastMoves.size() -1].x) {
         switch (whiteTurn ? (int)selection.y : 7 - (int)selection.y) {
             case 0: 

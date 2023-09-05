@@ -6,10 +6,9 @@
 #include <cstdlib>
 #include <glm/detail/qualifier.hpp>
 #include <iostream>
-#include <memory>
-#include <vector>
+
 #include <ctime>
-#include <glm/glm.hpp>
+
 #include "glm/gtx/string_cast.hpp"
 #include "glm/ext.hpp"
 #include <algorithm>

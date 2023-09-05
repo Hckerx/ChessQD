@@ -2,9 +2,9 @@
 #include "piece.hpp"
 
 #include "util.hpp"
-#include "glm/glm.hpp"
 
 #include <algorithm>
+
 #include <iostream>
 Pawn::Pawn(glm::vec2 p_pos, bool white)
 :Piece(p_pos, white){

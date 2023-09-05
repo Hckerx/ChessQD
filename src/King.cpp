@@ -1,12 +1,9 @@
 #include "king.hpp"
-#include "glm/gtx/string_cast.hpp"
 #include "piece.hpp"
-#include "glm/glm.hpp"
 #include "util.hpp"
 #include "rook.hpp"
 
 #include <iostream>
-#include <memory>
 King::King(glm::vec2 p_pos, bool white)
 :Piece(p_pos, white){
     if (white) {
