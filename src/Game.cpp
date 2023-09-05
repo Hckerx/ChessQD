@@ -178,7 +178,7 @@ void Game::handleCheckmate() {
             if (kingPointerDerived->isKingInCheck(Pieces) && kingPointerDerived->white) {
                 check_white = true;
             }
-            else if (kingPointerDerived->isKingInCheck(Pieces) && kingPointerDerived->black) {
+            else if (kingPointerDerived->isKingInCheck(Pieces) && !kingPointerDerived->white) {
                 check_black = true;
             }
         }
