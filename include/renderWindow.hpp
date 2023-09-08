@@ -15,14 +15,18 @@ public:
 	void fullRender(std::vector<glm::ivec2> highlight, std::vector<glm::ivec2> lastMoves, std::vector<std::shared_ptr<Piece>>& Pieces, bool whiteDown);
     int displayPromotionOptions(glm::vec2 pos, bool white);
     int squareSize;
-	void updateWindowSize() {
+	void updateSquareSize() {
 		SDL_GetWindowSize(window, &windowx, &windowy);
         squareSize = std::min(windowx, windowy)/8;
 	}
 	void display();
-		
+	bool checkIfButtonClicked(std::uint8_t buttonType, glm::vec2 mousepos);
 
 private:
+	int createButton(std::uint8_t buttonType);
+
+    SDL_Rect textRectResign;
+    SDL_Rect textRectOnline;
 	SDL_Texture* texture;
 	SDL_Window* window;
 	SDL_Renderer* renderer;

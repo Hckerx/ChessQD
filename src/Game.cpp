@@ -2,23 +2,17 @@
 #define SDL_MAIN_HANDLED
 
 //includes
-#include <algorithm>
-#include <iterator>
-#include <map>
-#include <cmath>
-#include <glm/fwd.hpp>
+
 #include <glm/gtx/string_cast.hpp>
 #include <memory>
-#include <string>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <iostream>
 #include <vector>
-#include <sstream>
+#include <bits/stdc++.h>
 
 #include "renderWindow.hpp"
 #include "util.hpp"
-
 #include "pawn.hpp"
 #include "rook.hpp"
 #include "bishop.hpp"
@@ -26,23 +20,22 @@
 #include "queen.hpp"
 #include "knight.hpp"
 #include "piece.hpp"
-#include <bits/stdc++.h>
 #include "game.hpp"
 
 
 // TODO: Threefold FIVEFOLD seventy move rule insufficent material?
+
 //constructor of class Game (the main class)
 Game::Game(std::string fen) : window("never gonna give you up") {
-    //if (window.displayWelcomeMessage("Welcome to ChessQLD")){
-    
+   
     //importing given FEN-notation in the pieces array
     Pieces = FenImport(fen);
-    
     moveHistory.push_back(fen);
     
     std::cout << "online?[y/n]" << std::endl;
     std::string input;
-    std::getline(std::cin,input);
+    //std::getline(std::cin,input);
+    input = "n";
     isPlayingOnline = input == "y" ? true : false;
     if (isPlayingOnline) {
         std::cout << "host or join?" << std::endl;
@@ -66,79 +59,84 @@ Game::Game(std::string fen) : window("never gonna give you up") {
         }
     }
 
+    run();       
+}
 
-
-    run();
-    
-        if (state==2) {
-            window.displayWelcomeMessage("Draw");
-        }
-        else if (state==0) {
-        window.displayWelcomeMessage("White lost");
-        }
-        else if (state==1) {
-            window.displayWelcomeMessage("Black lost");
-        }
+Game::~Game() {
+    window.cleanUp();
 }
 
 
 void Game::run() {
     while (gameRunning)
     {
-        window.updateWindowSize();
-        if (isPieceSelected)
-        {
+        window.updateSquareSize();
+        
+        if (PieceSelected)
             DragPiece();
-        }
         if (halfMoveNumber >= 50) {
             state = 2;
             break;
         }
+        if (counter <= 0) 
+            counter = 0;
+        
         handleEvents();
-        //std::vector<glm::vec2> temp = {{1000,1000}};
+    
+    // TODO: add a way to continue running code while waiting for response
+        if (whiteTurn != isWhite && isPlayingOnline) {
+            std::string temp = communication->receive(); 
+        if (temp != FenExport(Pieces)) {
+            Pieces = FenImport(temp);
+            moveHistory.push_back(FenExport(Pieces));
+            }
+        }
+
+
         window.fullRender(highlightMoves, std::vector<glm::ivec2>(lastMoves.end() - 2, lastMoves.end()), Pieces, whiteDown);
         if (isPromoting) {
             window.displayPromotionOptions(lastMoves[lastMoves.size() - 1], whiteTurn);
         }
         window.display();
     }
-    return;
     //0=white lost 1=black lost 2=draw else=quit
+    if (state==2) 
+        window.displayWelcomeMessage("Draw");
+        
+    else if (state==0) 
+        window.displayWelcomeMessage("White lost");
+
+    else if (state==1) 
+            window.displayWelcomeMessage("Black lost");
+    
 }
-Game::~Game() {
-    window.cleanUp();
-}
+
 
 void Game::DragPiece() {
-
     glm::vec2 newPos = getMousePosition(whiteDown,window.squareSize);
-
-
     newPos -= 0.5;
     selectedPiece->setPos(newPos);
 }
 
+
 void Game::selectPiece() {
-
     glm::ivec2 MousePosition = getMousePosition(whiteDown,window.squareSize);
-
-
     selectedPiece = getMatchingPiece(MousePosition, Pieces);
+    
     if (selectedPiece != nullptr) {
         selectedPiece->findMoves(Pieces);     
         highlightMoves = {selectedPiece->getPos()};
-        for (auto i: selectedPiece->legalMoves) {
+        for (auto i: selectedPiece->legalMoves) 
             highlightMoves.push_back(i);
-        }
-        isPieceSelected = true;
-
+       
+        PieceSelected = true;
     } 
+
 }
 
+
 void Game::placePiece() {
-
     glm::ivec2 MousePosition = getMousePosition(whiteDown,window.squareSize);
-
     glm::vec2 oldPos = highlightMoves[0];
     int sizeOfPieces = Pieces.size();
     if (counter == 0) {
@@ -168,7 +166,7 @@ void Game::placePiece() {
     }
 
     //highlightMoves.push_back(selectedPiece->getPos());
-    isPieceSelected = false;
+    PieceSelected = false;
 }
 
 bool Game::handleProtomotion(std::shared_ptr<Piece> selectedPiece, bool Captured)
@@ -206,10 +204,10 @@ void Game::handleCheckmate() {
             state = 2;
         }
         else if (whiteTurn) {
-        state = 0;
+            state = 0;
         }
         else {
-        state=1;
+            state = 1;
         }
         gameRunning = false;
     }
@@ -218,18 +216,7 @@ void Game::handleCheckmate() {
 //prolly hashmaps of all pieces' moves im too stupid for this
 void Game::handleEvents()
 {
-
-    if (counter <= 0) {
-        counter = 0;
-    }
-    // TODO: add a way to continue running code while waiting for response
-    if (whiteTurn != isWhite && isPlayingOnline) {
-        std::string temp = communication->receive(); 
-        if (temp != FenExport(Pieces)) {
-            Pieces = FenImport(temp);
-            moveHistory.push_back(FenExport(Pieces));
-        }
-    }
+    
     while (SDL_PollEvent(&event))
     {
         switch (event.type)
@@ -237,11 +224,9 @@ void Game::handleEvents()
             case SDL_MOUSEBUTTONDOWN:
                 if (event.button.button == SDL_BUTTON_LEFT)
                 {
-
                     if (!isPromoting)
-                        {
                             selectPiece();
-                        }
+
                     else
                     {
                         handlePromotionPieceSelection(getMousePosition(whiteDown, window.squareSize));
@@ -260,13 +245,12 @@ void Game::handleEvents()
             case SDL_QUIT:
                 state = 3;
                 gameRunning = false;
-                window.cleanUp();
-                return;
+                break;
             case SDL_MOUSEBUTTONUP:
-                if (event.button.button == SDL_BUTTON_LEFT && selectedPiece != nullptr && !isPromoting)
-                {
+                if (event.button.button == SDL_BUTTON_LEFT && selectedPiece != nullptr)// && !isPromoting
                     placePiece();
-                    break;
+                break;
+
                     case SDL_KEYDOWN:
                         switch (event.key.keysym.sym)
                         {
@@ -279,6 +263,7 @@ void Game::handleEvents()
                                 Pieces = FenImport(moveHistory[moveHistory.size() - (1 + counter)]);
                                 break;
                             case SDLK_q:
+                                state = 3;
                                 gameRunning = false;
                                 break;
                             case SDLK_LEFT:
@@ -298,7 +283,7 @@ void Game::handleEvents()
                                 Pieces = FenImport(lastFen);
                                 break;
                         }
-                }
+                
         }
     }
 }

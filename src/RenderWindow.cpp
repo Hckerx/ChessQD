@@ -1,6 +1,8 @@
-#include <SDL2/SDL_blendmode.h>
+#include <SDL2/SDL_rect.h>
 #include <SDL2/SDL_video.h>
 #define SDL_MAIN_HANDLED
+#include <SDL2/SDL_blendmode.h>
+
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>
@@ -13,10 +15,13 @@
 #include "queen.hpp"
 #include "rook.hpp"
 #include "bishop.hpp"
+
 // Todo line width of rect
+#define RESIGN 1
+#define ONLINE 0
 
 RenderWindow::RenderWindow(const char* p_title)
-{
+{ //SDL initiation
     if (SDL_Init(SDL_INIT_VIDEO) > 0) std::cout << "HEY.. SDL_Init HAS FAILED. SDL_ERROR: " << SDL_GetError() << std::endl;
 
     if (!(IMG_Init(IMG_INIT_PNG)))
@@ -24,17 +29,17 @@ RenderWindow::RenderWindow(const char* p_title)
 
     if (TTF_Init() == -1)
         std::cout << "TTF_init has failed. Error: " << SDL_GetError() << std::endl;
-
     SDL_DisplayMode DM;
     SDL_GetCurrentDisplayMode(0, &DM);
-    int height = DM.h < DM.w ? DM.h*0.9 : DM.w;
-    window = SDL_CreateWindow(p_title, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, height, height, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
+    int height = DM.h < DM.w ? DM.h*0.95 : DM.w * 0.95;
+    
+    squareSize = (float)height/8*0.95;
+    window = SDL_CreateWindow(p_title, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, squareSize * 8, height, SDL_WINDOW_RESIZABLE| SDL_WINDOW_SHOWN); //| SDL_WINDOW_RESIZABLE
 
     if (window == NULL)
     {
         std::cout << "Window failed to init. Error: " << SDL_GetError() << std::endl;
     }
-    updateWindowSize();
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
     SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
 
@@ -44,12 +49,12 @@ RenderWindow::RenderWindow(const char* p_title)
 
     SDL_ShowCursor(1);
 
-    squareSize = std::min(windowy, windowx)/8;
     loadTexture("bin/debug/res/gfx/pieces.png");
 
     ChessQLDfont = TTF_OpenFont("bin/debug/res/font/REFOLTER.otf", 128);
     if (ChessQLDfont == NULL) {
         throw "Font's not working"; 
+        
     }
 }
 
@@ -101,6 +106,50 @@ void RenderWindow::render(std::shared_ptr<Piece>& p_piece, bool whiteDown)
 
     SDL_RenderCopy(renderer, texture, &src, &dst);
 }
+int RenderWindow::createButton(std::uint8_t buttonType) {
+    std::string Text;
+    if (buttonType == RESIGN) {
+        Text = "Resign";
+    } else if (buttonType == ONLINE) {
+        Text = "online";
+    }
+    SDL_Texture* textTexture;
+    SDL_Color textColor = {255, 255, 255};
+    SDL_Surface* textSurface = TTF_RenderText_Blended(ChessQLDfont, Text.c_str(), textColor);
+    if (!textSurface) {
+        fprintf(stderr, "Failed to render text surface: %s\n", TTF_GetError());
+        return -1;
+    }
+
+    // Create a texture from the rendered text surface and set its blend mode to alpha blending
+    textTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
+    SDL_SetTextureBlendMode(textTexture, SDL_BLENDMODE_BLEND);
+
+
+    SDL_Rect textRect;
+    textRect.w = windowx/2;
+    textRect.h = windowy*0.05;
+    textRect.y = windowy - windowy*0.05;
+    if (buttonType == RESIGN) {
+        textRect.x = windowx/2;
+        textRectResign = textRect;
+    } else if (buttonType == ONLINE) {
+        textRect.x = 0;
+        textRectOnline = textRect;
+    }
+    // dst
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+    SDL_RenderCopy(renderer, textTexture, NULL, &textRect);
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+    return 0;
+}
+
+bool RenderWindow::checkIfButtonClicked(std::uint8_t buttonType, glm::vec2 mousepos) {
+    //if (mousepos.x >= textRectOnline.x && mousepos.x <= textRectOnline.x + textRectOnline.w && mousepos.y >= textRectOnline.y && mousepos.y <= textRectOnline.y + textRectOnline.h) {
+                //   // Set the flag to true and exit the loop
+    return true;
+}
+
 void RenderWindow::renderbg(std::vector<glm::ivec2> highlight = {{1000,1000}}, std::vector<glm::ivec2> lastMoves = {{1000, 1000}}, bool whiteDown=true) {
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     for (int i = 0; i < 8; i++) {
@@ -149,6 +198,9 @@ void RenderWindow::fullRender(std::vector<glm::ivec2> highlight, std::vector<glm
     for (int i = 0; i < (int)Pieces.size(); i++) {
         render(Pieces[i], whiteDown);
     }
+    if (createButton(RESIGN) == -1 || createButton(ONLINE) == -1) {
+        throw "Button couldn't be created";
+    }
 }
 
 
@@ -174,7 +226,7 @@ bool RenderWindow::displayWelcomeMessage(std::string text) {
 
     // Loop until the "PLAY" button is pressed
     while (!playButtonPressed) {
-        updateWindowSize();
+        updateSquareSize();
         textRect.w = windowx/1.01;
         textRect.h = windowy/5;
         textRect.x = (windowx - textRect.w) / 2;
@@ -230,7 +282,7 @@ int RenderWindow::displayPromotionOptions(glm::vec2 pos, bool white) {
 
 
 
-    SDL_SetRenderDrawColor(renderer, 166, 168, 171, 100);
+    SDL_SetRenderDrawColor(renderer, 166, 168, 171, 200);
     int calculations = (int)pos.y*squareSize - (white ? 0 : 3*squareSize);
     SDL_Rect rect = {(int)pos.x*squareSize, calculations, (squareSize ), (squareSize * 4)};
     SDL_RenderFillRect(renderer, &rect);
