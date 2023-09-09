@@ -212,7 +212,7 @@ void RenderWindow::fullRender(std::vector<glm::ivec2> highlight, std::vector<glm
         render(Pieces[i], whiteDown);
     }
     // This is actually so bad i hate myself for this shitty code
-    if (createButton(RESIGN, over) == -1 || createButton(ONLINE, !over) == -1) {
+    if (createButton(RESIGN, over) == -1 || createButton(ONLINE, false) == -1) {
         throw "Button couldn't be created";
     }
 }
