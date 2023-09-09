@@ -19,23 +19,19 @@ Bishop::Bishop(glm::vec2 p_pos, bool white)
 void Bishop::findMovesWithoutCheck(std::vector<std::shared_ptr<Piece>>& Pieces){
         legalMoves.clear();
         for (int8_t i = pos.x+1; i<8; i++) {
-            if (!findIndMoves(Pieces, i, pos.y+(i-pos.x))) {
+            if (!findIndMoves(Pieces, i, pos.y+(i-pos.x)))
                 break;
-            }
         }
         for (int8_t i = pos.x-1; i>=0; i--) {
-            if (!findIndMoves(Pieces, i, pos.y-(i-pos.x))) {
+            if (!findIndMoves(Pieces, i, pos.y-(i-pos.x)))
                 break;
-            }
         }
         for (int8_t i = pos.x+1; i<8; i++) {
-            if (!findIndMoves(Pieces, i, pos.y-(i-pos.x))) {
+            if (!findIndMoves(Pieces, i, pos.y-(i-pos.x))) 
                 break;
-            }
         }
         for (int8_t i = pos.x-1; i>=0; i--) {
-            if (!findIndMoves(Pieces, i, pos.y+(i-pos.x))) {
+            if (!findIndMoves(Pieces, i, pos.y+(i-pos.x))) 
                 break;
-            }
         }
 }

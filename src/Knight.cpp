@@ -26,5 +26,3 @@ void Knight::findMovesWithoutCheck(std::vector<std::shared_ptr<Piece>>& Pieces) 
         findIndMoves(Pieces, pos[0] - 1, pos[1] + 2);
         findIndMoves(Pieces, pos[0] - 1, pos[1] - 2);
 }
-
-
