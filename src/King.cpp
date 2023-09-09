@@ -17,8 +17,7 @@ King::King(glm::vec2 p_pos, bool white)
     currentFrame.h = 128;
 }
 
-void King::findMovesWithoutCheck(std::vector<std::shared_ptr<Piece>> &Pieces)
-{
+void King::findMovesWithoutCheck(std::vector<std::shared_ptr<Piece>> &Pieces) {
     // FIXME add special Rules rochade
     legalMoves.clear();
     findIndMoves(Pieces, pos[0] + 1, pos[1] + 1);
@@ -27,59 +26,54 @@ void King::findMovesWithoutCheck(std::vector<std::shared_ptr<Piece>> &Pieces)
     findIndMoves(Pieces, pos[0] - 1, pos[1] - 1);
     findIndMoves(Pieces, pos[0], pos[1] - 1);
     findIndMoves(Pieces, pos[0], pos[1] + 1);
-    //prevent recursion??  
-       
-         //For Castling Only
-        if (findIndMoves(Pieces, pos[0] - 1, pos[1]) && !hasMoved)
-            {
-            pos.x = pos.x - 1;
+    // prevent recursion??
+
+    // For Castling Only
+    if (findIndMoves(Pieces, pos[0] - 1, pos[1]) && !hasMoved) {
+        pos.x = pos.x - 1;
+        if (!isKingInCheck(Pieces)) {
+            pos.x = pos.x - 2;
             if (!isKingInCheck(Pieces)) {
-                pos.x = pos.x -2;
-                if (!isKingInCheck(Pieces)) {
-                    pos.x = pos.x + 3;
+                pos.x = pos.x + 3;
 
-                    std::shared_ptr<Piece> piece = getMatchingPiece(glm::vec2{pos[0] - 4, pos[1]}, Pieces);
-                    std::shared_ptr<Rook> rook = std::dynamic_pointer_cast<Rook>(piece);
-                    if (rook != nullptr){
-                        if (!rook->hasMoved){
-                            rook->findMovesWithoutCheck(Pieces);                           
-                                for (auto i : rook->legalMoves)
-                                {
-                                    if (i == glm::vec2{pos[0] - 3, pos[1]})
-                                        findIndMoves(Pieces, pos[0] - 2, pos[1]); 
-                                    //????   howgetout                                
-                                }                            
+                std::shared_ptr<Piece> piece =
+                getMatchingPiece(glm::vec2{pos[0] - 4, pos[1]}, Pieces);
+                std::shared_ptr<Rook> rook = std::dynamic_pointer_cast<Rook>(piece);
+                if (rook != nullptr) {
+                    if (!rook->hasMoved) {
+                        rook->findMovesWithoutCheck(Pieces);
+                        for (auto i : rook->legalMoves) {
+                            if (i == glm::vec2{pos[0] - 3, pos[1]}) {
+                                findIndMoves(Pieces, pos[0] - 2, pos[1]);
+                            }
                         }
-                    }   
+                    }
                 }
-                else
-                    pos.x = pos[0] + 1;
+            } else {
+                pos.x = pos[0] + 3;
             }
-            else
-                pos.x = pos[0] + 1;
+        } else {
+            pos.x = pos[0] + 1;
         }
+    }
 
- if (findIndMoves(Pieces, pos[0]+1, pos[1]) && !hasMoved) 
-    {   
+    if (findIndMoves(Pieces, pos[0] + 1, pos[1]) && !hasMoved) {
         pos.x = pos[0] + 1;
         if (!isKingInCheck(Pieces)) {
-            pos.x = pos[0] - 1;   
-
-                    std::shared_ptr<Piece> piece = getMatchingPiece(glm::vec2{pos[0] + 3, pos[1]}, Pieces);
-                    std::shared_ptr<Rook> rook = std::dynamic_pointer_cast<Rook>(piece);
-                    if (rook != nullptr) {
-                        if (!rook->hasMoved) 
-                            findIndMoves(Pieces, pos[0] + 2, pos[1]);
-                                 
-                    }            
-              }
-        else
-            pos.x = pos[0] - 1;   
+            pos.x = pos[0] - 1;
+            std::shared_ptr<Piece> piece =
+            getMatchingPiece(glm::vec2{pos[0] + 3, pos[1]}, Pieces);
+            std::shared_ptr<Rook> rook = std::dynamic_pointer_cast<Rook>(piece);
+            if (rook != nullptr) {
+                if (!rook->hasMoved) {
+                    findIndMoves(Pieces, pos[0] + 2, pos[1]);
+                }
+            }
+        }   else {
+            pos.x = pos[0] - 1;
+        }
     }
-    }
-
-
-
+}
 
 //Special move function for castling
 bool King::move(glm::vec2 newPos, glm::vec2 oldPos, std::vector<std::shared_ptr<Piece>>& Pieces, bool whiteTurn) {

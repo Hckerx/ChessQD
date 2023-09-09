@@ -2,18 +2,18 @@
 #include "piece.hpp"
 
 #include "util.hpp"
-
 #include <algorithm>
 
-#include <iostream>
 Pawn::Pawn(glm::vec2 p_pos, bool white)
 :Piece(p_pos, white){
 
         if (white) {
                 currentFrame.y = 128;
+                 step = 1;
         }
         else {
                 currentFrame.y = 0;
+                step = -1;
         }
         currentFrame.x = 0;
         currentFrame.w = 128;
@@ -22,17 +22,9 @@ Pawn::Pawn(glm::vec2 p_pos, bool white)
 }
 
 
-
 void Pawn::findMovesWithoutCheck(std::vector<std::shared_ptr<Piece>>& Pieces){
         legalMoves.clear();
-        int step;
-        if(white){
-           step = 1;      
-        }
-        else{
-            step = -1;
-        }
-
+       
         if(getMatchingPiece(glm::vec2{pos[0], pos[1]-step}, Pieces) == nullptr and !(pos[0] > 7 || pos[0] < 0 || pos[1]-step > 7|| pos[1]-step < 0)) {
                 legalMoves.push_back(glm::vec2(pos[0],pos[1] - step)); 
                 if (((pos.y == 6 && white) || (pos.y == 1 && white == false)) && getMatchingPiece(glm::vec2{pos[0],pos[1] - 2*step}, Pieces) == nullptr ){
@@ -55,17 +47,17 @@ void Pawn::findMovesWithoutCheck(std::vector<std::shared_ptr<Piece>>& Pieces){
                 }
         }
         hypoPiece = getMatchingPiece(glm::vec2{pos[0] - 1, pos[1]}, Pieces);
-        std::shared_ptr<Pawn> derivedPtr = std::dynamic_pointer_cast<Pawn>(hypoPiece); // was macht das?
-        if (derivedPtr != nullptr) {
-                if (derivedPtr->isEnPassantVulnerable) {
+        std::shared_ptr<Pawn> hypoPawn = std::dynamic_pointer_cast<Pawn>(hypoPiece); // was macht das?
+        if (hypoPawn != nullptr) {
+                if (hypoPawn->isEnPassantVulnerable) {
                         legalMoves.push_back(glm::vec2{pos[0] - 1, pos[1]-step});
                 }
         }
 
         hypoPiece = getMatchingPiece(glm::vec2{pos[0] + 1, pos[1]}, Pieces);
-        derivedPtr = std::dynamic_pointer_cast<Pawn>(hypoPiece); // was macht das?
-        if (derivedPtr != nullptr) {
-                if (derivedPtr->isEnPassantVulnerable) {
+        hypoPawn = std::dynamic_pointer_cast<Pawn>(hypoPiece); // was macht das?
+        if (hypoPawn != nullptr) {
+                if (hypoPawn->isEnPassantVulnerable) {
                         legalMoves.push_back(glm::vec2{pos[0] + 1, pos[1]-step});
                 }
         }
@@ -73,14 +65,7 @@ void Pawn::findMovesWithoutCheck(std::vector<std::shared_ptr<Piece>>& Pieces){
 
 
 bool Pawn::move(glm::vec2 newPos, glm::vec2 oldPos, std::vector<std::shared_ptr<Piece>>& Pieces, bool whiteTurn) {
-    int step;
     std::shared_ptr<Piece> hypoPiece;
-    if (white) {
-        step = 1;
-    } 
-    else {
-        step = -1;
-    }
 
     if (whiteTurn == white) {
         for (glm::vec2 i: legalMoves) {
@@ -105,20 +90,18 @@ bool Pawn::move(glm::vec2 newPos, glm::vec2 oldPos, std::vector<std::shared_ptr<
                         if (this == i.get()) {
                             continue;
                         }
-                        std::shared_ptr<Pawn> derivedPtr = std::dynamic_pointer_cast<Pawn>(i);
-                        if (derivedPtr != nullptr) {
+                        std::shared_ptr<Pawn> hypoPawn = std::dynamic_pointer_cast<Pawn>(i);
+                        if (hypoPawn != nullptr) {
                             
-                            derivedPtr->isEnPassantVulnerable = false;
+                            hypoPawn->isEnPassantVulnerable = false;
                         }
                     }
                     setPos(newPos);
                     return true;
                 }
-            }
-        
+            }  
         setPos(oldPos);
-        return false;
-        
+        return false;     
     }
     setPos(oldPos);
     return false;

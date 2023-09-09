@@ -6,6 +6,7 @@ public:
     void findMovesWithoutCheck(std::vector<std::shared_ptr<Piece>>& Pieces);
     bool move(glm::vec2 newPos, glm::vec2 oldPos, std::vector<std::shared_ptr<Piece>> &Pieces, bool whiteTurn);
     bool isEnPassantVulnerable = false;
+    int step;
 
 private:
 };

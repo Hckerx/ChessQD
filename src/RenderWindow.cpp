@@ -106,7 +106,7 @@ void RenderWindow::render(std::shared_ptr<Piece>& p_piece, bool whiteDown)
 
     SDL_RenderCopy(renderer, texture, &src, &dst);
 }
-int RenderWindow::createButton(std::uint8_t buttonType) {
+int RenderWindow::createButton(std::uint8_t buttonType, bool over) {
     std::string Text;
     if (buttonType == RESIGN) {
         Text = "Resign";
@@ -114,7 +114,12 @@ int RenderWindow::createButton(std::uint8_t buttonType) {
         Text = "online";
     }
     SDL_Texture* textTexture;
-    SDL_Color textColor = {255, 255, 255};
+    SDL_Color textColor;
+    if (!over) {
+        textColor = {255, 255, 255};
+    } else {
+        textColor = {255,255, 255};
+    }
     SDL_Surface* textSurface = TTF_RenderText_Blended(ChessQLDfont, Text.c_str(), textColor);
     if (!textSurface) {
         fprintf(stderr, "Failed to render text surface: %s\n", TTF_GetError());
@@ -144,10 +149,18 @@ int RenderWindow::createButton(std::uint8_t buttonType) {
     return 0;
 }
 
-bool RenderWindow::checkIfButtonClicked(std::uint8_t buttonType, glm::vec2 mousepos) {
-    //if (mousepos.x >= textRectOnline.x && mousepos.x <= textRectOnline.x + textRectOnline.w && mousepos.y >= textRectOnline.y && mousepos.y <= textRectOnline.y + textRectOnline.h) {
-                //   // Set the flag to true and exit the loop
-    return true;
+bool RenderWindow::checkIfButtonClicked(std::uint8_t buttonType, glm::ivec2 mousepos) {
+    SDL_Rect Rect;
+    if (buttonType == RESIGN) {
+        Rect = textRectOnline;
+    } else {
+        Rect = textRectOnline;
+    }
+    if (mousepos.x >= Rect.x && mousepos.x <= Rect.x + Rect.w && mousepos.y >= Rect.y && mousepos.y <= Rect.y + Rect.h) {
+        return true;        
+    } else {
+        return false;
+    }
 }
 
 void RenderWindow::renderbg(std::vector<glm::ivec2> highlight = {{1000,1000}}, std::vector<glm::ivec2> lastMoves = {{1000, 1000}}, bool whiteDown=true) {
@@ -191,14 +204,15 @@ void RenderWindow::display()
 }
 
 
-void RenderWindow::fullRender(std::vector<glm::ivec2> highlight, std::vector<glm::ivec2> lastMoves, std::vector<std::shared_ptr<Piece>>& Pieces, bool whiteDown) {
+void RenderWindow::fullRender(std::vector<glm::ivec2> highlight, std::vector<glm::ivec2> lastMoves, std::vector<std::shared_ptr<Piece>>& Pieces, bool whiteDown, bool over) {
     clear();
 
     renderbg(highlight, lastMoves,  whiteDown);
     for (int i = 0; i < (int)Pieces.size(); i++) {
         render(Pieces[i], whiteDown);
     }
-    if (createButton(RESIGN) == -1 || createButton(ONLINE) == -1) {
+    // This is actually so bad i hate myself for this shitty code
+    if (createButton(RESIGN, over) == -1 || createButton(ONLINE, !over) == -1) {
         throw "Button couldn't be created";
     }
 }

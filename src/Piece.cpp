@@ -1,10 +1,9 @@
+#define SDL_MAIN_HANDLED
 #include "piece.hpp"
 #include "util.hpp"
-#define SDL_MAIN_HANDLED
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <cstdlib>
-#include <glm/detail/qualifier.hpp>
 #include <iostream>
 
 #include <ctime>

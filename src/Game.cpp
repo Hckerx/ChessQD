@@ -23,6 +23,8 @@
 #include "game.hpp"
 
 
+#define RESIGN 1
+#define ONLINE 0
 // TODO: Threefold FIVEFOLD seventy move rule insufficent material?
 
 //constructor of class Game (the main class)
@@ -92,8 +94,11 @@ void Game::run() {
             }
         }
 
+        int Mouse_x, Mouse_y;
+        SDL_GetMouseState(&Mouse_x, &Mouse_y);
+        bool over = window.checkIfButtonClicked(RESIGN, {Mouse_x, Mouse_y});
 
-        window.fullRender(highlightMoves, std::vector<glm::ivec2>(lastMoves.end() - 2, lastMoves.end()), Pieces, whiteDown);
+        window.fullRender(highlightMoves, std::vector<glm::ivec2>(lastMoves.end() - 2, lastMoves.end()), Pieces, whiteDown, over);
         if (isPromoting) {
             window.displayPromotionOptions(lastMoves[lastMoves.size() - 1], whiteTurn);
         }
@@ -224,6 +229,20 @@ void Game::handleEvents()
             case SDL_MOUSEBUTTONDOWN:
                 if (event.button.button == SDL_BUTTON_LEFT)
                 {
+
+                    int Mouse_x, Mouse_y;
+                    SDL_GetMouseState(&Mouse_x, &Mouse_y);
+                    bool resignButtonClicked = window.checkIfButtonClicked(RESIGN, {Mouse_x, Mouse_y});
+                    if (resignButtonClicked) {
+                        std::cout << "We entered this" << std::endl;
+                        if (whiteTurn) {
+                            state = 0;
+                        } else {
+                            state = 1;
+                        }
+                        gameRunning = false;
+                        break;
+                    }
                     if (!isPromoting)
                             selectPiece();
 
