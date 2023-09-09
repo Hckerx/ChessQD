@@ -118,7 +118,7 @@ int RenderWindow::createButton(std::uint8_t buttonType, bool over) {
     if (!over) {
         textColor = {255, 255, 255};
     } else {
-        textColor = {255,255, 255};
+        textColor = {255,0, 0};
     }
     SDL_Surface* textSurface = TTF_RenderText_Blended(ChessQLDfont, Text.c_str(), textColor);
     if (!textSurface) {
