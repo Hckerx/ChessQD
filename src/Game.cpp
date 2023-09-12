@@ -28,7 +28,7 @@
 // TODO: Threefold FIVEFOLD seventy move rule insufficent material?
 
 //constructor of class Game (the main class)
-Game::Game(std::string fen) : window("never gonna give you up") {
+Game::Game(std::string fen) : window("ChessQLD") {
    
     //importing given FEN-notation in the pieces array
     Pieces = FenImport(fen);
@@ -96,9 +96,10 @@ void Game::run() {
 
         int Mouse_x, Mouse_y;
         SDL_GetMouseState(&Mouse_x, &Mouse_y);
-        bool over = window.checkIfButtonClicked(RESIGN, {Mouse_x, Mouse_y});
-
-        window.fullRender(highlightMoves, std::vector<glm::ivec2>(lastMoves.end() - 2, lastMoves.end()), Pieces, whiteDown, over);
+        bool resignHover = window.checkIfButtonClicked(RESIGN, {Mouse_x, Mouse_y});
+        bool onlineHover = window.checkIfButtonClicked(ONLINE, {Mouse_x, Mouse_y});
+        bool buttons[] = {resignHover, onlineHover};
+        window.fullRender(highlightMoves, std::vector<glm::ivec2>(lastMoves.end() - 2, lastMoves.end()), Pieces, whiteDown, buttons);
         if (isPromoting) {
             window.displayPromotionOptions(lastMoves[lastMoves.size() - 1], whiteTurn);
         }

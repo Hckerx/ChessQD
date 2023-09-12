@@ -1,5 +1,7 @@
 #include <SDL2/SDL_rect.h>
 #include <SDL2/SDL_video.h>
+#include <string>
+#include <vector>
 #define SDL_MAIN_HANDLED
 #include <SDL2/SDL_blendmode.h>
 
@@ -31,7 +33,7 @@ RenderWindow::RenderWindow(const char* p_title)
         std::cout << "TTF_init has failed. Error: " << SDL_GetError() << std::endl;
     SDL_DisplayMode DM;
     SDL_GetCurrentDisplayMode(0, &DM);
-    int height = DM.h < DM.w ? DM.h*0.95 : DM.w * 0.95;
+    int height = DM.h < DM.w ? DM.h*0.90 : DM.w * 0.90;
     
     squareSize = (float)height/8*0.95;
     window = SDL_CreateWindow(p_title, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, squareSize * 8, height, SDL_WINDOW_RESIZABLE| SDL_WINDOW_SHOWN); //| SDL_WINDOW_RESIZABLE
@@ -106,13 +108,8 @@ void RenderWindow::render(std::shared_ptr<Piece>& p_piece, bool whiteDown)
 
     SDL_RenderCopy(renderer, texture, &src, &dst);
 }
-int RenderWindow::createButton(std::uint8_t buttonType, bool over) {
-    std::string Text;
-    if (buttonType == RESIGN) {
-        Text = "Resign";
-    } else if (buttonType == ONLINE) {
-        Text = "online";
-    }
+int RenderWindow::createButton(std::string buttons[3], bool over) {
+    for (const std::string &i : buttons)
     SDL_Texture* textTexture;
     SDL_Color textColor;
     if (!over) {
@@ -132,14 +129,14 @@ int RenderWindow::createButton(std::uint8_t buttonType, bool over) {
 
 
     SDL_Rect textRect;
-    textRect.w = windowx/2;
-    textRect.h = windowy*0.05;
-    textRect.y = windowy - windowy*0.05;
+    textRect.w = windowx/4;
+    textRect.h = (windowy*0.1)/2;
+    textRect.y = windowy - (windowy*0.1) + 0.5*(windowy*0.1);
     if (buttonType == RESIGN) {
-        textRect.x = windowx/2;
+        textRect.x = windowx/2 + (windowx * 1/4)*0.5;
         textRectResign = textRect;
     } else if (buttonType == ONLINE) {
-        textRect.x = 0;
+        textRect.x = (windowx * 1/4)*0.5;
         textRectOnline = textRect;
     }
     // dst
@@ -152,7 +149,7 @@ int RenderWindow::createButton(std::uint8_t buttonType, bool over) {
 bool RenderWindow::checkIfButtonClicked(std::uint8_t buttonType, glm::ivec2 mousepos) {
     SDL_Rect Rect;
     if (buttonType == RESIGN) {
-        Rect = textRectOnline;
+        Rect = textRectResign;
     } else {
         Rect = textRectOnline;
     }
@@ -204,7 +201,7 @@ void RenderWindow::display()
 }
 
 
-void RenderWindow::fullRender(std::vector<glm::ivec2> highlight, std::vector<glm::ivec2> lastMoves, std::vector<std::shared_ptr<Piece>>& Pieces, bool whiteDown, bool over) {
+void RenderWindow::fullRender(std::vector<glm::ivec2> highlight, std::vector<glm::ivec2> lastMoves, std::vector<std::shared_ptr<Piece>>& Pieces, bool whiteDown, bool over[2]) {
     clear();
 
     renderbg(highlight, lastMoves,  whiteDown);
@@ -212,7 +209,7 @@ void RenderWindow::fullRender(std::vector<glm::ivec2> highlight, std::vector<glm
         render(Pieces[i], whiteDown);
     }
     // This is actually so bad i hate myself for this shitty code
-    if (createButton(RESIGN, over) == -1 || createButton(ONLINE, false) == -1) {
+    if (createButton(RESIGN, over[0]) == -1 || createButton(ONLINE, over[1]) == -1) {
         throw "Button couldn't be created";
     }
 }

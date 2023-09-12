@@ -12,7 +12,7 @@ public:
 	RenderWindow(const char* p_title);
 	bool displayWelcomeMessage(std::string text);
 	void cleanUp();
-	void fullRender(std::vector<glm::ivec2> highlight, std::vector<glm::ivec2> lastMoves, std::vector<std::shared_ptr<Piece>>& Pieces, bool whiteDown, bool over);
+	void fullRender(std::vector<glm::ivec2> highlight, std::vector<glm::ivec2> lastMoves, std::vector<std::shared_ptr<Piece>>& Pieces, bool whiteDown, bool over[2]);
     int displayPromotionOptions(glm::vec2 pos, bool white);
     int squareSize;
 	void updateSquareSize() {
@@ -23,7 +23,7 @@ public:
 	bool checkIfButtonClicked(std::uint8_t buttonType, glm::ivec2 mousepos);
 
 private:
-	int createButton(std::uint8_t buttonType, bool over);
+	int createButton(std::string buttons[3], bool over);
 
     SDL_Rect textRectResign;
     SDL_Rect textRectOnline;
