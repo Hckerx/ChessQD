@@ -1,7 +1,10 @@
 #include <SDL2/SDL_rect.h>
 #include <SDL2/SDL_video.h>
+#include <cstdint>
+#include <glm/fwd.hpp>
 #include <string>
 #include <vector>
+#include <array>
 #define SDL_MAIN_HANDLED
 #include <SDL2/SDL_blendmode.h>
 
@@ -108,53 +111,58 @@ void RenderWindow::render(std::shared_ptr<Piece>& p_piece, bool whiteDown)
 
     SDL_RenderCopy(renderer, texture, &src, &dst);
 }
-int RenderWindow::createButton(std::string buttons[3], bool over) {
-    for (const std::string &i : buttons)
-    SDL_Texture* textTexture;
-    SDL_Color textColor;
-    if (!over) {
-        textColor = {255, 255, 255};
-    } else {
-        textColor = {255,0, 0};
-    }
-    SDL_Surface* textSurface = TTF_RenderText_Blended(ChessQLDfont, Text.c_str(), textColor);
-    if (!textSurface) {
-        fprintf(stderr, "Failed to render text surface: %s\n", TTF_GetError());
-        return -1;
+int RenderWindow::createButton(std::array<std::string, 3> buttonsArray, glm::ivec2 mousepos) {
+
+    for (uint8_t i = 0; i<buttonsArray.size(); i++) {
+        SDL_Rect textRect;
+        textRect.w = windowx/(2*buttonsArray.size());
+        textRect.h = (windowy*0.1)/2;
+        textRect.y = windowy - (windowy*0.1) + 0.5*(windowy*0.1);
+        textRect.x = i*windowx/buttonsArray.size() + (windowx * 1/(buttonsArray.size()*2));
+        Rects[i] = textRect;
+        bool hoveredButton = checkIfButtonClicked(mousepos, i);
+        SDL_Texture* textTexture;
+        SDL_Color textColor;
+        if (!hoveredButton) {
+            textColor = {255, 255, 255};
+        } else {
+            textColor = {255,0, 0};
+        }
+        SDL_Surface* textSurface = TTF_RenderText_Blended(ChessQLDfont, buttonsArray[i].c_str(), textColor);
+        if (!textSurface) {
+            fprintf(stderr, "Failed to render text surface: %s\n", TTF_GetError());
+            return -1;
+        }
+        // Create a texture from the rendered text surface and set its blend mode to alpha blending
+        textTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
+        SDL_SetTextureBlendMode(textTexture, SDL_BLENDMODE_BLEND);
+
+
+        // dst
+        SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+        SDL_RenderCopy(renderer, textTexture, NULL, &textRect);
+        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     }
 
-    // Create a texture from the rendered text surface and set its blend mode to alpha blending
-    textTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
-    SDL_SetTextureBlendMode(textTexture, SDL_BLENDMODE_BLEND);
-
-
-    SDL_Rect textRect;
-    textRect.w = windowx/4;
-    textRect.h = (windowy*0.1)/2;
-    textRect.y = windowy - (windowy*0.1) + 0.5*(windowy*0.1);
-    if (buttonType == RESIGN) {
-        textRect.x = windowx/2 + (windowx * 1/4)*0.5;
-        textRectResign = textRect;
-    } else if (buttonType == ONLINE) {
-        textRect.x = (windowx * 1/4)*0.5;
-        textRectOnline = textRect;
-    }
-    // dst
-    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-    SDL_RenderCopy(renderer, textTexture, NULL, &textRect);
-    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     return 0;
 }
 
-bool RenderWindow::checkIfButtonClicked(std::uint8_t buttonType, glm::ivec2 mousepos) {
-    SDL_Rect Rect;
-    if (buttonType == RESIGN) {
-        Rect = textRectResign;
-    } else {
-        Rect = textRectOnline;
+std::array<bool, 3> RenderWindow::checkIfButtonClicked(glm::ivec2 mousepos) {
+    std::array<bool, 3> clickedButtons;
+    for (uint8_t i = 0; i<Rects.size(); i++) {
+        if (mousepos.x >= Rects[i].x && mousepos.x <= Rects[i].x + Rects[i].w && mousepos.y >= Rects[i].y && mousepos.y <= Rects[i].y + Rects[i].h) {
+            clickedButtons[i] = true;
+        } else {
+            clickedButtons[i] = false;
+        }
     }
-    if (mousepos.x >= Rect.x && mousepos.x <= Rect.x + Rect.w && mousepos.y >= Rect.y && mousepos.y <= Rect.y + Rect.h) {
-        return true;        
+    return clickedButtons;
+}
+
+
+bool RenderWindow::checkIfButtonClicked(glm::ivec2 mousepos, uint8_t i) {
+    if (mousepos.x >= Rects[i].x && mousepos.x <= Rects[i].x + Rects[i].w && mousepos.y >= Rects[i].y && mousepos.y <= Rects[i].y + Rects[i].h) {
+        return true;
     } else {
         return false;
     }
@@ -201,17 +209,15 @@ void RenderWindow::display()
 }
 
 
-void RenderWindow::fullRender(std::vector<glm::ivec2> highlight, std::vector<glm::ivec2> lastMoves, std::vector<std::shared_ptr<Piece>>& Pieces, bool whiteDown, bool over[2]) {
+void RenderWindow::fullRender(std::vector<glm::ivec2> highlight, std::vector<glm::ivec2> lastMoves, std::vector<std::shared_ptr<Piece>>& Pieces, bool whiteDown, glm::ivec2 mousepos) {
     clear();
 
     renderbg(highlight, lastMoves,  whiteDown);
     for (int i = 0; i < (int)Pieces.size(); i++) {
         render(Pieces[i], whiteDown);
     }
-    // This is actually so bad i hate myself for this shitty code
-    if (createButton(RESIGN, over[0]) == -1 || createButton(ONLINE, over[1]) == -1) {
-        throw "Button couldn't be created";
-    }
+    createButton({"online", "resign", "turn"}, mousepos) ;
+    
 }
 
 

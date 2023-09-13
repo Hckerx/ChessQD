@@ -1,4 +1,5 @@
 //necessary for windows
+#include <array>
 #define SDL_MAIN_HANDLED
 
 //includes
@@ -70,6 +71,9 @@ Game::~Game() {
 
 
 void Game::run() {
+    int Mouse_x, Mouse_y;
+    SDL_GetMouseState(&Mouse_x, &Mouse_y);
+    window.fullRender(highlightMoves, lastMoves, Pieces, whiteDown, {Mouse_x, Mouse_y});
     while (gameRunning)
     {
         window.updateSquareSize();
@@ -96,10 +100,7 @@ void Game::run() {
 
         int Mouse_x, Mouse_y;
         SDL_GetMouseState(&Mouse_x, &Mouse_y);
-        bool resignHover = window.checkIfButtonClicked(RESIGN, {Mouse_x, Mouse_y});
-        bool onlineHover = window.checkIfButtonClicked(ONLINE, {Mouse_x, Mouse_y});
-        bool buttons[] = {resignHover, onlineHover};
-        window.fullRender(highlightMoves, std::vector<glm::ivec2>(lastMoves.end() - 2, lastMoves.end()), Pieces, whiteDown, buttons);
+        window.fullRender(highlightMoves, std::vector<glm::ivec2>(lastMoves.end() - 2, lastMoves.end()), Pieces, whiteDown, {Mouse_x, Mouse_y});
         if (isPromoting) {
             window.displayPromotionOptions(lastMoves[lastMoves.size() - 1], whiteTurn);
         }
@@ -233,9 +234,14 @@ void Game::handleEvents()
 
                     int Mouse_x, Mouse_y;
                     SDL_GetMouseState(&Mouse_x, &Mouse_y);
-                    bool resignButtonClicked = window.checkIfButtonClicked(RESIGN, {Mouse_x, Mouse_y});
-                    if (resignButtonClicked) {
-                        std::cout << "We entered this" << std::endl;
+                    std::array<bool, 3> buttonsClicked = window.checkIfButtonClicked({Mouse_x, Mouse_y});
+                    for (bool i : buttonsClicked) {
+                        std::cout << "a" << i << std::endl;                        
+                    }
+                    if (buttonsClicked[2]) {
+                        rotate_board = true;
+                    }
+                    if (buttonsClicked[1]) {
                         if (whiteTurn) {
                             state = 0;
                         } else {
@@ -244,6 +250,7 @@ void Game::handleEvents()
                         gameRunning = false;
                         break;
                     }
+
                     if (!isPromoting)
                             selectPiece();
 

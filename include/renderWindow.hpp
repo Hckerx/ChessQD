@@ -1,4 +1,7 @@
 #pragma once
+#include <SDL2/SDL_rect.h>
+#include <array>
+#include <glm/fwd.hpp>
 #define SDL_MAIN_HANDLED
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>
@@ -12,7 +15,7 @@ public:
 	RenderWindow(const char* p_title);
 	bool displayWelcomeMessage(std::string text);
 	void cleanUp();
-	void fullRender(std::vector<glm::ivec2> highlight, std::vector<glm::ivec2> lastMoves, std::vector<std::shared_ptr<Piece>>& Pieces, bool whiteDown, bool over[2]);
+	void fullRender(std::vector<glm::ivec2> highlight, std::vector<glm::ivec2> lastMoves, std::vector<std::shared_ptr<Piece>>& Pieces, bool whiteDown, glm::ivec2 mousepos);
     int displayPromotionOptions(glm::vec2 pos, bool white);
     int squareSize;
 	void updateSquareSize() {
@@ -20,13 +23,13 @@ public:
         squareSize = std::min(windowx, windowy)/8;
 	}
 	void display();
-	bool checkIfButtonClicked(std::uint8_t buttonType, glm::ivec2 mousepos);
 
+    std::array<bool, 3> checkIfButtonClicked(glm::ivec2 mousepos);
+    bool checkIfButtonClicked(glm::ivec2 mousepos, uint8_t i);
 private:
-	int createButton(std::string buttons[3], bool over);
-
-    SDL_Rect textRectResign;
-    SDL_Rect textRectOnline;
+	int createButton(std::array<std::string, 3> buttonsArray, glm::ivec2 mousepos);
+    
+    std::array<SDL_Rect, 3> Rects;
 	SDL_Texture* texture;
 	SDL_Window* window;
 	SDL_Renderer* renderer;
