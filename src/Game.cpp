@@ -239,7 +239,7 @@ void Game::handleEvents()
                         std::cout << "a" << i << std::endl;                        
                     }
                     if (buttonsClicked[2]) {
-                        rotate_board = true;
+                            rotate_board = !rotate_board;
                     }
                     if (buttonsClicked[1]) {
                         if (whiteTurn) {
