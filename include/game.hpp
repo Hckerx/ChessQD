@@ -14,7 +14,10 @@ private:
     // Communication
     std::unique_ptr<Communication> communication = nullptr;
 
+    // threading
+    std::future<std::string> futurerecv;
     //Game Logic
+
     bool gameRunning = true;
     bool PieceSelected = false; //Does user hold leftclick on piece
     bool whiteTurn = true;

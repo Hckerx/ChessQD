@@ -1,4 +1,8 @@
 //necessary for windows
+#include <functional>
+#include <future>
+#include <thread>
+#include <chrono>
 #include <array>
 #define SDL_MAIN_HANDLED
 
@@ -38,9 +42,10 @@ Game::Game(std::string fen) : window("ChessQLD") {
     std::cout << "online?[y/n]" << std::endl;
     std::string input;
     //std::getline(std::cin,input);
-    input = "n";
+    input = "y";
     isPlayingOnline = input == "y" ? true : false;
     if (isPlayingOnline) {
+                
         std::cout << "host or join?" << std::endl;
         std::getline(std::cin,input);
         isServer = input == "host" ? true : false;
@@ -59,6 +64,9 @@ Game::Game(std::string fen) : window("ChessQLD") {
                 isWhite = true;
                 whiteDown = true;
             }
+        }
+        if (isWhite != whiteTurn) {
+            futurerecv = std::async(std::launch::async, std::bind(&Communication::receive, &(*communication)));
         }
     }
 
@@ -147,7 +155,7 @@ void Game::placePiece() {
     glm::vec2 oldPos = highlightMoves[0];
     int sizeOfPieces = Pieces.size();
     if (counter == 0) {
-        if ((isPlayingOnline && isWhite) || !isPlayingOnline) {
+        if ((isPlayingOnline && isWhite == whiteTurn) || !isPlayingOnline) {
             if (selectedPiece->move(MousePosition, highlightMoves[0], Pieces, whiteTurn)) {
                 if (rotate_board) {
                     whiteDown=!whiteDown;
@@ -164,6 +172,7 @@ void Game::placePiece() {
                 highlightMoves = {{1000,1000}};
                 if (isPlayingOnline) {
                     communication->send(FenExport(Pieces));
+                    futurerecv = std::async(std::launch::async, std::bind(&Communication::receive, &(*communication)));
                 }
             } 
         }
@@ -223,7 +232,14 @@ void Game::handleCheckmate() {
 //prolly hashmaps of all pieces' moves im too stupid for this
 void Game::handleEvents()
 {
-    
+    if (isPlayingOnline && whiteTurn != isWhite) {
+        std::chrono::milliseconds span (0);
+        auto status = futurerecv.wait_for(span); 
+        if (status == std::future_status::ready) {
+            FenImport(futurerecv.get());
+        }
+    } 
+
     while (SDL_PollEvent(&event))
     {
         switch (event.type)
@@ -235,9 +251,6 @@ void Game::handleEvents()
                     int Mouse_x, Mouse_y;
                     SDL_GetMouseState(&Mouse_x, &Mouse_y);
                     std::array<bool, 3> buttonsClicked = window.checkIfButtonClicked({Mouse_x, Mouse_y});
-                    for (bool i : buttonsClicked) {
-                        std::cout << "a" << i << std::endl;                        
-                    }
                     if (buttonsClicked[2]) {
                             rotate_board = !rotate_board;
                     }
@@ -408,12 +421,12 @@ std::vector<std::shared_ptr<Piece>> Game::FenImport(std::string FenString) {
     // Process the captured metadata if needed
     int count = 0;
 
+    std::cout << FenString << std::endl;
     if (metadataFen[count] == 'w') {
         whiteTurn = true;
     } else if (metadataFen[count] == 'b') {
         whiteTurn = false;
     } else {
-
         throw std::invalid_argument( "white or black erro" );
     }
     count++;
@@ -545,7 +558,6 @@ std::string Game::FenExport(std::vector<std::shared_ptr<Piece>> piecesVector) {
                 if (pawnPointerDerived->isEnPassantVulnerable) {
                     enPassantSquare = abc[x];
                     enPassantSquare += i->second->white ? std::to_string(8-(y+1)) : std::to_string(8-(y-1));
-                    std::cout << enPassantSquare << std::endl;
                 }
             }
             else if (std::shared_ptr<Rook> rookPointerDerived = std::dynamic_pointer_cast<Rook>(i->second)) {

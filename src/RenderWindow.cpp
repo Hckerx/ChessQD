@@ -118,7 +118,6 @@ int RenderWindow::createButton(std::array<std::string, 3> buttonsArray, glm::ive
         textRect.w = windowx/(2*buttonsArray.size());
         textRect.h = (windowy*0.1)/2;
         textRect.y = windowy - (windowy*0.1) + 0.5*(windowy*0.1);
-        std::cout << (i*(windowx/buttonsArray.size())) << std::endl;
         textRect.x = i*(windowx/buttonsArray.size()) + (windowx/(2*buttonsArray.size()))/2;
         Rects[i] = textRect;
         bool hoveredButton = checkIfButtonClicked(mousepos, i);
