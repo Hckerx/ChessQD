@@ -5,6 +5,8 @@ using boost::asio::ip::tcp;
 class Communication
 {
 public:
+    bool received;
+    std::string receivedString;
     Communication(bool Server);
     ~Communication() {
         socket.close();

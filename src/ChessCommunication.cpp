@@ -1,3 +1,4 @@
+#include <boost/asio/buffer.hpp>
 #include <iostream>
 #include <boost/asio.hpp>
 #include "chessCommunication.hpp"
@@ -12,9 +13,11 @@ try : socket(io_context), isServer(Server) {
         std::cout << "Waiting for client..." << std::endl;
         tcp::acceptor acceptor(io_context, tcp::endpoint(tcp::v4(), 12345));
         acceptor.accept(socket);
+        std::cout << "connected to client" << std::endl;
     } else {
         std::cout << "Connecting to server..." << std::endl;
         socket.connect(tcp::endpoint(boost::asio::ip::address::from_string("127.0.0.1"), 12345));
+        std::cout << "connected to server" << std::endl;
     }
 }
 catch (std::exception& e)
@@ -39,8 +42,11 @@ void Communication::send(std::string message) {
 //
 
 std::string Communication::receive() {
+    std::cout << "is receiving" << std::endl;
     boost::asio::async_read_until(socket, receiveBuffer, '\n', boost::bind(&Communication::handle_read, this, boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
-    return "";
+    boost::asio::read_until(socket, receiveBuffer, '\n');
+    std::string str = boost::asio::buffer_cast<const char*>(receiveBuffer.data());
+    return str;
 }
 // We need to implement the handle_read function, which is called when the asynchronous read operation initiated by async_read_until has finished.
 void Communication::handle_read(const boost::system::error_code& error, size_t bytes_transferred) {
@@ -50,6 +56,8 @@ void Communication::handle_read(const boost::system::error_code& error, size_t b
         if (!data.empty() && data.back() == '\n') {
             data.pop_back();
         }
+        received = true;
+        receivedString = data;
         std::cout << "Received: " << data << std::endl;
     } else {
         std::cout << "Error: " << error.message() << std::endl;

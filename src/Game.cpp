@@ -52,20 +52,24 @@ Game::Game(std::string fen) : window("ChessQLD") {
         if (isServer) {
             isWhite = std::rand() % 2 == 0;
             communication = std::make_unique<Communication>(isServer);
+            whiteDown = isWhite;
             communication->send(isWhite ? "black" : "white");
             // isServer is kind of unnecessary but I'm leaving it here
         } else {
-
             communication = std::make_unique<Communication>(isServer);
-            if (communication->receive() == "black") {
+            std::string color = communication->receive();
+            if (color == "black") {
+                std::cout << "is black" << std::endl;
                 isWhite = false;
                 whiteDown = false;
             } else {
+                std::cout << "is white" << std::endl;
                 isWhite = true;
                 whiteDown = true;
             }
         }
         if (isWhite != whiteTurn) {
+            // This is some weird ass code (it's basically shit)
             futurerecv = std::async(std::launch::async, std::bind(&Communication::receive, &(*communication)));
         }
     }
@@ -98,13 +102,6 @@ void Game::run() {
         handleEvents();
     
     // TODO: add a way to continue running code while waiting for response
-        if (whiteTurn != isWhite && isPlayingOnline) {
-            std::string temp = communication->receive(); 
-        if (temp != FenExport(Pieces)) {
-            Pieces = FenImport(temp);
-            moveHistory.push_back(FenExport(Pieces));
-            }
-        }
 
         int Mouse_x, Mouse_y;
         SDL_GetMouseState(&Mouse_x, &Mouse_y);
@@ -236,9 +233,13 @@ void Game::handleEvents()
         std::chrono::milliseconds span (0);
         auto status = futurerecv.wait_for(span); 
         if (status == std::future_status::ready) {
-            FenImport(futurerecv.get());
+            std::string temp = futurerecv.get();
+            if (temp != FenExport(Pieces)) {
+                Pieces = FenImport(temp);
+                moveHistory.push_back(FenExport(Pieces));
+                }
+            }
         }
-    } 
 
     while (SDL_PollEvent(&event))
     {
@@ -421,7 +422,6 @@ std::vector<std::shared_ptr<Piece>> Game::FenImport(std::string FenString) {
     // Process the captured metadata if needed
     int count = 0;
 
-    std::cout << FenString << std::endl;
     if (metadataFen[count] == 'w') {
         whiteTurn = true;
     } else if (metadataFen[count] == 'b') {
