@@ -3,6 +3,7 @@
 #include <boost/asio.hpp>
 #include "chessCommunication.hpp"
 
+
 using boost::asio::ip::tcp;
 
 
@@ -27,7 +28,9 @@ catch (std::exception& e)
 
 void Communication::send(std::string message) {
     message += '\n';
-    boost::asio::write(socket, boost::asio::buffer(message));
+    std::cout << "Sending: " << message << std::endl;
+    int bytes = boost::asio::write(socket, boost::asio::buffer(message));
+    std::cout << "bytes_transferred:" << bytes << std::endl;
 }
 
 // std::string Communication::receive() {
@@ -41,24 +44,37 @@ void Communication::send(std::string message) {
 // }
 //
 
-std::string Communication::receive() {
-    std::cout << "is receiving" << std::endl;
-    boost::asio::async_read_until(socket, receiveBuffer, '\n', boost::bind(&Communication::handle_read, this, boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
+void Communication::receive() {
     boost::asio::read_until(socket, receiveBuffer, '\n');
-    std::string str = boost::asio::buffer_cast<const char*>(receiveBuffer.data());
-    return str;
+    std::string data = boost::asio::buffer_cast<const char*>(receiveBuffer.data());
+    if (!data.empty() && data.back() == '\n') {
+        data.pop_back();
+    }
+    receivedString = data;
+    received = true;
 }
+
+//void Communication::receive() {
+//    received = false;
+//    std::cout << "is receiving in async" << std::endl;
+//    boost::asio::async_read_until(socket, receiveBuffer, '\n', boost::bind(&Communication::handle_read, this, boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
+//}
 // We need to implement the handle_read function, which is called when the asynchronous read operation initiated by async_read_until has finished.
 void Communication::handle_read(const boost::system::error_code& error, size_t bytes_transferred) {
+    std::cout << "is handling" << std::endl;
     if (!error) {
 
-        std::string data = boost::asio::buffer_cast<const char*>(receiveBuffer.data());
-        if (!data.empty() && data.back() == '\n') {
-            data.pop_back();
+        //std::string data = boost::asio::buffer_cast<const char*>(receiveBuffer.data());
+        std::istream is(&receiveBuffer);
+        std::string line;
+        std::getline(is, line);
+        
+        if (!line.empty() && line.back() == '\n') {
+            line.pop_back();
         }
         received = true;
-        receivedString = data;
-        std::cout << "Received: " << data << std::endl;
+        receivedString = line;
+        std::cout << "Received: Async" << line << std::endl;
     } else {
         std::cout << "Error: " << error.message() << std::endl;
     }

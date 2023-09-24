@@ -6,7 +6,6 @@
 #include <array>
 #define SDL_MAIN_HANDLED
 
-//includes
 
 #include <glm/gtx/string_cast.hpp>
 #include <memory>
@@ -52,12 +51,15 @@ Game::Game(std::string fen) : window("ChessQLD") {
         if (isServer) {
             isWhite = std::rand() % 2 == 0;
             communication = std::make_unique<Communication>(isServer);
+            //communication->io_context.run();
             whiteDown = isWhite;
             communication->send(isWhite ? "black" : "white");
             // isServer is kind of unnecessary but I'm leaving it here
         } else {
             communication = std::make_unique<Communication>(isServer);
-            std::string color = communication->receive();
+            communication->receive();
+            std::string color = communication->receivedString;
+            // std::string color = communication->noAsyncReceive();
             if (color == "black") {
                 std::cout << "is black" << std::endl;
                 isWhite = false;
@@ -68,9 +70,12 @@ Game::Game(std::string fen) : window("ChessQLD") {
                 whiteDown = true;
             }
         }
-        if (isWhite != whiteTurn) {
+        if (!isWhite) {
             // This is some weird ass code (it's basically shit)
-            futurerecv = std::async(std::launch::async, std::bind(&Communication::receive, &(*communication)));
+            //futurerecv = std::async(std::launch::async, std::bind(&Communication::receive, &(*communication)));
+            // communication->receive(); when it was async 
+            std::thread t2 (&Communication::receive, &(*communication));
+            t2.detach();
         }
     }
 
@@ -152,7 +157,7 @@ void Game::placePiece() {
     glm::vec2 oldPos = highlightMoves[0];
     int sizeOfPieces = Pieces.size();
     if (counter == 0) {
-        if ((isPlayingOnline && isWhite == whiteTurn) || !isPlayingOnline) {
+        if ((isPlayingOnline && (isWhite == whiteTurn)) || !isPlayingOnline) {
             if (selectedPiece->move(MousePosition, highlightMoves[0], Pieces, whiteTurn)) {
                 if (rotate_board) {
                     whiteDown=!whiteDown;
@@ -168,8 +173,11 @@ void Game::placePiece() {
                 lastMoves.push_back(selectedPiece->getPos());
                 highlightMoves = {{1000,1000}};
                 if (isPlayingOnline) {
-                    communication->send(FenExport(Pieces));
-                    futurerecv = std::async(std::launch::async, std::bind(&Communication::receive, &(*communication)));
+                    std::string temp = FenExport(Pieces);
+                    communication->send(temp);
+                    std::thread recvThread (&Communication::receive, &(*communication));
+                    recvThread.detach();
+                    //futurerecv = std::async(std::launch::async, std::bind(&Communication::receive, &(*communication)));
                 }
             } 
         }
@@ -227,19 +235,26 @@ void Game::handleCheckmate() {
 }
 
 //prolly hashmaps of all pieces' moves im too stupid for this
-void Game::handleEvents()
-{
-    if (isPlayingOnline && whiteTurn != isWhite) {
-        std::chrono::milliseconds span (0);
-        auto status = futurerecv.wait_for(span); 
-        if (status == std::future_status::ready) {
-            std::string temp = futurerecv.get();
+void Game::handleEvents() {
+    // io_context.poll();
+    // io_context.reset();
+    // io_context.run();
+    if (isPlayingOnline && (whiteTurn != isWhite)) {
+
+        // std::chrono::milliseconds span (0);
+        // auto status = futurerecv.wait_for(span); 
+        // if (status == std::future_status::ready)
+        //
+        // std::string temp = futurerecv.get();
+        if (communication->received) {
+            std::string temp = communication->receivedString;
             if (temp != FenExport(Pieces)) {
                 Pieces = FenImport(temp);
                 moveHistory.push_back(FenExport(Pieces));
-                }
             }
+            communication->received = false;
         }
+    }
 
     while (SDL_PollEvent(&event))
     {
@@ -373,6 +388,7 @@ void Game::handlePromotionPieceSelection(glm::vec2 selection){
 
 
 std::vector<std::shared_ptr<Piece>> Game::FenImport(std::string FenString) {
+    std::cout << FenString << std::endl;
     std::vector<std::shared_ptr<Piece>> piecesVector;
     int countx = 0;
     int county = 0;

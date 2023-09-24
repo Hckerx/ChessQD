@@ -5,19 +5,19 @@ using boost::asio::ip::tcp;
 class Communication
 {
 public:
-    bool received;
+    bool received = false;
     std::string receivedString;
     Communication(bool Server);
     ~Communication() {
         socket.close();
     }
     void send(std::string message);
-    std::string receive();
-
+    void receive();
+    std::string noAsyncReceive();
+    boost::asio::io_context io_context;
 private:
     void handle_read(const boost::system::error_code& error, size_t bytes_transferred);
     boost::asio::streambuf receiveBuffer;  
-    boost::asio::io_context io_context;
     tcp::socket socket;
     bool isServer;
 };
