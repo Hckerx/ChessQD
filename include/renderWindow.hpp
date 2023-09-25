@@ -15,19 +15,17 @@ public:
 	RenderWindow(const char* p_title);
 	bool displayWelcomeMessage(std::string text);
 	void cleanUp();
-	void fullRender(std::vector<glm::ivec2> highlight, std::vector<glm::ivec2> lastMoves, std::vector<std::shared_ptr<Piece>>& Pieces, bool whiteDown, glm::ivec2 mousepos);
+	void fullRender(std::vector<glm::ivec2> highlight, std::vector<glm::ivec2> lastMoves, std::vector<std::shared_ptr<Piece>>& Pieces, bool whiteDown);
     int displayPromotionOptions(glm::vec2 pos, bool white);
     int squareSize;
 	void updateSquareSize() {
 		SDL_GetWindowSize(window, &windowx, &windowy);
-        squareSize = std::min(windowx, windowy)/8;
+        squareSize = std::min(windowx, (int)(windowy*0.95))/8;
 	}
 	void display();
 
-    std::array<bool, 3> checkIfButtonClicked(glm::ivec2 mousepos);
-    bool checkIfButtonClicked(glm::ivec2 mousepos, uint8_t i);
 private:
-	int createButton(std::array<std::string, 3> buttonsArray, glm::ivec2 mousepos);
+	int renderButton(std::array<std::string, 3> buttonsArray);
     
     std::array<SDL_Rect, 3> Rects;
 	SDL_Texture* texture;

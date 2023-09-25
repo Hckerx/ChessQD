@@ -4,7 +4,7 @@
 #include <vector>
 #include "renderWindow.hpp"
 #include "piece.hpp"
-#include "chessCommunication.hpp"
+#include "Communication.hpp"
 class Game
 {
 private:

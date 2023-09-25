@@ -38,45 +38,11 @@ Game::Game(std::string fen) : window("ChessQLD") {
     Pieces = FenImport(fen);
     moveHistory.push_back(fen);
     
-    std::cout << "online?[y/n]" << std::endl;
-    std::string input;
-    //std::getline(std::cin,input);
-    input = "y";
-    isPlayingOnline = input == "y" ? true : false;
-    if (isPlayingOnline) {
-                
-        std::cout << "host or join?" << std::endl;
-        std::getline(std::cin,input);
-        isServer = input == "host" ? true : false;
-        if (isServer) {
-            isWhite = std::rand() % 2 == 0;
-            communication = std::make_unique<Communication>(isServer);
-            //communication->io_context.run();
+    if (!true) { /*if online button clicked*/
+            communication = std::make_unique<Communication>();
+            isWhite = communication->isWhite;      
             whiteDown = isWhite;
-            communication->send(isWhite ? "black" : "white");
-            // isServer is kind of unnecessary but I'm leaving it here
-        } else {
-            communication = std::make_unique<Communication>(isServer);
-            communication->receive();
-            std::string color = communication->receivedString;
-            // std::string color = communication->noAsyncReceive();
-            if (color == "black") {
-                std::cout << "is black" << std::endl;
-                isWhite = false;
-                whiteDown = false;
-            } else {
-                std::cout << "is white" << std::endl;
-                isWhite = true;
-                whiteDown = true;
-            }
-        }
-        if (!isWhite) {
-            // This is some weird ass code (it's basically shit)
-            //futurerecv = std::async(std::launch::async, std::bind(&Communication::receive, &(*communication)));
-            // communication->receive(); when it was async 
-            std::thread t2 (&Communication::receive, &(*communication));
-            t2.detach();
-        }
+            //communication->io_context.run();     
     }
 
     run();       
@@ -88,9 +54,8 @@ Game::~Game() {
 
 
 void Game::run() {
-    int Mouse_x, Mouse_y;
-    SDL_GetMouseState(&Mouse_x, &Mouse_y);
-    window.fullRender(highlightMoves, lastMoves, Pieces, whiteDown, {Mouse_x, Mouse_y});
+    
+    window.fullRender(highlightMoves, lastMoves, Pieces, whiteDown);
     while (gameRunning)
     {
         window.updateSquareSize();
@@ -110,7 +75,7 @@ void Game::run() {
 
         int Mouse_x, Mouse_y;
         SDL_GetMouseState(&Mouse_x, &Mouse_y);
-        window.fullRender(highlightMoves, std::vector<glm::ivec2>(lastMoves.end() - 2, lastMoves.end()), Pieces, whiteDown, {Mouse_x, Mouse_y});
+        window.fullRender(highlightMoves, std::vector<glm::ivec2>(lastMoves.end() - 2, lastMoves.end()), Pieces, whiteDown);
         if (isPromoting) {
             window.displayPromotionOptions(lastMoves[lastMoves.size() - 1], whiteTurn);
         }
@@ -266,19 +231,19 @@ void Game::handleEvents() {
 
                     int Mouse_x, Mouse_y;
                     SDL_GetMouseState(&Mouse_x, &Mouse_y);
-                    std::array<bool, 3> buttonsClicked = window.checkIfButtonClicked({Mouse_x, Mouse_y});
-                    if (buttonsClicked[2]) {
-                            rotate_board = !rotate_board;
-                    }
-                    if (buttonsClicked[1]) {
-                        if (whiteTurn) {
-                            state = 0;
-                        } else {
-                            state = 1;
-                        }
-                        gameRunning = false;
-                        break;
-                    }
+                    //std::array<bool, 3> buttonsClicked = window.checkIfButtonClicked({Mouse_x, Mouse_y});
+                    // if (buttonsClicked[2]) {
+                    //         rotate_board = !rotate_board;
+                    // }
+                    // if (buttonsClicked[1]) {
+                    //     if (whiteTurn) {
+                    //         state = 0;
+                    //     } else {
+                    //         state = 1;
+                    //     }
+                    //     gameRunning = false;
+                    //     break;
+                    // }
 
                     if (!isPromoting)
                             selectPiece();

@@ -111,16 +111,18 @@ void RenderWindow::render(std::shared_ptr<Piece>& p_piece, bool whiteDown)
 
     SDL_RenderCopy(renderer, texture, &src, &dst);
 }
-int RenderWindow::createButton(std::array<std::string, 3> buttonsArray, glm::ivec2 mousepos) {
-
-    for (uint8_t i = 0; i<buttonsArray.size(); i++) {
+int RenderWindow::renderButton(std::array<std::string, 3> buttonsArray) {
+        int Mouse_x, Mouse_y;
+        SDL_GetMouseState(&Mouse_x,&Mouse_y);
         SDL_Rect textRect;
+    for (uint8_t i = 0; i<buttonsArray.size(); i++) {
         textRect.w = windowx/(2*buttonsArray.size());
-        textRect.h = (windowy*0.1)/2;
-        textRect.y = windowy - (windowy*0.1) + 0.5*(windowy*0.1);
-        textRect.x = i*(windowx/buttonsArray.size()) + (windowx/(2*buttonsArray.size()))/2;
+        textRect.h = windowy*0.05;
+        textRect.y = windowy *0.95;
+        textRect.x = i*(windowx/buttonsArray.size()) + (windowx/(4*buttonsArray.size()));
         Rects[i] = textRect;
-        bool hoveredButton = checkIfButtonClicked(mousepos, i);
+        SDL_Point point = {Mouse_x,Mouse_y};
+        SDL_bool hoveredButton = SDL_PointInRect( &point, &Rects[i]);
         SDL_Texture* textTexture;
         SDL_Color textColor;
         if (!hoveredButton) {
@@ -147,26 +149,7 @@ int RenderWindow::createButton(std::array<std::string, 3> buttonsArray, glm::ive
     return 0;
 }
 
-std::array<bool, 3> RenderWindow::checkIfButtonClicked(glm::ivec2 mousepos) {
-    std::array<bool, 3> clickedButtons;
-    for (uint8_t i = 0; i<Rects.size(); i++) {
-        if (mousepos.x >= Rects[i].x && mousepos.x <= Rects[i].x + Rects[i].w && mousepos.y >= Rects[i].y && mousepos.y <= Rects[i].y + Rects[i].h) {
-            clickedButtons[i] = true;
-        } else {
-            clickedButtons[i] = false;
-        }
-    }
-    return clickedButtons;
-}
 
-
-bool RenderWindow::checkIfButtonClicked(glm::ivec2 mousepos, uint8_t i) {
-    if (mousepos.x >= Rects[i].x && mousepos.x <= Rects[i].x + Rects[i].w && mousepos.y >= Rects[i].y && mousepos.y <= Rects[i].y + Rects[i].h) {
-        return true;
-    } else {
-        return false;
-    }
-}
 
 void RenderWindow::renderbg(std::vector<glm::ivec2> highlight = {{1000,1000}}, std::vector<glm::ivec2> lastMoves = {{1000, 1000}}, bool whiteDown=true) {
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
@@ -185,19 +168,14 @@ void RenderWindow::renderbg(std::vector<glm::ivec2> highlight = {{1000,1000}}, s
                     
                         SDL_SetRenderDrawColor(renderer, 255,255,0, 190);
                         SDL_RenderFillRect(renderer, &rect);
-
                 } 
             }
             for (glm::ivec2 k : highlight)
             {
                 if ((whiteDown && k == glm::ivec2(j,i))||(!whiteDown &&k == glm::ivec2(8-(j+1), 8-(i+1)))) {
-
                         SDL_SetRenderDrawColor(renderer, 255,0,0, 200);
                         SDL_RenderFillRect(renderer, &rect);
-
             }
-
-
         }
     }}
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
@@ -209,14 +187,14 @@ void RenderWindow::display()
 }
 
 
-void RenderWindow::fullRender(std::vector<glm::ivec2> highlight, std::vector<glm::ivec2> lastMoves, std::vector<std::shared_ptr<Piece>>& Pieces, bool whiteDown, glm::ivec2 mousepos) {
+void RenderWindow::fullRender(std::vector<glm::ivec2> highlight, std::vector<glm::ivec2> lastMoves, std::vector<std::shared_ptr<Piece>>& Pieces, bool whiteDown) {
     clear();
 
     renderbg(highlight, lastMoves,  whiteDown);
     for (int i = 0; i < (int)Pieces.size(); i++) {
         render(Pieces[i], whiteDown);
     }
-    createButton({"online", "resign", "turn"}, mousepos) ;
+    renderButton({"online", "resign", "turn"}) ;
     
 }
 
