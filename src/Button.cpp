@@ -5,4 +5,3 @@ Button::Button(int x,int y,int w,int h,std::string name)
 :SDL_Rect(){
 
 }
-

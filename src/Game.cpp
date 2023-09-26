@@ -38,10 +38,9 @@ Game::Game(std::string fen) : window("ChessQLD") {
     Pieces = FenImport(fen);
     moveHistory.push_back(fen);
     
-    if (!true) { /*if online button clicked*/
+    if (true) { /*if online button clicked*/
             communication = std::make_unique<Communication>();
-            isWhite = communication->isWhite;      
-            whiteDown = isWhite;
+            whiteDown = communication->isWhite;      
             //communication->io_context.run();     
     }
 
@@ -122,7 +121,7 @@ void Game::placePiece() {
     glm::vec2 oldPos = highlightMoves[0];
     int sizeOfPieces = Pieces.size();
     if (counter == 0) {
-        if ((isPlayingOnline && (isWhite == whiteTurn)) || !isPlayingOnline) {
+        if ((isPlayingOnline && (communication->isWhite == whiteTurn)) || !isPlayingOnline) {
             if (selectedPiece->move(MousePosition, highlightMoves[0], Pieces, whiteTurn)) {
                 if (rotate_board) {
                     whiteDown=!whiteDown;
@@ -140,9 +139,6 @@ void Game::placePiece() {
                 if (isPlayingOnline) {
                     std::string temp = FenExport(Pieces);
                     communication->send(temp);
-                    std::thread recvThread (&Communication::receive, &(*communication));
-                    recvThread.detach();
-                    //futurerecv = std::async(std::launch::async, std::bind(&Communication::receive, &(*communication)));
                 }
             } 
         }
@@ -204,20 +200,11 @@ void Game::handleEvents() {
     // io_context.poll();
     // io_context.reset();
     // io_context.run();
-    if (isPlayingOnline && (whiteTurn != isWhite)) {
-
-        // std::chrono::milliseconds span (0);
-        // auto status = futurerecv.wait_for(span); 
-        // if (status == std::future_status::ready)
-        //
-        // std::string temp = futurerecv.get();
-        if (communication->received) {
-            std::string temp = communication->receivedString;
-            if (temp != FenExport(Pieces)) {
-                Pieces = FenImport(temp);
+    if (isPlayingOnline && (whiteTurn != communication->isWhite)) {
+        std::string read = communication->read();
+        if (read != "") {
+                Pieces = FenImport(read);
                 moveHistory.push_back(FenExport(Pieces));
-            }
-            communication->received = false;
         }
     }
 
@@ -229,8 +216,8 @@ void Game::handleEvents() {
                 if (event.button.button == SDL_BUTTON_LEFT)
                 {
 
-                    int Mouse_x, Mouse_y;
-                    SDL_GetMouseState(&Mouse_x, &Mouse_y);
+                   // int Mouse_x, Mouse_y;
+                   // SDL_GetMouseState(&Mouse_x, &Mouse_y);
                     //std::array<bool, 3> buttonsClicked = window.checkIfButtonClicked({Mouse_x, Mouse_y});
                     // if (buttonsClicked[2]) {
                     //         rotate_board = !rotate_board;

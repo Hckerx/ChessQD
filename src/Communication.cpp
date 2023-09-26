@@ -4,65 +4,47 @@
 #include "Communication.hpp"
 
 
+
 using boost::asio::ip::tcp;
 
 
 Communication::Communication()
-
-
 try : socket(io_context) {
 
-     std::cout << "Connecting to server..." << std::endl;
         try {
          socket.connect(tcp::endpoint(boost::asio::ip::address::from_string("127.0.0.1"), 12345));
-         isServer = true;
-         isWhite = std::rand() % 2 == 0;
-         send(isWhite ? "black" : "white");
-        
+         isServer = false;
+        std::cout << "1"<< std::endl;
         } 
         catch (std::exception& e) {
+        std::cout << "2"<< std::endl;
          tcp::acceptor acceptor(io_context, tcp::endpoint(tcp::v4(), 12345));
          acceptor.accept(socket);
-
-        receive();
-            std::string color = receivedString;
-            // std::string color = communication->noAsyncReceive();
-            if (color == "black") {
-                std::cout << "is black" << std::endl;
-                isWhite = false; 
-            } else {
-                std::cout << "is white" << std::endl;
-                isWhite = true;
-            }
-        
-        if (!isWhite) {
-            // This is some weird ass code (it's basically shit)
-            //futurerecv = std::async(std::launch::async, std::bind(&Communication::receive, &(*communication)));
-            // communication->receive(); when it was async 
-            std::thread t2 (&Communication::receive, this);
-        }
-        }
-       
-        std::cout << "connected to server" << std::endl;
-        std::cout << "isServer" << isServer << std::endl;
-        std::cout << "Waiting for client..." << std::endl;
-       
-        std::cout << "connected to client" << std::endl;
-        
-
-    
+         std::cout << "3"<< std::endl;
+         isServer = true;
+         isWhite = std::rand() % 2 == 0;
+         send(isWhite ? "black" : "white");       
+        }      
 }
 catch (std::exception& e)
 {
+    std::cout << "4"<< std::endl;
     std::cerr << "Exception: " << e.what() << std::endl;    
 }
+
+std::thread( receive());
+
+      
+    
 
 void Communication::send(std::string message) {
     message += '\n';
     std::cout << "Sending: " << message << std::endl;
     int bytes = boost::asio::write(socket, boost::asio::buffer(message));
     std::cout << "bytes_transferred:" << bytes << std::endl;
+    received = false;
 }
+
 
 // std::string Communication::receive() {
 //     boost::asio::streambuf buffer;
@@ -76,13 +58,33 @@ void Communication::send(std::string message) {
 //
 
 void Communication::receive() {
+while (true) {
     boost::asio::read_until(socket, receiveBuffer, '\n');
-    std::string data = boost::asio::buffer_cast<const char*>(receiveBuffer.data());
+    data = boost::asio::buffer_cast<const char*>(receiveBuffer.data());
     if (!data.empty() && data.back() == '\n') {
         data.pop_back();
+        received = true;
     }
-    receivedString = data;
-    received = true;
+    if (data == "black") {
+                std::cout << "is black" << std::endl;
+                isWhite = false; 
+                data="";
+            } 
+    else if (data == "white") {
+                std::cout << "is white" << std::endl;
+                isWhite = true;
+                data = "";
+            }
+             
+}
+}
+
+std::string Communication::read(){
+    if (data != message) {
+    message = data;
+    return message;
+    }
+return "";
 }
 
 //void Communication::receive() {
@@ -104,7 +106,7 @@ void Communication::handle_read(const boost::system::error_code& error, size_t b
             line.pop_back();
         }
         received = true;
-        receivedString = line;
+       // receivedString = line;
         std::cout << "Received: Async" << line << std::endl;
     } else {
         std::cout << "Error: " << error.message() << std::endl;

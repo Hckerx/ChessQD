@@ -14,8 +14,6 @@ private:
     // Communication
     std::unique_ptr<Communication> communication = nullptr;
 
-    // threading
-    std::future<std::string> futurerecv;
     //Game Logic
 
     bool gameRunning = true;
@@ -28,9 +26,7 @@ private:
     int fullMoveNumber = 0; //needed?
     int state = 5; //state of the game (draw, checkmate, closed)
     int counter = 0; //needed?
-    bool isServer; //bullshit
     bool isPlayingOnline = false; //maybe other place?
-    bool isWhite = false; //DUUMMMM!!!
 
     // RenderWindow stuff
     RenderWindow window; //displayed main window
