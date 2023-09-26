@@ -39,6 +39,7 @@ Game::Game(std::string fen) : window("ChessQLD") {
     moveHistory.push_back(fen);
     
     if (true) { /*if online button clicked*/
+    isPlayingOnline = true;
             communication = std::make_unique<Communication>();
             whiteDown = communication->isWhite;      
             //communication->io_context.run();     
@@ -141,6 +142,9 @@ void Game::placePiece() {
                     communication->send(temp);
                 }
             } 
+        }
+        else {
+        Pieces = FenImport(moveHistory[moveHistory.size() - 1]);
         }
     } else {
         counter = 0;

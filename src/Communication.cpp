@@ -17,7 +17,7 @@ try : socket(io_context) {
         std::cout << "1"<< std::endl;
         } 
         catch (std::exception& e) {
-        std::cout << "2"<< std::endl;
+            socket.close();
          tcp::acceptor acceptor(io_context, tcp::endpoint(tcp::v4(), 12345));
          acceptor.accept(socket);
          std::cout << "3"<< std::endl;
@@ -28,7 +28,6 @@ try : socket(io_context) {
 }
 catch (std::exception& e)
 {
-    std::cout << "4"<< std::endl;
     std::cerr << "Exception: " << e.what() << std::endl;    
 }
 
