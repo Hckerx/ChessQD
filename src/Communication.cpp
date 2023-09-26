@@ -40,7 +40,6 @@ try : socket(io_context) {
             //futurerecv = std::async(std::launch::async, std::bind(&Communication::receive, &(*communication)));
             // communication->receive(); when it was async 
             std::thread t2 (&Communication::receive, this);
-            t2.detach();
         }
         }
        
