@@ -1,4 +1,5 @@
 #include "pawn.hpp"
+#include "Communication.hpp"
 #include "piece.hpp"
 
 #include "util.hpp"
@@ -67,7 +68,8 @@ void Pawn::findMovesWithoutCheck(std::vector<std::shared_ptr<Piece>>& Pieces){
 bool Pawn::move(glm::vec2 newPos, glm::vec2 oldPos, std::vector<std::shared_ptr<Piece>>& Pieces, bool whiteTurn) {
     std::shared_ptr<Piece> hypoPiece;
 
-    if (whiteTurn == white) {
+    if (whiteTurn == white && (!isPlayingOnline || (isPlayingOnline && communication->isWhite == whiteTurn))) {
+    //if (whiteTurn == white) {
         for (glm::vec2 i: legalMoves) {
             if (i == newPos)	{
                 if ((white && oldPos.y == 6 && newPos.y == 4) || (!white && oldPos.y == 1 && newPos.y == 3)) {

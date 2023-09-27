@@ -122,7 +122,7 @@ void Game::placePiece() {
     glm::vec2 oldPos = highlightMoves[0];
     int sizeOfPieces = Pieces.size();
     if (counter == 0) {
-        if ((isPlayingOnline && (communication->isWhite == whiteTurn)) || !isPlayingOnline) {
+        //if ((isPlayingOnline && (communication->isWhite == whiteTurn)) || !isPlayingOnline) {
             if (selectedPiece->move(MousePosition, highlightMoves[0], Pieces, whiteTurn)) {
                 if (rotate_board) {
                     whiteDown=!whiteDown;
@@ -142,10 +142,10 @@ void Game::placePiece() {
                     communication->send(temp);
                 }
             } 
-        }
-        else {
-        Pieces = FenImport(moveHistory[moveHistory.size() - 1]);
-        }
+        //}
+        // else {
+        // Pieces = FenImport(moveHistory[moveHistory.size() - 1]);
+        // }
     } else {
         counter = 0;
         Pieces = FenImport(moveHistory[moveHistory.size() - 1]);
