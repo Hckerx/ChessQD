@@ -76,8 +76,8 @@ void King::findMovesWithoutCheck(std::vector<std::shared_ptr<Piece>> &Pieces) {
 }
 
 //Special move function for castling
-bool King::move(glm::vec2 newPos, glm::vec2 oldPos, std::vector<std::shared_ptr<Piece>>& Pieces, bool whiteTurn) {
-    if (Piece::move(newPos, oldPos, Pieces, whiteTurn)) {
+bool King::move(glm::vec2 newPos, glm::vec2 oldPos, std::vector<std::shared_ptr<Piece>>& Pieces, bool whiteTurn, bool isPlayingOnline, bool isWhite) {
+    if (Piece::move(newPos, oldPos, Pieces, whiteTurn, isPlayingOnline, isWhite)) {
         if (newPos.x - oldPos.x == 2) {
             std::shared_ptr<Piece> Rook = getMatchingPiece(glm::vec2{7, newPos.y}, Pieces);
             Rook->setPos(glm::vec2{5, newPos.y});

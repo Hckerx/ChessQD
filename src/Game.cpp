@@ -39,10 +39,10 @@ Game::Game(std::string fen) : window("ChessQLD") {
     moveHistory.push_back(fen);
     
     if (true) { /*if online button clicked*/
-    isPlayingOnline = true;
-            communication = std::make_unique<Communication>();
-            whiteDown = communication->isWhite;      
-            //communication->io_context.run();     
+        communication = std::make_unique<Communication>();
+        isPlayingOnline = true;
+        whiteDown = isWhite();      
+        //communication->io_context.run();     
     }
 
     run();       
@@ -123,7 +123,7 @@ void Game::placePiece() {
     int sizeOfPieces = Pieces.size();
     if (counter == 0) {
         //if ((isPlayingOnline && (communication->isWhite == whiteTurn)) || !isPlayingOnline) {
-            if (selectedPiece->move(MousePosition, highlightMoves[0], Pieces, whiteTurn)) {
+            if (selectedPiece->move(MousePosition, highlightMoves[0], Pieces, whiteTurn, isPlayingOnline, isWhite())) {
                 if (rotate_board) {
                     whiteDown=!whiteDown;
                 }
@@ -204,7 +204,7 @@ void Game::handleEvents() {
     // io_context.poll();
     // io_context.reset();
     // io_context.run();
-    if (isPlayingOnline && (whiteTurn != communication->isWhite)) {
+    if (isPlayingOnline && (whiteTurn != isWhite())) {
         std::string read = communication->read();
         if (read != "") {
                 Pieces = FenImport(read);

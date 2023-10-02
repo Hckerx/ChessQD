@@ -52,8 +52,8 @@ void Rook::findMovesWithoutCheck(std::vector<std::shared_ptr<Piece>>& Pieces) {
 }
 
 
-bool Rook::move(glm::vec2 newPos, glm::vec2 oldPos, std::vector<std::shared_ptr<Piece>>& Pieces, bool whiteTurn) {
-        if (Piece::move(newPos, oldPos, Pieces, whiteTurn)) {
+bool Rook::move(glm::vec2 newPos, glm::vec2 oldPos, std::vector<std::shared_ptr<Piece>>& Pieces, bool whiteTurn, bool isPlayingOnline, bool isWhite) {
+        if (Piece::move(newPos, oldPos, Pieces, whiteTurn, isPlayingOnline, isWhite)) {
                 hasMoved = true;
                 return true;
         } else {

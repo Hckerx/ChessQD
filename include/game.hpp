@@ -4,9 +4,19 @@
 #include <vector>
 #include "renderWindow.hpp"
 #include "piece.hpp"
+#include <iostream>
 #include "Communication.hpp"
 class Game
 {
+public:
+    bool isPlayingOnline = false; //maybe other place?
+    bool isWhite(){
+            if (communication != nullptr) {
+                return communication->isWhite;
+            }
+        return false;
+    }
+
 private:
     // SDL specific stuff
     SDL_Event event;
@@ -26,7 +36,7 @@ private:
     int fullMoveNumber = 0; //needed?
     int state = 5; //state of the game (draw, checkmate, closed)
     int counter = 0; //needed?
-    bool isPlayingOnline = false; //maybe other place?
+    
 
     // RenderWindow stuff
     RenderWindow window; //displayed main window

@@ -48,8 +48,8 @@ bool Piece::findIndMoves(std::vector<std::shared_ptr<Piece>>& Pieces, int x, int
     }
 }
 
-bool Piece::move(glm::vec2 newPos, glm::vec2 oldPos, std::vector<std::shared_ptr<Piece>>& Pieces, bool whiteTurn) {
-    if (whiteTurn == white && (!isPlayingOnline || (isPlayingOnline && communication->isWhite == whiteTurn))) {
+bool Piece::move(glm::vec2 newPos, glm::vec2 oldPos, std::vector<std::shared_ptr<Piece>>& Pieces, bool whiteTurn, bool isPlayingOnline, bool isWhite) {
+    if (whiteTurn == white && (!isPlayingOnline || (isPlayingOnline && isWhite == whiteTurn))) {
         for (glm::vec2 i: legalMoves) {
             if (i == newPos)	{
                 std::shared_ptr<Piece> hypoPiece = getMatchingPiece(glm::vec2{newPos.x, newPos.y}, Pieces);
