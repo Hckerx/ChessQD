@@ -37,11 +37,9 @@ Game::Game(std::string fen) : window("ChessQLD") {
     //importing given FEN-notation in the pieces array
     Pieces = FenImport(fen);
     moveHistory.push_back(fen);
-    
     if (true) { /*if online button clicked*/
         communication = std::make_unique<Communication>();
         isPlayingOnline = true;
-        whiteDown = isWhite();      
         //communication->io_context.run();     
     }
 
@@ -204,14 +202,16 @@ void Game::handleEvents() {
     // io_context.poll();
     // io_context.reset();
     // io_context.run();
-    if (isPlayingOnline && (whiteTurn != isWhite())) {
-        std::string read = communication->read();
-        if (read != "") {
+    if (isPlayingOnline) {
+        whiteDown = communication->isWhite;
+        if (whiteTurn != isWhite()) {
+            std::string read = communication->read();
+            if (read != "") {
                 Pieces = FenImport(read);
                 moveHistory.push_back(FenExport(Pieces));
+            }
         }
     }
-
     while (SDL_PollEvent(&event))
     {
         switch (event.type)
