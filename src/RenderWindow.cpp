@@ -194,7 +194,7 @@ void RenderWindow::fullRender(std::vector<glm::ivec2> highlight, std::vector<glm
     for (int i = 0; i < (int)Pieces.size(); i++) {
         render(Pieces[i], whiteDown);
     }
-    renderButton({"online", "resign", "turn"}) ;
+    //renderButton({"online", "resign", "turn"}) ;
     
 }
 

@@ -37,7 +37,7 @@ Game::Game(std::string fen) : window("ChessQLD") {
     //importing given FEN-notation in the pieces array
     Pieces = FenImport(fen);
     moveHistory.push_back(fen);
-    if (true) { /*if online button clicked*/
+    if (false) { /*if online button clicked*/
         communication = std::make_unique<Communication>();
         isPlayingOnline = true;
         //communication->io_context.run();     
@@ -344,7 +344,6 @@ void Game::handlePromotionPieceSelection(glm::vec2 selection){
 
 
 std::vector<std::shared_ptr<Piece>> Game::FenImport(std::string FenString) {
-    std::cout << FenString << std::endl;
     std::vector<std::shared_ptr<Piece>> piecesVector;
     int countx = 0;
     int county = 0;
