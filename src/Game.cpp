@@ -53,7 +53,7 @@ Game::Game(std::string fen) : window("ChessQLD") {
             communication = std::make_unique<Communication>(isServer);
             //communication->io_context.run();
             whiteDown = isWhite;
-            communication->send(isWhite ? "black" : "white");
+            communication->send(isWhite ? "black" : "white"); // nicht gethreaded ddeswegen schwarz
             // isServer is kind of unnecessary but I'm leaving it here
         } else {
             communication = std::make_unique<Communication>(isServer);
