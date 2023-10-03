@@ -16,7 +16,7 @@ public:
 	bool displayWelcomeMessage(std::string text);
 	void cleanUp();
 	void fullRender(std::vector<glm::ivec2> highlight, std::vector<glm::ivec2> lastMoves, 
-					std::vector<std::shared_ptr<Piece>>& Pieces, bool whiteDown,Button buttons []);
+					std::vector<std::shared_ptr<Piece>>& Pieces, bool whiteDown,std::array<Button, 3>);
     int displayPromotionOptions(glm::vec2 pos, bool white);
     int squareSize;
 	void updateSquareSize() {
@@ -26,9 +26,8 @@ public:
 	void display();
 
 private:
-	int renderButton(std::array<std::string, 3> buttonsArray);
+	int renderButton(std::array<Button, 3> buttons);
     
-    std::array<SDL_Rect, 3> Rects;
 	SDL_Texture* texture;
 	SDL_Window* window;
 	SDL_Renderer* renderer;

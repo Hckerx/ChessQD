@@ -111,38 +111,27 @@ void RenderWindow::render(std::shared_ptr<Piece>& p_piece, bool whiteDown)
 
     SDL_RenderCopy(renderer, texture, &src, &dst);
 }
-int RenderWindow::renderButton(std::array<std::string, 3> buttonsArray) {
-        int Mouse_x, Mouse_y;
-        SDL_GetMouseState(&Mouse_x,&Mouse_y);
-        SDL_Rect textRect;
-    for (uint8_t i = 0; i<buttonsArray.size(); i++) {
-        textRect.w = windowx/(2*buttonsArray.size());
-        textRect.h = windowy*0.05;
-        textRect.y = windowy *0.95;
-        textRect.x = i*(windowx/buttonsArray.size()) + (windowx/(4*buttonsArray.size()));
-        Rects[i] = textRect;
-        SDL_Point point = {Mouse_x,Mouse_y};
-        SDL_bool hoveredButton = SDL_PointInRect( &point, &Rects[i]);
-        SDL_Texture* textTexture;
-        SDL_Color textColor;
-        if (!hoveredButton) {
-            textColor = {255, 255, 255};
-        } else {
-            textColor = {255,0, 0};
-        }
-        SDL_Surface* textSurface = TTF_RenderText_Blended(ChessQLDfont, buttonsArray[i].c_str(), textColor);
+int RenderWindow::renderButton(std::array<Button, 3> buttons) {
+    
+    for (uint8_t i = 0; i<buttons.size(); i++) {
+        buttons[i].w = windowx/(2*buttons.size());
+        buttons[i].h = windowy*0.05;
+        buttons[i].y = windowy *0.95;
+        buttons[i].x = i*(windowx/buttons.size()) + (windowx/(4*buttons.size()));
+        
+        SDL_Surface* textSurface = TTF_RenderText_Blended(ChessQLDfont, buttons[i].name.c_str(), buttons[i].getColor());
         if (!textSurface) {
             fprintf(stderr, "Failed to render text surface: %s\n", TTF_GetError());
             return -1;
         }
         // Create a texture from the rendered text surface and set its blend mode to alpha blending
-        textTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
+        SDL_Texture* textTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
         SDL_SetTextureBlendMode(textTexture, SDL_BLENDMODE_BLEND);
 
 
         // dst
         SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-        SDL_RenderCopy(renderer, textTexture, NULL, &textRect);
+        SDL_RenderCopy(renderer, textTexture, NULL, &buttons[i]);
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     }
 
@@ -153,6 +142,7 @@ int RenderWindow::renderButton(std::array<std::string, 3> buttonsArray) {
 
 void RenderWindow::renderbg(std::vector<glm::ivec2> highlight = {{1000,1000}}, std::vector<glm::ivec2> lastMoves = {{1000, 1000}}, bool whiteDown=true) {
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+    updateSquareSize();
     for (int i = 0; i < 8; i++) {
         for (int j = 0; j < 8; j++) {
             SDL_Rect rect = {j * squareSize, i * squareSize, squareSize, squareSize};
@@ -188,13 +178,15 @@ void RenderWindow::display()
 
 
 void RenderWindow::fullRender(std::vector<glm::ivec2> highlight, std::vector<glm::ivec2> lastMoves,
-                              std::vector<std::shared_ptr<Piece>>& Pieces, bool whiteDown,Button buttons[]){
+                              std::vector<std::shared_ptr<Piece>>& Pieces, bool whiteDown,std::array<Button, 3> buttons){
     clear();
-
+    
     renderbg(highlight, lastMoves,  whiteDown);
+    renderButton(buttons);
     for (int i = 0; i < (int)Pieces.size(); i++) {
         render(Pieces[i], whiteDown);
     }
+
     //renderButton({"online", "resign", "turn"}) ;
     
 }

@@ -57,7 +57,6 @@ void Game::run() {
     window.fullRender(highlightMoves, lastMoves, Pieces, whiteDown,buttons);
     while (gameRunning)
     {
-        window.updateSquareSize();
         
         if (PieceSelected)
             DragPiece();
@@ -72,8 +71,8 @@ void Game::run() {
     
     // TODO: add a way to continue running code while waiting for response
 
-        int Mouse_x, Mouse_y;
-        SDL_GetMouseState(&Mouse_x, &Mouse_y);
+
+
         window.fullRender(highlightMoves, std::vector<glm::ivec2>(lastMoves.end() - 2, lastMoves.end()), Pieces, whiteDown,buttons);
         if (isPromoting) {
             window.displayPromotionOptions(lastMoves[lastMoves.size() - 1], whiteTurn);
@@ -200,7 +199,9 @@ void Game::handleCheckmate() {
 
 //prolly hashmaps of all pieces' moves im too stupid for this
 void Game::handleEvents() {
-
+    std::cout << "resign button hovered " << buttons[0].hovered() << std::endl;
+    std::cout << "online button hovered " << buttons[1].hovered() << std::endl;
+    std::cout << "rotate board button hovered " << buttons[2].hovered() << std::endl;
     if (isPlayingOnline) {
         whiteDown = communication->isWhite;
         if (whiteTurn != isWhite()) {
@@ -211,17 +212,6 @@ void Game::handleEvents() {
             }
         }
     }
-
-    if (buttons[0].clicked()) {
-    
-    }
-    if (buttons[1].clicked()) {
-    
-    }
-    if (buttons[2].clicked()) {
-    
-    }
-
     while (SDL_PollEvent(&event))
     {
         switch (event.type)
@@ -229,9 +219,26 @@ void Game::handleEvents() {
             case SDL_MOUSEBUTTONDOWN:
                 if (event.button.button == SDL_BUTTON_LEFT)
                 {
-
-                   // int Mouse_x, Mouse_y;
-                   // SDL_GetMouseState(&Mouse_x, &Mouse_y);
+                    if(event.button.clicks == 2){
+                        std::cout << "wwww" << std::endl;
+                        if (buttons[0].hovered()) {
+                            if (whiteTurn) {
+                                state = 0;
+                            } else {
+                                state = 1;
+                            }
+                            gameRunning = false;
+                            break;
+                        }
+                        if (buttons[1].hovered()){
+                            isPlayingOnline = !isPlayingOnline;
+                        }
+                        if (buttons[2].hovered()) {
+                            rotate_board = !rotate_board;
+                        }
+                    }
+                   
+                   
                     //std::array<bool, 3> buttonsClicked = window.checkIfButtonClicked({Mouse_x, Mouse_y});
                     // if (buttonsClicked[2]) {
                     //         rotate_board = !rotate_board;

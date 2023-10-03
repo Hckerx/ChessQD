@@ -1,3 +1,4 @@
+#include <array>
 #define SDL_MAIN_HANDLED
 
 #include <memory>
@@ -37,7 +38,7 @@ private:
     int state = 5; //state of the game (draw, checkmate, closed)
     int counter = 0; //needed?
 
-    Button buttons[3]={Button("resign"),Button("online"),Button("rotate")};
+    std::array<Button, 3> buttons = {Button("resign"),Button("online"),Button("rotate")};
 
     // RenderWindow stuff
     RenderWindow window; //displayed main window
