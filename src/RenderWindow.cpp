@@ -187,7 +187,8 @@ void RenderWindow::display()
 }
 
 
-void RenderWindow::fullRender(std::vector<glm::ivec2> highlight, std::vector<glm::ivec2> lastMoves, std::vector<std::shared_ptr<Piece>>& Pieces, bool whiteDown) {
+void RenderWindow::fullRender(std::vector<glm::ivec2> highlight, std::vector<glm::ivec2> lastMoves,
+                              std::vector<std::shared_ptr<Piece>>& Pieces, bool whiteDown,Button buttons[]){
     clear();
 
     renderbg(highlight, lastMoves,  whiteDown);

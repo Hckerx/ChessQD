@@ -8,14 +8,6 @@
 #include "Communication.hpp"
 class Game
 {
-public:
-    bool isPlayingOnline = false; //maybe other place?
-    bool isWhite(){
-            if (communication != nullptr) {
-                return communication->isWhite;
-            }
-        return false;
-    }
 
 private:
     // SDL specific stuff
@@ -25,6 +17,14 @@ private:
     std::unique_ptr<Communication> communication = nullptr;
 
     //Game Logic
+
+    bool isPlayingOnline = false; //maybe other place?
+    bool isWhite(){
+            if (communication != nullptr) {
+                return communication->isWhite;
+            }
+        return false;
+    }
 
     bool gameRunning = true;
     bool PieceSelected = false; //Does user hold leftclick on piece
@@ -36,7 +36,8 @@ private:
     int fullMoveNumber = 0; //needed?
     int state = 5; //state of the game (draw, checkmate, closed)
     int counter = 0; //needed?
-    
+
+    Button buttons[3]={Button("resign"),Button("online"),Button("rotate")};
 
     // RenderWindow stuff
     RenderWindow window; //displayed main window

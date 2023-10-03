@@ -3,7 +3,7 @@
 class Button : public SDL_Rect
 {
 public:
-    Button(int x,int y,int w,int h,std::string name);
+    Button(std::string name);
     bool clicked();
     bool hovered();
     std::string name;

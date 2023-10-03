@@ -36,6 +36,7 @@ Game::Game(std::string fen) : window("ChessQLD") {
    
     //importing given FEN-notation in the pieces array
     Pieces = FenImport(fen);
+
     moveHistory.push_back(fen);
     if (false) { /*if online button clicked*/
         communication = std::make_unique<Communication>();
@@ -53,7 +54,7 @@ Game::~Game() {
 
 void Game::run() {
     
-    window.fullRender(highlightMoves, lastMoves, Pieces, whiteDown);
+    window.fullRender(highlightMoves, lastMoves, Pieces, whiteDown,buttons);
     while (gameRunning)
     {
         window.updateSquareSize();
@@ -73,7 +74,7 @@ void Game::run() {
 
         int Mouse_x, Mouse_y;
         SDL_GetMouseState(&Mouse_x, &Mouse_y);
-        window.fullRender(highlightMoves, std::vector<glm::ivec2>(lastMoves.end() - 2, lastMoves.end()), Pieces, whiteDown);
+        window.fullRender(highlightMoves, std::vector<glm::ivec2>(lastMoves.end() - 2, lastMoves.end()), Pieces, whiteDown,buttons);
         if (isPromoting) {
             window.displayPromotionOptions(lastMoves[lastMoves.size() - 1], whiteTurn);
         }
@@ -199,9 +200,7 @@ void Game::handleCheckmate() {
 
 //prolly hashmaps of all pieces' moves im too stupid for this
 void Game::handleEvents() {
-    // io_context.poll();
-    // io_context.reset();
-    // io_context.run();
+
     if (isPlayingOnline) {
         whiteDown = communication->isWhite;
         if (whiteTurn != isWhite()) {
@@ -212,6 +211,17 @@ void Game::handleEvents() {
             }
         }
     }
+
+    if (buttons[0].clicked()) {
+    
+    }
+    if (buttons[1].clicked()) {
+    
+    }
+    if (buttons[2].clicked()) {
+    
+    }
+
     while (SDL_PollEvent(&event))
     {
         switch (event.type)
@@ -294,8 +304,7 @@ void Game::handleEvents() {
                                 std::string lastFen = moveHistory[moveHistory.size() - (1 + counter)];
                                 Pieces = FenImport(lastFen);
                                 break;
-                        }
-                
+                        }  
         }
     }
 }

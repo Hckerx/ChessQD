@@ -5,7 +5,7 @@
 #define SDL_MAIN_HANDLED
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>
-
+#include "button.hpp"
 #include "piece.hpp"
 
 
@@ -15,7 +15,8 @@ public:
 	RenderWindow(const char* p_title);
 	bool displayWelcomeMessage(std::string text);
 	void cleanUp();
-	void fullRender(std::vector<glm::ivec2> highlight, std::vector<glm::ivec2> lastMoves, std::vector<std::shared_ptr<Piece>>& Pieces, bool whiteDown);
+	void fullRender(std::vector<glm::ivec2> highlight, std::vector<glm::ivec2> lastMoves, 
+					std::vector<std::shared_ptr<Piece>>& Pieces, bool whiteDown,Button buttons []);
     int displayPromotionOptions(glm::vec2 pos, bool white);
     int squareSize;
 	void updateSquareSize() {
