@@ -111,15 +111,15 @@ void RenderWindow::render(std::shared_ptr<Piece>& p_piece, bool whiteDown)
 
     SDL_RenderCopy(renderer, texture, &src, &dst);
 }
-int RenderWindow::renderButton(std::array<Button, 3> buttons) {
+int RenderWindow::renderButton(std::array<Button*, 3> buttons) {
     
     for (uint8_t i = 0; i<buttons.size(); i++) {
-        buttons[i].w = windowx/(2*buttons.size());
-        buttons[i].h = windowy*0.05;
-        buttons[i].y = windowy *0.95;
-        buttons[i].x = i*(windowx/buttons.size()) + (windowx/(4*buttons.size()));
+        buttons[i]->w = windowx/(2*buttons.size());
+        buttons[i]->h = windowy*0.05;
+        buttons[i]->y = windowy *0.95;
+        buttons[i]->x = i*(windowx/buttons.size()) + (windowx/(4*buttons.size()));
         
-        SDL_Surface* textSurface = TTF_RenderText_Blended(ChessQLDfont, buttons[i].name.c_str(), buttons[i].getColor());
+        SDL_Surface* textSurface = TTF_RenderText_Blended(ChessQLDfont, buttons[i]->name.c_str(), buttons[i]->getColor());
         if (!textSurface) {
             fprintf(stderr, "Failed to render text surface: %s\n", TTF_GetError());
             return -1;
@@ -131,7 +131,7 @@ int RenderWindow::renderButton(std::array<Button, 3> buttons) {
 
         // dst
         SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-        SDL_RenderCopy(renderer, textTexture, NULL, &buttons[i]);
+        SDL_RenderCopy(renderer, textTexture, NULL, buttons[i]);
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     }
 
@@ -178,7 +178,7 @@ void RenderWindow::display()
 
 
 void RenderWindow::fullRender(std::vector<glm::ivec2> highlight, std::vector<glm::ivec2> lastMoves,
-                              std::vector<std::shared_ptr<Piece>>& Pieces, bool whiteDown,std::array<Button, 3> buttons){
+                              std::vector<std::shared_ptr<Piece>>& Pieces, bool whiteDown,std::array<Button*, 3> buttons){
     clear();
     
     renderbg(highlight, lastMoves,  whiteDown);

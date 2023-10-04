@@ -38,7 +38,7 @@ private:
     int state = 5; //state of the game (draw, checkmate, closed)
     int counter = 0; //needed?
 
-    std::array<Button, 3> buttons = {Button("resign"),Button("online"),Button("rotate")};
+    std::array<Button*, 3> buttons = {new Button("resign"), new Button("online"), new Button("rotate")};
 
     // RenderWindow stuff
     RenderWindow window; //displayed main window

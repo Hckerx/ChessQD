@@ -199,9 +199,6 @@ void Game::handleCheckmate() {
 
 //prolly hashmaps of all pieces' moves im too stupid for this
 void Game::handleEvents() {
-    std::cout << "resign button hovered " << buttons[0].hovered() << std::endl;
-    std::cout << "online button hovered " << buttons[1].hovered() << std::endl;
-    std::cout << "rotate board button hovered " << buttons[2].hovered() << std::endl;
     if (isPlayingOnline) {
         whiteDown = communication->isWhite;
         if (whiteTurn != isWhite()) {
@@ -219,9 +216,9 @@ void Game::handleEvents() {
             case SDL_MOUSEBUTTONDOWN:
                 if (event.button.button == SDL_BUTTON_LEFT)
                 {
-                    if(event.button.clicks == 2){
+                    if(event.button.clicks == 1){
                         std::cout << "wwww" << std::endl;
-                        if (buttons[0].hovered()) {
+                        if (buttons[0]->hovered()) {
                             if (whiteTurn) {
                                 state = 0;
                             } else {
@@ -230,10 +227,10 @@ void Game::handleEvents() {
                             gameRunning = false;
                             break;
                         }
-                        if (buttons[1].hovered()){
+                        if (buttons[1]->hovered()){
                             isPlayingOnline = !isPlayingOnline;
                         }
-                        if (buttons[2].hovered()) {
+                        if (buttons[2]->hovered()) {
                             rotate_board = !rotate_board;
                         }
                     }
