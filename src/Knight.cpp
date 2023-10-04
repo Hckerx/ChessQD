@@ -2,7 +2,7 @@
 #include "piece.hpp"
 
 #include <iostream>
-Knight::Knight(std::array<int, 2> p_pos, bool white)
+Knight::Knight(glm::vec2 p_pos, bool white)
 :Piece(p_pos, white){
         if (white) {
                 currentFrame.y = 128;

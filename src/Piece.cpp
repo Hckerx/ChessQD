@@ -15,7 +15,7 @@
 #include <king.hpp>
 #include <pawn.hpp>
 
-Piece::Piece(std::array<int, 2> p_pos, bool white)
+Piece::Piece(glm::vec2 p_pos, bool white)
 :pos(p_pos), white(white)
 {
 }
@@ -26,13 +26,13 @@ SDL_Rect Piece::getCurrentFrame()
 }
 
 bool Piece::findIndMoves(std::vector<std::shared_ptr<Piece>>& Pieces, int x, int y){
-    std::shared_ptr<Piece> hypotheticalPiece = getMatchingPiece(std::array<int, 2>{x, y}, Pieces);
+    std::shared_ptr<Piece> hypotheticalPiece = getMatchingPiece(glm::vec2{x, y}, Pieces);
     if (x > 7 || x < 0 || y > 7 || y < 0) {
         return false;
     }
     if (hypotheticalPiece == nullptr)
     {
-        legalMoves.push_back(std::array<int, 2>(x, y));
+        legalMoves.push_back(glm::vec2(x, y));
         return true;
     }
     else if (hypotheticalPiece->white == white)
@@ -43,16 +43,16 @@ bool Piece::findIndMoves(std::vector<std::shared_ptr<Piece>>& Pieces, int x, int
 
     else
     {
-        legalMoves.push_back(std::array<int, 2>(x, y));
+        legalMoves.push_back(glm::vec2(x, y));
         return false;
     }
 }
 
-bool Piece::move(std::array<int, 2> newPos, std::array<int, 2> oldPos, std::vector<std::shared_ptr<Piece>>& Pieces, bool whiteTurn, bool isPlayingOnline, bool isWhite) {
+bool Piece::move(glm::vec2 newPos, glm::vec2 oldPos, std::vector<std::shared_ptr<Piece>>& Pieces, bool whiteTurn, bool isPlayingOnline, bool isWhite) {
     if (whiteTurn == white && (!isPlayingOnline || (isPlayingOnline && isWhite == whiteTurn))) {
-        for (std::array<int, 2> i: legalMoves) {
+        for (glm::vec2 i: legalMoves) {
             if (i == newPos)	{
-                std::shared_ptr<Piece> hypoPiece = getMatchingPiece(std::array<int, 2>{newPos[0], newPos[1]}, Pieces);
+                std::shared_ptr<Piece> hypoPiece = getMatchingPiece(glm::vec2{newPos.x, newPos.y}, Pieces);
                 if (hypoPiece != nullptr) {
                     std::vector<std::shared_ptr<Piece>>::iterator position = std::find(Pieces.begin(), Pieces.end(), hypoPiece);
                     if (position != Pieces.end()){ // == myVector.end() means the element was not found
@@ -100,19 +100,19 @@ bool Piece::findMoves(std::vector<std::shared_ptr<Piece>>& Pieces) {
     }
     std::shared_ptr<Piece> hypoPiece;
     findMovesWithoutCheck(Pieces);
-    std::vector<std::array<int, 2>> legalMovescopy = legalMoves;
-    std::vector<std::array<int, 2>> newLegalMoves;
+    std::vector<glm::vec2> legalMovescopy = legalMoves;
+    std::vector<glm::vec2> newLegalMoves;
 
-    std::array<int, 2> oldpos = pos;
+    glm::vec2 oldpos = pos;
     
-    std::array<int, 2> PfuschKoordinaten;
+    glm::vec2 PfuschKoordinaten;
     for (auto move : legalMovescopy)
     {
         // check if myself is a pawn
-        hypoPiece = getMatchingPiece(std::array<int, 2>{move[0], move[1]}, Pieces);
+        hypoPiece = getMatchingPiece(glm::vec2{move.x, move.y}, Pieces);
         if (hypoPiece == nullptr) {
             if (typeid(*this) == typeid(Pawn)) {
-                hypoPiece = getMatchingPiece(std::array<int, 2>{move[0], move[1]+step}, Pieces);
+                hypoPiece = getMatchingPiece(glm::vec2{move.x, move.y+step}, Pieces);
             }
         }
         if (hypoPiece != nullptr) {
@@ -139,7 +139,7 @@ bool Piece::findMoves(std::vector<std::shared_ptr<Piece>>& Pieces) {
 
 
 bool Piece::isKingInCheck(std::vector<std::shared_ptr<Piece>>& Pieces) {
-    std::array<int, 2> kingPos;
+    glm::vec2 kingPos;
     for (auto i : Pieces) {
         std::shared_ptr<King> derivedPtr = std::dynamic_pointer_cast<King>(i); //was macht das?
         if (derivedPtr != nullptr && i->white == white) {
@@ -156,7 +156,7 @@ bool Piece::isKingInCheck(std::vector<std::shared_ptr<Piece>>& Pieces) {
 
     for (auto& i : Pieces) {
         if (i->white != white) {
-            for (std::array<int, 2> j : i->legalMoves) {
+            for (glm::vec2 j : i->legalMoves) {
                 if (j == kingPos) {
                     return true;
                 }

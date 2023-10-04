@@ -91,35 +91,35 @@ void RenderWindow::clear()
 void RenderWindow::render(std::shared_ptr<Piece>& p_piece, bool whiteDown)
 {
     SDL_Rect src; 
-    src[0] = p_piece->getCurrentFrame()[0];
-    src[1] = p_piece->getCurrentFrame()[1];
+    src.x = p_piece->getCurrentFrame().x;
+    src.y = p_piece->getCurrentFrame().y;
     src.w = p_piece->getCurrentFrame().w;
     src.h = p_piece->getCurrentFrame().h;
 
 
     SDL_Rect dst;
     if (whiteDown) {
-        dst[0] = p_piece->getPos()[0] * squareSize;
-        dst[1] = p_piece->getPos()[1] * squareSize;
+        dst.x = p_piece->getPos().x * squareSize;
+        dst.y = p_piece->getPos().y * squareSize;
     }
     else {
-        dst[0] = squareSize*8 - (p_piece->getPos()[0] * squareSize + squareSize);
-        dst[1] = squareSize*8 - (p_piece->getPos()[1] * squareSize + squareSize);
+        dst.x = squareSize*8 - (p_piece->getPos().x * squareSize + squareSize);
+        dst.y = squareSize*8 - (p_piece->getPos().y * squareSize + squareSize);
     }
     dst.w = squareSize;
     dst.h = squareSize;
 
     SDL_RenderCopy(renderer, texture, &src, &dst);
 }
-int RenderWindow::renderButton(std::array<Button*, 3> buttons) {
+int RenderWindow::renderButton(std::array<Button, 3> buttons) {
     
     for (uint8_t i = 0; i<buttons.size(); i++) {
-        buttons[i]->w = windowx/(2*buttons.size());
-        buttons[i]->h = windowy*0.05;
-        buttons[i]->y = windowy *0.95;
-        buttons[i]->x = i*(windowx/buttons.size()) + (windowx/(4*buttons.size()));
+        buttons[i].w = windowx/(2*buttons.size());
+        buttons[i].h = windowy*0.05;
+        buttons[i].y = windowy *0.95;
+        buttons[i].x = i*(windowx/buttons.size()) + (windowx/(4*buttons.size()));
         
-        SDL_Surface* textSurface = TTF_RenderText_Blended(ChessQLDfont, buttons[i]->name.c_str(), buttons[i]->getColor());
+        SDL_Surface* textSurface = TTF_RenderText_Blended(ChessQLDfont, buttons[i].name.c_str(), buttons[i].getColor());
         if (!textSurface) {
             fprintf(stderr, "Failed to render text surface: %s\n", TTF_GetError());
             return -1;
@@ -131,7 +131,7 @@ int RenderWindow::renderButton(std::array<Button*, 3> buttons) {
 
         // dst
         SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-        SDL_RenderCopy(renderer, textTexture, NULL, buttons[i]);
+        SDL_RenderCopy(renderer, textTexture, NULL, &buttons[i]);
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     }
 
@@ -140,7 +140,7 @@ int RenderWindow::renderButton(std::array<Button*, 3> buttons) {
 
 
 
-void RenderWindow::renderbg(std::vector<std::array<int, 2>> highlight = {{1000,1000}}, std::vector<std::array<int, 2>> lastMoves = {{1000, 1000}}, bool whiteDown=true) {
+void RenderWindow::renderbg(std::vector<glm::ivec2> highlight = {{1000,1000}}, std::vector<glm::ivec2> lastMoves = {{1000, 1000}}, bool whiteDown=true) {
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     updateSquareSize();
     for (int i = 0; i < 8; i++) {
@@ -152,17 +152,17 @@ void RenderWindow::renderbg(std::vector<std::array<int, 2>> highlight = {{1000,1
                 SDL_SetRenderDrawColor(renderer, 139,69,19, 255);
             }
             SDL_RenderFillRect(renderer, &rect);
-            for (std::array<int, 2> k : lastMoves)
+            for (glm::ivec2 k : lastMoves)
             {
-                if ((whiteDown && k == std::array<int, 2>(j,i))||(!whiteDown && k == std::array<int, 2>(8-(j+1), 8-(i+1)))) {
+                if ((whiteDown && k == glm::ivec2(j,i))||(!whiteDown && k == glm::ivec2(8-(j+1), 8-(i+1)))) {
                     
                         SDL_SetRenderDrawColor(renderer, 255,255,0, 190);
                         SDL_RenderFillRect(renderer, &rect);
                 } 
             }
-            for (std::array<int, 2> k : highlight)
+            for (glm::ivec2 k : highlight)
             {
-                if ((whiteDown && k == std::array<int, 2>(j,i))||(!whiteDown &&k == std::array<int, 2>(8-(j+1), 8-(i+1)))) {
+                if ((whiteDown && k == glm::ivec2(j,i))||(!whiteDown &&k == glm::ivec2(8-(j+1), 8-(i+1)))) {
                         SDL_SetRenderDrawColor(renderer, 255,0,0, 200);
                         SDL_RenderFillRect(renderer, &rect);
             }
@@ -177,8 +177,8 @@ void RenderWindow::display()
 }
 
 
-void RenderWindow::fullRender(std::vector<std::array<int, 2>> highlight, std::vector<std::array<int, 2>> lastMoves,
-                              std::vector<std::shared_ptr<Piece>>& Pieces, bool whiteDown,std::array<Button*, 3> buttons){
+void RenderWindow::fullRender(std::vector<glm::ivec2> highlight, std::vector<glm::ivec2> lastMoves,
+                              std::vector<std::shared_ptr<Piece>>& Pieces, bool whiteDown,std::array<Button, 3> buttons){
     clear();
     
     renderbg(highlight, lastMoves,  whiteDown);
@@ -217,8 +217,8 @@ bool RenderWindow::displayWelcomeMessage(std::string text) {
         updateSquareSize();
         textRect.w = windowx/1.01;
         textRect.h = windowy/5;
-        textRect[0] = (windowx - textRect.w) / 2;
-        textRect[1] = (windowy - textRect.h) / 2;
+        textRect.x = (windowx - textRect.w) / 2;
+        textRect.y = (windowy - textRect.h) / 2;
         // dst
         SDL_RenderClear(renderer);
         SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
@@ -234,7 +234,7 @@ bool RenderWindow::displayWelcomeMessage(std::string text) {
                 // Check if the "PLAY" button was pressed
                 // int x, y;
                 // SDL_GetMouseState(&x, &y);
-                // if (x >= textRect[0] && x <= textRect[0] + textRect.w && y >= textRect[1] && y <= textRect[1] + textRect.h) {
+                // if (x >= textRect.x && x <= textRect.x + textRect.w && y >= textRect.y && y <= textRect.y + textRect.h) {
                 //   // Set the flag to true and exit the loop
                 playButtonPressed = true;
             } else if (event.type == SDL_KEYDOWN) {
@@ -262,7 +262,7 @@ bool RenderWindow::displayWelcomeMessage(std::string text) {
     return true;
 }
 
-int RenderWindow::displayPromotionOptions(std::array<int, 2> pos, bool white) {
+int RenderWindow::displayPromotionOptions(glm::vec2 pos, bool white) {
     // we have to display a bot where are 4 options are displayed and the number returned represents the piece    
     // 1 = queen, 2 = rook, 3 = bishop, 4 = knight
     // we have to render the background first
@@ -271,11 +271,11 @@ int RenderWindow::displayPromotionOptions(std::array<int, 2> pos, bool white) {
 
 
     SDL_SetRenderDrawColor(renderer, 166, 168, 171, 200);
-    int calculations = (int)pos[1]*squareSize - (white ? 0 : 3*squareSize);
-    SDL_Rect rect = {(int)pos[0]*squareSize, calculations, (squareSize ), (squareSize * 4)};
+    int calculations = (int)pos.y*squareSize - (white ? 0 : 3*squareSize);
+    SDL_Rect rect = {(int)pos.x*squareSize, calculations, (squareSize ), (squareSize * 4)};
     SDL_RenderFillRect(renderer, &rect);
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-    SDL_Rect outline = {(int)pos[0]*squareSize, calculations, (squareSize ), (squareSize * 4)};
+    SDL_Rect outline = {(int)pos.x*squareSize, calculations, (squareSize ), (squareSize * 4)};
     SDL_RenderDrawRect(renderer, &outline);
     int y;
     if (white) {
@@ -288,14 +288,14 @@ int RenderWindow::displayPromotionOptions(std::array<int, 2> pos, bool white) {
         SDL_Rect src; 
         src.h = 128;
         src.w = 128;
-        src[1] = y; 
-        src[0] = 128*5-i; 
+        src.y = y; 
+        src.x = 128*5-i; 
         SDL_Rect dst;
-        dst[0] = pos[0]* squareSize;
+        dst.x = pos.x* squareSize;
         if (white) {
-            dst[1] = (pos[1]+(int)((i-128)/128)) * squareSize;
+            dst.y = (pos.y+(int)((i-128)/128)) * squareSize;
         } else {
-            dst[1] = (pos[1]-(int)((i-128)/128)) * squareSize;
+            dst.y = (pos.y-(int)((i-128)/128)) * squareSize;
         }
         dst.w = squareSize;
         dst.h = squareSize;

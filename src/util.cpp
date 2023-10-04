@@ -11,7 +11,7 @@
 #include "knight.hpp"
 #include "piece.hpp"
    
-std::shared_ptr<Piece> getMatchingPiece(std::array<int, 2> field, std::vector<std::shared_ptr<Piece>>& Pieces) {
+std::shared_ptr<Piece> getMatchingPiece(glm::vec2 field, std::vector<std::shared_ptr<Piece>>& Pieces) {
     
     for (auto& i: Pieces)
     {
@@ -22,7 +22,7 @@ std::shared_ptr<Piece> getMatchingPiece(std::array<int, 2> field, std::vector<st
     return nullptr;
 }
 
-std::array<float, 2> getMousePosition(bool whiteDown,int squareSize){
+glm::vec2 getMousePosition(bool whiteDown,int squareSize){
     int Mouse_x, Mouse_y;
     float Mousex, Mousey;
     SDL_GetMouseState(&Mouse_x, &Mouse_y);
@@ -42,6 +42,6 @@ std::array<float, 2> getMousePosition(bool whiteDown,int squareSize){
         Mouse_x = 8-Mouse_x/squareSize;
         Mouse_y = 8-Mouse_y/squareSize;
     }
-    return std::array<float, 2> {Mousex,Mousey};
+    return glm::vec2 {Mousex,Mousey};
 }
 

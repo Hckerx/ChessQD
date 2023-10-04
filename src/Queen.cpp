@@ -3,7 +3,7 @@
 
 #include <iostream>
 
-Queen::Queen(std::array<int, 2> p_pos, bool white)
+Queen::Queen(glm::vec2 p_pos, bool white)
 :Piece(p_pos, white){
         if (white) {
                 currentFrame.y = 128;
@@ -18,23 +18,23 @@ Queen::Queen(std::array<int, 2> p_pos, bool white)
 
 void Queen::findMovesWithoutCheck(std::vector<std::shared_ptr<Piece>>& Pieces) {
     legalMoves.clear();
-    for (int8_t i = pos[0]+1; i<8; i++) {
-        if (!findIndMoves(Pieces, i, pos[1]+(i-pos[0]))) {
+    for (int8_t i = pos.x+1; i<8; i++) {
+        if (!findIndMoves(Pieces, i, pos.y+(i-pos.x))) {
             break;
         }
     }
-    for (int8_t i = pos[0]-1; i>=0; i--) {
-        if (!findIndMoves(Pieces, i, pos[1]-(i-pos[0]))) {
+    for (int8_t i = pos.x-1; i>=0; i--) {
+        if (!findIndMoves(Pieces, i, pos.y-(i-pos.x))) {
             break;
         }
     }
-    for (int8_t i = pos[0]+1; i<8; i++) {
-        if (!findIndMoves(Pieces, i, pos[1]-(i-pos[0]))) {
+    for (int8_t i = pos.x+1; i<8; i++) {
+        if (!findIndMoves(Pieces, i, pos.y-(i-pos.x))) {
             break;
         }
     }
-    for (int8_t i = pos[0]-1; i>=0; i--) {
-        if (!findIndMoves(Pieces, i, pos[1]+(i-pos[0]))) {
+    for (int8_t i = pos.x-1; i>=0; i--) {
+        if (!findIndMoves(Pieces, i, pos.y+(i-pos.x))) {
             break;
         }
     }
@@ -59,7 +59,7 @@ void Queen::findMovesWithoutCheck(std::vector<std::shared_ptr<Piece>>& Pieces) {
             break;
         }
     }
-    pos_y = pos[1] - 1;
+    pos_y = pos.y - 1;
     for (int8_t i = pos_y; i >= 0; i-=1)
     {
         if(!findIndMoves(Pieces,pos[0],i)){

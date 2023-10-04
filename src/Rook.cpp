@@ -5,7 +5,7 @@
 #include "glm/ext.hpp"
 #include "util.hpp"
 #include <iostream>
-Rook::Rook(std::array<int, 2> p_pos, bool white)
+Rook::Rook(glm::vec2 p_pos, bool white)
 :Piece(p_pos, white){
         if (white) {
                 currentFrame.y = 128;
@@ -42,7 +42,7 @@ void Rook::findMovesWithoutCheck(std::vector<std::shared_ptr<Piece>>& Pieces) {
             break;
         }
     }
-    pos_y = pos[1] - 1;
+    pos_y = pos.y - 1;
     for (int8_t i = pos_y; i >= 0; i-=1)
     {
         if(!findIndMoves(Pieces,pos[0],i)){
@@ -52,7 +52,7 @@ void Rook::findMovesWithoutCheck(std::vector<std::shared_ptr<Piece>>& Pieces) {
 }
 
 
-bool Rook::move(std::array<int, 2> newPos, std::array<int, 2> oldPos, std::vector<std::shared_ptr<Piece>>& Pieces, bool whiteTurn, bool isPlayingOnline, bool isWhite) {
+bool Rook::move(glm::vec2 newPos, glm::vec2 oldPos, std::vector<std::shared_ptr<Piece>>& Pieces, bool whiteTurn, bool isPlayingOnline, bool isWhite) {
         if (Piece::move(newPos, oldPos, Pieces, whiteTurn, isPlayingOnline, isWhite)) {
                 hasMoved = true;
                 return true;

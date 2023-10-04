@@ -15,9 +15,9 @@ public:
 	RenderWindow(const char* p_title);
 	bool displayWelcomeMessage(std::string text);
 	void cleanUp();
-	void fullRender(std::vector<std::array<int, 2>> highlight, std::vector<std::array<int, 2>> lastMoves, 
-					std::vector<std::shared_ptr<Piece>>& Pieces, bool whiteDown,std::array<Button*, 3>);
-    int displayPromotionOptions(std::array<int, 2> pos, bool white);
+	void fullRender(std::vector<glm::ivec2> highlight, std::vector<glm::ivec2> lastMoves, 
+					std::vector<std::shared_ptr<Piece>>& Pieces, bool whiteDown,std::array<Button, 3>);
+    int displayPromotionOptions(glm::vec2 pos, bool white);
     int squareSize;
 	void updateSquareSize() {
 		SDL_GetWindowSize(window, &windowx, &windowy);
@@ -26,7 +26,7 @@ public:
 	void display();
 
 private:
-	int renderButton(std::array<Button*, 3> buttons);
+	int renderButton(std::array<Button, 3> buttons);
     
 	SDL_Texture* texture;
 	SDL_Window* window;
@@ -36,6 +36,6 @@ private:
 	int windowy;
 	void clear();
 	void render(std::shared_ptr<Piece>& p_piece, bool whiteDown);
-	void renderbg(std::vector<std::array<int, 2>> highlight, std::vector<std::array<int, 2>> lastMoves, bool whiteDown);
+	void renderbg(std::vector<glm::ivec2> highlight, std::vector<glm::ivec2> lastMoves, bool whiteDown);
 	SDL_Texture* loadTexture(const char* p_filePath);
 };
