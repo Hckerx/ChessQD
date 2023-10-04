@@ -10,6 +10,7 @@ public:
     void updateRect();
     int Mouse_x, Mouse_y;
     SDL_Point point;
+    bool hovered(int MouseX, int MouseY);
     bool hovered();
     std::string name;
 private:

@@ -3,7 +3,7 @@
 
 #include <iostream>
 
-Bishop::Bishop(glm::vec2 p_pos, bool white)
+Bishop::Bishop(std::array<int, 2> p_pos, bool white)
 :Piece(p_pos, white){
         if (white) {
                 currentFrame.y = 128;
@@ -18,20 +18,20 @@ Bishop::Bishop(glm::vec2 p_pos, bool white)
 
 void Bishop::findMovesWithoutCheck(std::vector<std::shared_ptr<Piece>>& Pieces){
         legalMoves.clear();
-        for (int8_t i = pos.x+1; i<8; i++) {
-            if (!findIndMoves(Pieces, i, pos.y+(i-pos.x)))
+        for (int8_t i = pos[0]+1; i<8; i++) {
+            if (!findIndMoves(Pieces, i, pos[1]+(i-pos[0])))
                 break;
         }
-        for (int8_t i = pos.x-1; i>=0; i--) {
-            if (!findIndMoves(Pieces, i, pos.y-(i-pos.x)))
+        for (int8_t i = pos[0]-1; i>=0; i--) {
+            if (!findIndMoves(Pieces, i, pos[1]-(i-pos[0])))
                 break;
         }
-        for (int8_t i = pos.x+1; i<8; i++) {
-            if (!findIndMoves(Pieces, i, pos.y-(i-pos.x))) 
+        for (int8_t i = pos[0]+1; i<8; i++) {
+            if (!findIndMoves(Pieces, i, pos[1]-(i-pos[0]))) 
                 break;
         }
-        for (int8_t i = pos.x-1; i>=0; i--) {
-            if (!findIndMoves(Pieces, i, pos.y+(i-pos.x))) 
+        for (int8_t i = pos[0]-1; i>=0; i--) {
+            if (!findIndMoves(Pieces, i, pos[1]+(i-pos[0]))) 
                 break;
         }
 }
