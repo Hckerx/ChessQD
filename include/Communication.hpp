@@ -21,7 +21,6 @@ public:
 private:
     std::thread receiveThread;
     void handle_read(const boost::system::error_code& error, size_t bytes_transferred);
-    boost::asio::streambuf receiveBuffer;  
     tcp::socket socket;
     bool isServer = false;
     std::string data;
