@@ -13,19 +13,17 @@ try : socket(io_context) {
 
     try {
         socket.connect(tcp::endpoint(boost::asio::ip::address::from_string("127.0.0.1"), 12345));
+        std::thread receiveThread(&Communication::receive, this);
+        receiveThread.detach();
         isServer = false;
     } 
     catch (std::exception& e) {
         socket.close();
-        tcp::acceptor acceptor(io_context, tcp::endpoint(tcp::v4(), 12345));
-        acceptor.accept(socket);
-        isServer = true;
-        isWhite = std::rand() % 2 == 0;
-        send(isWhite ? "black" : "white");       
-        received = true;
+        
+        std::thread init(&Communication::init, this);
+        init.detach();
     }      
-    std::thread receiveThread(&Communication::receive, this);
-    receiveThread.detach();
+    
 }
 catch (std::exception& e)
 {
@@ -39,6 +37,16 @@ void Communication::send(std::string message) {
     std::cout << "Sending: " << message << std::endl;
     int bytes = boost::asio::write(socket, boost::asio::buffer(message));
     std::cout << "bytes_transferred:" << bytes << std::endl;
+}
+void Communication::init(){
+    tcp::acceptor acceptor(io_context, tcp::endpoint(tcp::v4(), 12345));
+    acceptor.accept(socket);
+    isServer = true;
+    isWhite = std::rand() % 2 == 0;
+    send(isWhite ? "black" : "white");       
+    received = true;
+    std::thread receiveThread(&Communication::receive, this);
+    receiveThread.detach();
 }
 
 

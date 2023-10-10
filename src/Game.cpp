@@ -229,6 +229,12 @@ void Game::handleEvents() {
                         }
                         if (buttons[1]->hovered()){
                             isPlayingOnline = !isPlayingOnline;
+                            if (isPlayingOnline) {
+                             communication = std::make_unique<Communication>();
+                            }
+                            else {
+                            communication.reset();
+                            }
                         }
                         if (buttons[2]->hovered()) {
                             rotate_board = !rotate_board;

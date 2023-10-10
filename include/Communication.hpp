@@ -24,5 +24,6 @@ private:
     tcp::socket socket;
     bool isServer = false;
     std::string data;
+    void init();
 };
 
