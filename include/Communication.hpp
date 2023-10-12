@@ -23,12 +23,12 @@ public:
     ~Communication() {
         std::cout << "Communication destructor" << std::endl;
         if (isConnected) {
-            send("close");
+            send("closse");
+            acceptor->close();
         }
         if (acceptor != nullptr) {
             std::cout << "closing acceptor" << std::endl;
-            acceptor->cancel();
-            acceptor->close();
+            
             delete acceptor;
         }
         socket.close();

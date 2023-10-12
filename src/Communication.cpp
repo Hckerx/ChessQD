@@ -1,4 +1,5 @@
 #include <boost/asio/buffer.hpp>
+#include <cstdio>
 #include <iostream>
 #include <boost/asio.hpp>
 #include "Communication.hpp"
@@ -20,13 +21,12 @@ try : socket(io_context) {
     } 
     catch (std::exception& e) {
         socket.close();
-        
         std::thread init(&Communication::init, this);
         init.detach();
     }      
 }
 catch (std::exception& e)
-{
+{ 
     std::cerr << "Exception: " << e.what() << std::endl;    
 } 
 
@@ -40,8 +40,8 @@ void Communication::send(std::string message) {
 }
 void Communication::init(){
     acceptor = new tcp::acceptor(io_context, tcp::endpoint(tcp::v4(), 12345));
-    // write the line below so that it accepts asyncronously
-    acceptor->accept(socket);
+    acceptor->async_accept([this](const boost::system::error_code& error, tcp::socket socket) {
+    if (!error) {
     std::cout << "how did we get here?" << std::endl;
     isConnected = true;
     isServer = true;
@@ -50,6 +50,10 @@ void Communication::init(){
     received = true;
     std::thread receiveThread(&Communication::receive, this);
     receiveThread.detach();
+    } else {
+        std::cerr << "Error accepting connection: " << error.message() << std::endl;
+    }
+});   
 }
 
 
