@@ -13,6 +13,7 @@ try : socket(io_context) {
 
     try {
         socket.connect(tcp::endpoint(boost::asio::ip::address::from_string("127.0.0.1"), 12345));
+        isConnected = true;
         std::thread receiveThread(&Communication::receive, this);
         receiveThread.detach();
         isServer = false;
@@ -23,7 +24,6 @@ try : socket(io_context) {
         std::thread init(&Communication::init, this);
         init.detach();
     }      
-    
 }
 catch (std::exception& e)
 {
@@ -39,8 +39,11 @@ void Communication::send(std::string message) {
     std::cout << "bytes_transferred:" << bytes << std::endl;
 }
 void Communication::init(){
-    tcp::acceptor acceptor(io_context, tcp::endpoint(tcp::v4(), 12345));
-    acceptor.accept(socket);
+    acceptor = new tcp::acceptor(io_context, tcp::endpoint(tcp::v4(), 12345));
+    // write the line below so that it accepts asyncronously
+    acceptor->accept(socket);
+    std::cout << "how did we get here?" << std::endl;
+    isConnected = true;
     isServer = true;
     isWhite = std::rand() % 2 == 0;
     send(isWhite ? "black" : "white");       
@@ -61,14 +64,20 @@ void Communication::init(){
 // }
 //
 
+
 void Communication::receive() {
     while (true) {
+        std::cout << "How did we really get here" << std::endl;
         boost::asio::streambuf receiveBuffer;  
         boost::asio::read_until(socket, receiveBuffer, '\n');
         data = boost::asio::buffer_cast<const char*>(receiveBuffer.data());
         std::cout << "Received: " << data << std::endl;
         if (!data.empty() && data.back() == '\n') {
             data.pop_back();
+        }
+        if (data == "close") {
+            socket.close();
+            return;
         }
         if (data == "black") {
             isWhite = false; 

@@ -15,7 +15,8 @@ private:
     SDL_Event event;
 
     // Communication
-    std::unique_ptr<Communication> communication = nullptr;
+    //std::unique_ptr<Communication> communication = nullptr;
+    Communication* communication;
 
     //Game Logic
 

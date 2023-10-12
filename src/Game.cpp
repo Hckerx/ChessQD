@@ -39,7 +39,7 @@ Game::Game(std::string fen) : window("ChessQLD") {
 
     moveHistory.push_back(fen);
     if (false) { /*if online button clicked*/
-        communication = std::make_unique<Communication>();
+        communication = new Communication();
         isPlayingOnline = true;
         //communication->io_context.run();     
     }
@@ -217,7 +217,6 @@ void Game::handleEvents() {
                 if (event.button.button == SDL_BUTTON_LEFT)
                 {
                     if(event.button.clicks == 1){
-                        std::cout << "wwww" << std::endl;
                         if (buttons[0]->hovered()) {
                             if (whiteTurn) {
                                 state = 0;
@@ -227,16 +226,17 @@ void Game::handleEvents() {
                             gameRunning = false;
                             break;
                         }
-                        if (buttons[1]->hovered()){
-                            isPlayingOnline = !isPlayingOnline;
-                            if (isPlayingOnline) {
-                             communication = std::make_unique<Communication>();
+                            if (buttons[1]->hovered()){
+                                std::cout << "clicked online button" << std::endl;
+                                isPlayingOnline = !isPlayingOnline;
+                                if (isPlayingOnline) {
+                                    communication = new Communication();
+                                }
+                                else {
+                                    delete communication;
+                                }
                             }
-                            else {
-                            communication.reset();
-                            }
-                        }
-                        if (buttons[2]->hovered()) {
+                            if (buttons[2]->hovered()) {
                             rotate_board = !rotate_board;
                         }
                     }

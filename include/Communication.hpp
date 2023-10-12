@@ -1,5 +1,6 @@
 #include <boost/asio.hpp>
 #include <boost/bind.hpp>
+#include <iostream>
 
 using boost::asio::ip::tcp;
 class Communication
@@ -7,17 +8,31 @@ class Communication
 public:
     bool received = false;
     Communication();
-    ~Communication() {
-        socket.close();
-    }
+    void close();
     bool isWhite;
     void send(std::string message);
     void receive();
     [[nodiscard]] std::string read();
     std::string noAsyncReceive();
     boost::asio::io_context io_context;
+    bool isConnected = false;
 
+    
+    tcp::acceptor* acceptor = nullptr;
 
+    ~Communication() {
+        std::cout << "Communication destructor" << std::endl;
+        if (isConnected) {
+            send("close");
+        }
+        if (acceptor != nullptr) {
+            std::cout << "closing acceptor" << std::endl;
+            acceptor->cancel();
+            acceptor->close();
+            delete acceptor;
+        }
+        socket.close();
+    }
 private:
     std::thread receiveThread;
     void handle_read(const boost::system::error_code& error, size_t bytes_transferred);
