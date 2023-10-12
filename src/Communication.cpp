@@ -40,7 +40,7 @@ void Communication::send(std::string message) {
 }
 void Communication::init(){
     acceptor = new tcp::acceptor(io_context, tcp::endpoint(tcp::v4(), 12345));
-    acceptor->async_accept([this](const boost::system::error_code& error, tcp::socket socket) {
+    acceptor->async_accept(socket,[this](const boost::system::error_code& error) {
     if (!error) {
     std::cout << "how did we get here?" << std::endl;
     isConnected = true;
@@ -97,7 +97,6 @@ void Communication::receive() {
 }
 
 std::string Communication::read(){
-    std::cout << received << std::endl;
     
     if (received) {
         std::string tempdata = data;
