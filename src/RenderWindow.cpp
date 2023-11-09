@@ -56,12 +56,12 @@ RenderWindow::RenderWindow(const char* p_title)
 
     loadTexture("bin/debug/res/gfx/pieces.png");
 
-    ChessQLDfont = TTF_OpenFont("bin/debug/res/font/REFOLTER.otf", 128);
-    if (ChessQLDfont == NULL) {
-        throw "Font's not working"; 
-        
-    }
 }
+
+void RenderWindow::initFont(TTF_Font* font) {
+    ChessQLDfont = font;
+}
+
 
 SDL_Texture* RenderWindow::loadTexture(const char* p_filePath)
 {
@@ -119,11 +119,7 @@ int RenderWindow::renderButton(std::array<Button*, 3> buttons) {
         buttons[i]->y = windowy *0.95;
         buttons[i]->x = i*(windowx/buttons.size()) + (windowx/(4*buttons.size()));
         
-        SDL_Surface* textSurface = TTF_RenderText_Blended(ChessQLDfont, buttons[i]->name.c_str(), buttons[i]->getColor());
-        if (!textSurface) {
-            fprintf(stderr, "Failed to render text surface: %s\n", TTF_GetError());
-            return -1;
-        }
+        textSurface = buttons[i]->getSurface();
         // Create a texture from the rendered text surface and set its blend mode to alpha blending
         SDL_Texture* textTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
         SDL_SetTextureBlendMode(textTexture, SDL_BLENDMODE_BLEND);

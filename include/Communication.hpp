@@ -9,7 +9,7 @@ public:
     bool received = false;
     Communication();
     void close();
-    bool isWhite;
+    bool isWhite = true;
     void send(std::string message);
     void receive();
     [[nodiscard]] std::string read();

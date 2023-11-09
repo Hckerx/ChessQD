@@ -24,10 +24,11 @@ public:
         squareSize = std::min(windowx, (int)(windowy*0.95))/8;
 	}
 	void display();
+    void initFont(TTF_Font* font);
 
 private:
 	int renderButton(std::array<Button*, 3> buttons);
-    
+    SDL_Surface* textSurface;
 	SDL_Texture* texture;
 	SDL_Window* window;
 	SDL_Renderer* renderer;

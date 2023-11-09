@@ -33,6 +33,18 @@
 
 //constructor of class Game (the main class)
 Game::Game(std::string fen) : window("ChessQLD") {
+
+    // init font
+    //
+
+    ChessQLDfont = TTF_OpenFont("bin/debug/res/font/REFOLTER.otf", 128);
+    if (ChessQLDfont == NULL) {
+        throw "Font's not working"; 
+        
+    }
+
+    window.initFont(ChessQLDfont);
+    buttons = {new Button("resign", ChessQLDfont), new Button("online", ChessQLDfont), new Button("rotate", ChessQLDfont)};
    
     //importing given FEN-notation in the pieces array
     Pieces = FenImport(fen);
