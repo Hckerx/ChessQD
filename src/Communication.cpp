@@ -18,11 +18,13 @@ try : socket(io_context) {
         std::thread receiveThread(&Communication::receive, this);
         receiveThread.detach();
         isServer = false;
+        std::cout << "socket connected" << std::endl;
     } 
     catch (std::exception& e) {
         socket.close();
         std::thread init(&Communication::init, this);
         init.detach();
+        std::cout << "accepting" << std::endl;
     }      
 }
 catch (std::exception& e)
@@ -39,6 +41,7 @@ void Communication::send(std::string message) {
     std::cout << "bytes_transferred:" << bytes << std::endl;
 }
 void Communication::init(){
+    std::cout << "init" << std::endl;
     acceptor = new tcp::acceptor(io_context, tcp::endpoint(tcp::v4(), 12345));
     acceptor->async_accept(socket,[this](const boost::system::error_code& error) {
     if (!error) {
