@@ -9,10 +9,8 @@ Button::Button(std::string name)
 
 }
 void Button::initButton(SDL_Texture* textTexture, SDL_Texture* textHoveredTexture){
-
-Texture = textTexture;
-TextureHovered = textHoveredTexture;
-    
+    Texture = textTexture;
+    TextureHovered = textHoveredTexture;
 }
 SDL_Texture* Button::getTexture(){
 

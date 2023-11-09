@@ -64,6 +64,7 @@ RenderWindow::RenderWindow(const char* p_title)
 
 }
 
+
 void RenderWindow::initButtons(std::array<Button*, 3> buttons) {
     SDL_Surface* textSurface;
     SDL_Surface* textHoveredSurface;
@@ -81,6 +82,38 @@ void RenderWindow::initButtons(std::array<Button*, 3> buttons) {
     SDL_SetTextureBlendMode(textTexture, SDL_BLENDMODE_BLEND);
     buttons[i]->initButton(textTexture,textTextureHovered);
     }
+}
+
+void RenderWindow::freeTimer(Timer &timer) {
+	//Free texture if it exists
+	if( timer.texture != NULL )
+	{
+		SDL_DestroyTexture( texture );
+		timer.texture = NULL;
+	}
+}
+void RenderWindow::loadFromRenderedText(Timer &timer) {
+
+    freeTimer(timer);
+
+	//Render text surface
+	SDL_Surface* textSurface = TTF_RenderText_Solid( ChessQLDfont, timer.timeText.str().c_str(), timer.textColor );
+	if( textSurface != NULL )
+	{
+		//Create texture from surface pixels
+        timer.texture = SDL_CreateTextureFromSurface( renderer, textSurface );
+		if( texture == NULL )
+		{
+			printf( "Unable to create texture from rendered text! SDL Error: %s\n", SDL_GetError() );
+		}
+
+		//Get rid of old surface
+		SDL_FreeSurface( textSurface );
+	}
+	else
+	{
+		printf( "Unable to render text surface! SDL_ttf Error: %s\n", TTF_GetError() );
+	}
 }
 
 SDL_Texture* RenderWindow::loadTexture(const char* p_filePath)
@@ -188,7 +221,7 @@ void RenderWindow::display()
 
 
 void RenderWindow::fullRender(std::vector<glm::ivec2> highlight, std::vector<glm::ivec2> lastMoves,
-                              std::vector<std::shared_ptr<Piece>>& Pieces, bool whiteDown,std::array<Button*, 3> buttons){
+                            std::vector<std::shared_ptr<Piece>>& Pieces, bool whiteDown,std::array<Button*, 3> buttons, Timer &wTimer, Timer &bTimer) {
     clear();
     
     renderbg(highlight, lastMoves,  whiteDown);
@@ -196,11 +229,29 @@ void RenderWindow::fullRender(std::vector<glm::ivec2> highlight, std::vector<glm
     for (int i = 0; i < (int)Pieces.size(); i++) {
         render(Pieces[i], whiteDown);
     }
+    renderTimer(wTimer, bTimer);
 
     //renderButton({"online", "resign", "turn"}) ;
     
 }
 
+// TODO: All the render functions can be summarized into one function
+void RenderWindow::renderTimer(Timer &wTimer, Timer &bTimer) {
+    wTimer.w = 0; 
+    wTimer.h = 0; 
+    wTimer.y = 0; 
+    wTimer.x = 0; 
+
+    bTimer.w = 0; 
+    bTimer.h = 0; 
+    bTimer.y = 0; 
+    bTimer.x = 0; 
+
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+    SDL_RenderCopy(renderer, wTimer.texture, NULL, &wTimer);
+    SDL_RenderCopy(renderer, wTimer.texture, NULL, &bTimer);
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+}
 
 bool RenderWindow::displayWelcomeMessage(std::string text) {
     std::string welcomeText = text;

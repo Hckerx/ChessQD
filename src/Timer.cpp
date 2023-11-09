@@ -35,6 +35,7 @@ void Timer::reset() {
     isStarted = false;
 }
 
+
 Uint32 Timer::getTicks() const {
     if (isStarted) {
         if (isPaused)

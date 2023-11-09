@@ -37,7 +37,8 @@ Game::Game(std::string fen) : window("ChessQLD") {
     // init font
     //
 
-
+    wTimer = Timer();
+    bTimer = Timer();
     buttons = {new Button("resign"), new Button("online"), new Button("rotate")};
     window.initButtons(buttons);
    
@@ -132,7 +133,22 @@ void Game::placePiece() {
                 if (rotate_board) {
                     whiteDown=!whiteDown;
                 }
+                
                 if (!handleProtomotion(selectedPiece, sizeOfPieces != Pieces.size())) {
+                    if (whiteTurn) {
+                        if (wTimer.isStarted) {
+                            wTimer.pause();
+                        } else {
+                            wTimer.start();
+                        }
+
+                    } else {
+                        if (bTimer.isStarted) {
+                            bTimer.pause();
+                        } else {
+                            bTimer.start();
+                        }
+                    }
                     whiteTurn = !whiteTurn;
                     //         ++halfMoveNumber;
                     moveHistory.push_back(FenExport(Pieces));
@@ -146,6 +162,10 @@ void Game::placePiece() {
                     std::string temp = FenExport(Pieces);
                     communication->send(temp);
                 }
+                
+                
+                
+                
             } 
         //}
         // else {
@@ -216,6 +236,10 @@ void Game::handleEvents() {
             }
         }
     }
+    wTimer.timeText.str("");
+    bTimer.timeText.str("");
+	wTimer.timeText << "Seconds since start time " << ( wTimer.getTicks() / 1000.f ) ; 
+	bTimer.timeText << "Seconds since start time " << ( bTimer.getTicks() / 1000.f ) ; 
     while (SDL_PollEvent(&event))
     {
         switch (event.type)
@@ -326,43 +350,42 @@ void Game::handleEvents() {
 
 void Game::handlePromotionPieceSelection(glm::vec2 selection){
     if ((int)selection.x == lastMoves[lastMoves.size() -1].x) {
+        Pieces.erase(std::remove(Pieces.begin(), Pieces.end(), lastPiece), Pieces.end());
         switch (whiteTurn ? (int)selection.y : 7 - (int)selection.y) {
             case 0: 
-                Pieces.erase(std::remove(Pieces.begin(), Pieces.end(), lastPiece), Pieces.end());
                 Pieces.push_back(std::make_shared<Queen>(lastMoves[lastMoves.size()-1], whiteTurn));
-                isPromoting = false;
-                whiteTurn = !whiteTurn;
-                handleCheckmate();
-                moveHistory.push_back(FenExport(Pieces));
                 break;
             case 1: 
-                Pieces.erase(std::remove(Pieces.begin(), Pieces.end(), lastPiece), Pieces.end());
                 Pieces.push_back(std::make_shared<Rook>(lastMoves[lastMoves.size()-1], whiteTurn));
-                isPromoting = false;
-                whiteTurn = !whiteTurn;
-                handleCheckmate();
-                moveHistory.push_back(FenExport(Pieces));
                 break;
             case 2: 
-                Pieces.erase(std::remove(Pieces.begin(), Pieces.end(), lastPiece), Pieces.end());
                 Pieces.push_back(std::make_shared<Bishop>(lastMoves[lastMoves.size()-1], whiteTurn));
-                isPromoting = false;
-                whiteTurn = !whiteTurn;
-                handleCheckmate();
-                moveHistory.push_back(FenExport(Pieces));
                 break;
             case 3: 
-                Pieces.erase(std::remove(Pieces.begin(), Pieces.end(), lastPiece), Pieces.end());
                 Pieces.push_back(std::make_shared<Knight>(lastMoves[lastMoves.size()-1], whiteTurn));
-                isPromoting = false;
-                whiteTurn = !whiteTurn;
-                //++halfMoveNumber;
-                handleCheckmate();
-                moveHistory.push_back(FenExport(Pieces));
                 break;
             default: 
                 break;
         } 
+
+        isPromoting = false;
+        whiteTurn = !whiteTurn;
+        handleCheckmate();
+        moveHistory.push_back(FenExport(Pieces));
+        if (whiteTurn) {
+            if (wTimer.isStarted) {
+                wTimer.pause();
+            } else {
+                wTimer.start();
+            }
+
+        } else {
+            if (bTimer.isStarted) {
+                bTimer.pause();
+            } else {
+                bTimer.start();
+            }
+        }
     } 
 }
 

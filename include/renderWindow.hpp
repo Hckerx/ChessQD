@@ -7,6 +7,7 @@
 #include <SDL2/SDL_ttf.h>
 #include "button.hpp"
 #include "piece.hpp"
+#include "timer.hpp"
 
 
 class RenderWindow 
@@ -15,8 +16,8 @@ public:
 	RenderWindow(const char* p_title);
 	bool displayWelcomeMessage(std::string text);
 	void cleanUp();
-	void fullRender(std::vector<glm::ivec2> highlight, std::vector<glm::ivec2> lastMoves, 
-					std::vector<std::shared_ptr<Piece>>& Pieces, bool whiteDown,std::array<Button*, 3>);
+    void fullRender(std::vector<glm::ivec2> highlight, std::vector<glm::ivec2> lastMoves, std::vector<std::shared_ptr<Piece>>& Pieces, bool whiteDown,std::array<Button*, 3> buttons, Timer &wTimer, Timer &bTimer);
+    void renderTimer(Timer &wTimer, Timer &bTimer);
     int displayPromotionOptions(glm::vec2 pos, bool white);
     int squareSize;
 	void updateSquareSize() {
@@ -28,10 +29,12 @@ public:
 
 private:
 
+    void loadFromRenderedText(Timer &timer);
 	int renderButton(std::array<Button*, 3> buttons);
 	SDL_Texture* texture;
 	SDL_Window* window;
 	SDL_Renderer* renderer;
+    void freeTimer(Timer &timer);
     TTF_Font* ChessQLDfont = TTF_OpenFont("bin/debug/res/font/REFOLTER.otf", 128);;
 	int windowx;
 	int windowy;

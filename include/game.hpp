@@ -3,6 +3,7 @@
 
 #include <memory>
 #include <vector>
+#include "timer.hpp"
 #include "renderWindow.hpp"
 #include "piece.hpp"
 #include <iostream>
@@ -30,6 +31,8 @@ private:
 
 
     TTF_Font* ChessQLDfont;
+    Timer wTimer;
+    Timer bTimer;
     bool gameRunning = true;
     bool PieceSelected = false; //Does user hold leftclick on piece
     bool whiteTurn = true;
