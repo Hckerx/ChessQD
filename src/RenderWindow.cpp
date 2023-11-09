@@ -36,6 +36,10 @@ RenderWindow::RenderWindow(const char* p_title)
 
     if (TTF_Init() == -1)
         std::cout << "TTF_init has failed. Error: " << SDL_GetError() << std::endl;
+       if (ChessQLDfont == NULL) {
+        throw "Font's not working"; 
+        
+    }
     SDL_DisplayMode DM;
     SDL_GetCurrentDisplayMode(0, &DM);
     int height = DM.h < DM.w ? DM.h*0.90 : DM.w * 0.90;
@@ -60,9 +64,6 @@ RenderWindow::RenderWindow(const char* p_title)
 
 }
 
-void RenderWindow::initFont(TTF_Font* font) {
-    ChessQLDfont = font;
-}
 void RenderWindow::initButtons(std::array<Button*, 3> buttons) {
     SDL_Surface* textSurface;
     SDL_Surface* textHoveredSurface;

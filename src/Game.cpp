@@ -37,13 +37,7 @@ Game::Game(std::string fen) : window("ChessQLD") {
     // init font
     //
 
-    ChessQLDfont = TTF_OpenFont("bin/debug/res/font/REFOLTER.otf", 128);
-    if (ChessQLDfont == NULL) {
-        throw "Font's not working"; 
-        
-    }
 
-    window.initFont(ChessQLDfont);
     buttons = {new Button("resign", ChessQLDfont), new Button("online", ChessQLDfont), new Button("rotate", ChessQLDfont)};
     window.initButtons(buttons);
    
@@ -229,7 +223,6 @@ void Game::handleEvents() {
             case SDL_MOUSEBUTTONDOWN:
                 if (event.button.button == SDL_BUTTON_LEFT)
                 {
-                    if(event.button.clicks == 1){
                         if (buttons[0]->hovered()) {
                             if (whiteTurn) {
                                 state = 0;
@@ -252,7 +245,6 @@ void Game::handleEvents() {
                             if (buttons[2]->hovered()) {
                             rotate_board = !rotate_board;
                         }
-                    }
                    
                    
                     //std::array<bool, 3> buttonsClicked = window.checkIfButtonClicked({Mouse_x, Mouse_y});

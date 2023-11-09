@@ -24,7 +24,6 @@ public:
         squareSize = std::min(windowx, (int)(windowy*0.95))/8;
 	}
 	void display();
-    void initFont(TTF_Font* font);
     void initButtons(std::array<Button*, 3> buttons);
 
 private:
@@ -33,7 +32,7 @@ private:
 	SDL_Texture* texture;
 	SDL_Window* window;
 	SDL_Renderer* renderer;
-    TTF_Font* ChessQLDfont;
+    TTF_Font* ChessQLDfont = TTF_OpenFont("bin/debug/res/font/REFOLTER.otf", 128);;
 	int windowx;
 	int windowy;
 	void clear();
