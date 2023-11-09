@@ -25,16 +25,18 @@ public:
 	}
 	void display();
     void initFont(TTF_Font* font);
+    void initButtons(std::array<Button*, 3> buttons);
 
 private:
+
 	int renderButton(std::array<Button*, 3> buttons);
-    SDL_Surface* textSurface;
 	SDL_Texture* texture;
 	SDL_Window* window;
 	SDL_Renderer* renderer;
     TTF_Font* ChessQLDfont;
 	int windowx;
 	int windowy;
+    SDL_Texture* textTexture;
 	void clear();
 	void render(std::shared_ptr<Piece>& p_piece, bool whiteDown);
 	void renderbg(std::vector<glm::ivec2> highlight, std::vector<glm::ivec2> lastMoves, bool whiteDown);

@@ -61,7 +61,11 @@ RenderWindow::RenderWindow(const char* p_title)
 void RenderWindow::initFont(TTF_Font* font) {
     ChessQLDfont = font;
 }
-
+void RenderWindow::initButtons(std::array<Button*, 3> buttons) {
+    for (uint8_t i = 0; i<buttons.size(); i++) {
+        buttons[i]->initButton(ChessQLDfont, renderer);
+    }
+}
 
 SDL_Texture* RenderWindow::loadTexture(const char* p_filePath)
 {
@@ -119,11 +123,7 @@ int RenderWindow::renderButton(std::array<Button*, 3> buttons) {
         buttons[i]->y = windowy *0.95;
         buttons[i]->x = i*(windowx/buttons.size()) + (windowx/(4*buttons.size()));
         
-        textSurface = buttons[i]->getSurface();
-        // Create a texture from the rendered text surface and set its blend mode to alpha blending
-        SDL_Texture* textTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
-        SDL_SetTextureBlendMode(textTexture, SDL_BLENDMODE_BLEND);
-
+        textTexture = buttons[i]->getTexture();
 
         // dst
         SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);

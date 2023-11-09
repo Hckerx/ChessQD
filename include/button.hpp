@@ -15,9 +15,11 @@ public:
     SDL_Point point;
     bool hovered();
     std::string name;
+    void initButton(TTF_Font* font, SDL_Renderer* renderer);
+    SDL_Texture* getTexture();
 private:
-    SDL_Surface* textSurface;
-    SDL_Surface* textHoveredSurface;
+    SDL_Texture* textTexture;
+    SDL_Texture* textTextureHovered;
     SDL_Color color = {255, 255, 255};
     SDL_Color hoveredColor = {255, 0, 0};
 };

@@ -45,6 +45,7 @@ Game::Game(std::string fen) : window("ChessQLD") {
 
     window.initFont(ChessQLDfont);
     buttons = {new Button("resign", ChessQLDfont), new Button("online", ChessQLDfont), new Button("rotate", ChessQLDfont)};
+    window.initButtons(buttons);
    
     //importing given FEN-notation in the pieces array
     Pieces = FenImport(fen);
