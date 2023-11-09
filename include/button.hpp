@@ -6,8 +6,7 @@
 class Button : public SDL_Rect
 {
 public:
-    Button(std::string name, TTF_Font* font);
-    TTF_Font* ChessQLDfont;
+    Button(std::string name);
     bool clicked();
     SDL_Surface* getSurface();
     void updateRect();

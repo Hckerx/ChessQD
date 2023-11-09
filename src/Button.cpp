@@ -4,7 +4,7 @@
 #include <string>
 #include "button.hpp"
 #include <SDL2/SDL.h>
-Button::Button(std::string name, TTF_Font* font)
+Button::Button(std::string name)
 :SDL_Rect(), name(name){
 
 }
