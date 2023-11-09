@@ -1,4 +1,6 @@
 #include <SDL2/SDL_rect.h>
+#include <SDL2/SDL_render.h>
+#include <SDL2/SDL_surface.h>
 #include <SDL2/SDL_video.h>
 #include <cstdint>
 #include <glm/fwd.hpp>
@@ -62,8 +64,21 @@ void RenderWindow::initFont(TTF_Font* font) {
     ChessQLDfont = font;
 }
 void RenderWindow::initButtons(std::array<Button*, 3> buttons) {
+    SDL_Surface* textSurface;
+    SDL_Surface* textHoveredSurface;
+    SDL_Texture* textTexture;
+    SDL_Texture* textTextureHovered;
     for (uint8_t i = 0; i<buttons.size(); i++) {
-        buttons[i]->initButton(ChessQLDfont, renderer);
+        textSurface = TTF_RenderText_Blended(ChessQLDfont, buttons[i]->name.c_str(), buttons[i]->color);
+        textHoveredSurface = TTF_RenderText_Blended(ChessQLDfont, buttons[i]->name.c_str(), buttons[i]->hoveredColor);
+    if (!textSurface || !textHoveredSurface) {
+        fprintf(stderr, "Failed to render text surface: %s\n", TTF_GetError());
+    }
+    textTextureHovered = SDL_CreateTextureFromSurface(renderer, textHoveredSurface);
+    SDL_SetTextureBlendMode(textTextureHovered, SDL_BLENDMODE_BLEND);
+    textTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
+    SDL_SetTextureBlendMode(textTexture, SDL_BLENDMODE_BLEND);
+    buttons[i]->initButton(textTexture,textTextureHovered);
     }
 }
 
@@ -122,12 +137,10 @@ int RenderWindow::renderButton(std::array<Button*, 3> buttons) {
         buttons[i]->h = windowy*0.05;
         buttons[i]->y = windowy *0.95;
         buttons[i]->x = i*(windowx/buttons.size()) + (windowx/(4*buttons.size()));
-        
-        textTexture = buttons[i]->getTexture();
 
         // dst
         SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-        SDL_RenderCopy(renderer, textTexture, NULL, buttons[i]);
+        SDL_RenderCopy(renderer, buttons[i]->getTexture(), NULL, buttons[i]);
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     }
 

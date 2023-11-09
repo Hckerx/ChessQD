@@ -36,7 +36,6 @@ private:
     TTF_Font* ChessQLDfont;
 	int windowx;
 	int windowy;
-    SDL_Texture* textTexture;
 	void clear();
 	void render(std::shared_ptr<Piece>& p_piece, bool whiteDown);
 	void renderbg(std::vector<glm::ivec2> highlight, std::vector<glm::ivec2> lastMoves, bool whiteDown);
