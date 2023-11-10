@@ -88,7 +88,7 @@ void RenderWindow::freeTimer(Timer *timer) {
 	//Free texture if it exists
 	if( timer->texture != NULL )
 	{
-		SDL_DestroyTexture( texture );
+		SDL_DestroyTexture(timer->texture );
 		timer->texture = NULL;
 	}
 }
@@ -191,7 +191,7 @@ int RenderWindow::renderWidgets(std::array<Button*, 3> buttons, Timer* wTimer, T
 
     SDL_RenderCopy(renderer, wTimer->texture, NULL, wTimer);
     SDL_RenderCopy(renderer, bTimer->texture, NULL, bTimer);
-    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
     return 0;
 }
 

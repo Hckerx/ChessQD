@@ -53,7 +53,7 @@ Game::Game(std::string fen) : window("ChessQLD") {
     }
 
     run();       
-    wTimer.start();
+    
 }
 
 Game::~Game() {
@@ -62,7 +62,7 @@ Game::~Game() {
 
 
 void Game::run() {
-    
+    wTimer.start();
     window.fullRender(highlightMoves, lastMoves, Pieces, whiteDown,buttons, &wTimer, &bTimer);
     while (gameRunning)
     {
