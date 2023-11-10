@@ -53,6 +53,7 @@ Game::Game(std::string fen) : window("ChessQLD") {
     }
 
     run();       
+    wTimer.start();
 }
 
 Game::~Game() {
@@ -62,7 +63,7 @@ Game::~Game() {
 
 void Game::run() {
     
-    window.fullRender(highlightMoves, lastMoves, Pieces, whiteDown,buttons);
+    window.fullRender(highlightMoves, lastMoves, Pieces, whiteDown,buttons, &wTimer, &bTimer);
     while (gameRunning)
     {
         
@@ -81,7 +82,7 @@ void Game::run() {
 
 
 
-        window.fullRender(highlightMoves, std::vector<glm::ivec2>(lastMoves.end() - 2, lastMoves.end()), Pieces, whiteDown,buttons);
+        window.fullRender(highlightMoves, std::vector<glm::ivec2>(lastMoves.end() - 2, lastMoves.end()), Pieces, whiteDown,buttons, &wTimer, &bTimer);
         if (isPromoting) {
             window.displayPromotionOptions(lastMoves[lastMoves.size() - 1], whiteTurn);
         }
@@ -236,10 +237,13 @@ void Game::handleEvents() {
             }
         }
     }
-    wTimer.timeText.str("");
-    bTimer.timeText.str("");
-	wTimer.timeText << "Seconds since start time " << ( wTimer.getTicks() / 1000.f ) ; 
-	bTimer.timeText << "Seconds since start time " << ( bTimer.getTicks() / 1000.f ) ; 
+	wTimer.timeText = std::to_string(wTimer.getTicks() / 1000.f);
+	bTimer.timeText = std::to_string(bTimer.getTicks() / 1000.f);
+    std::cout << wTimer.timeText << std::endl;
+    std::cout << wTimer.getTicks() << std::endl;
+    std::cout << wTimer.isStarted << std::endl;
+    std::cout << wTimer.isPaused << std::endl;
+    std::cout << bTimer.timeText << std::endl;
     while (SDL_PollEvent(&event))
     {
         switch (event.type)

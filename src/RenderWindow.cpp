@@ -36,9 +36,10 @@ RenderWindow::RenderWindow(const char* p_title)
 
     if (TTF_Init() == -1)
         std::cout << "TTF_init has failed. Error: " << SDL_GetError() << std::endl;
-       if (ChessQLDfont == NULL) {
-        throw "Font's not working"; 
-        
+
+    ChessQLDfont = TTF_OpenFont("bin/debug/res/font/REFOLTER.otf", 128);
+    if (ChessQLDfont == NULL) {
+        std::cerr << "Failed to load font! SDL_ttf Error: %s\n", TTF_GetError();
     }
     SDL_DisplayMode DM;
     SDL_GetCurrentDisplayMode(0, &DM);
@@ -53,7 +54,6 @@ RenderWindow::RenderWindow(const char* p_title)
     }
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
     SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
-
     // Todo
     SDL_Surface* icon = IMG_Load("bin/debug/res/gfx/icon.png");
     SDL_SetWindowIcon(window, icon);
@@ -84,24 +84,24 @@ void RenderWindow::initButtons(std::array<Button*, 3> buttons) {
     }
 }
 
-void RenderWindow::freeTimer(Timer &timer) {
+void RenderWindow::freeTimer(Timer *timer) {
 	//Free texture if it exists
-	if( timer.texture != NULL )
+	if( timer->texture != NULL )
 	{
 		SDL_DestroyTexture( texture );
-		timer.texture = NULL;
+		timer->texture = NULL;
 	}
 }
-void RenderWindow::loadFromRenderedText(Timer &timer) {
+void RenderWindow::loadFromRenderedText(Timer *timer) {
 
     freeTimer(timer);
 
 	//Render text surface
-	SDL_Surface* textSurface = TTF_RenderText_Solid( ChessQLDfont, timer.timeText.str().c_str(), timer.textColor );
+	SDL_Surface* textSurface = TTF_RenderText_Solid( ChessQLDfont, timer->timeText.c_str(), timer->textColor );
 	if( textSurface != NULL )
 	{
 		//Create texture from surface pixels
-        timer.texture = SDL_CreateTextureFromSurface( renderer, textSurface );
+        timer->texture = SDL_CreateTextureFromSurface( renderer, textSurface );
 		if( texture == NULL )
 		{
 			printf( "Unable to create texture from rendered text! SDL Error: %s\n", SDL_GetError() );
@@ -164,20 +164,34 @@ void RenderWindow::render(std::shared_ptr<Piece>& p_piece, bool whiteDown)
 
     SDL_RenderCopy(renderer, texture, &src, &dst);
 }
-int RenderWindow::renderButton(std::array<Button*, 3> buttons) {
-    
-    for (uint8_t i = 0; i<buttons.size(); i++) {
-        buttons[i]->w = windowx/(2*buttons.size());
+int RenderWindow::renderWidgets(std::array<Button*, 3> buttons, Timer* wTimer, Timer* bTimer) {
+
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+    uint8_t i = 0;
+    for (i = 0; i<buttons.size(); i++) {
+        buttons[i]->w = windowx/(2*(buttons.size()+2));
         buttons[i]->h = windowy*0.05;
         buttons[i]->y = windowy *0.95;
-        buttons[i]->x = i*(windowx/buttons.size()) + (windowx/(4*buttons.size()));
+        buttons[i]->x = i*(windowx/(buttons.size()+2)) + (windowx/(4*(buttons.size()+2)));
 
         // dst
-        SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
         SDL_RenderCopy(renderer, buttons[i]->getTexture(), NULL, buttons[i]);
-        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     }
 
+    wTimer->w = windowx/(2*(buttons.size()+2)); 
+    wTimer->h = windowy*0.05; 
+    wTimer->y = windowy *0.95; 
+    wTimer->x = i*(windowx/(buttons.size()+2)) + (windowx/(4*(buttons.size()+2))); 
+
+    bTimer->w = windowx/(2*(buttons.size()+2)); 
+    bTimer->h = windowy*0.05; 
+    bTimer->y = windowy *0.95; 
+    bTimer->x = (i+1)*(windowx/(buttons.size()+2)) + (windowx/(4*(buttons.size()+2))); 
+
+
+    SDL_RenderCopy(renderer, wTimer->texture, NULL, wTimer);
+    SDL_RenderCopy(renderer, bTimer->texture, NULL, bTimer);
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     return 0;
 }
 
@@ -221,37 +235,22 @@ void RenderWindow::display()
 
 
 void RenderWindow::fullRender(std::vector<glm::ivec2> highlight, std::vector<glm::ivec2> lastMoves,
-                            std::vector<std::shared_ptr<Piece>>& Pieces, bool whiteDown,std::array<Button*, 3> buttons, Timer &wTimer, Timer &bTimer) {
+                            std::vector<std::shared_ptr<Piece>>& Pieces, bool whiteDown,std::array<Button*, 3> buttons, Timer* wTimer, Timer* bTimer) {
     clear();
     
     renderbg(highlight, lastMoves,  whiteDown);
-    renderButton(buttons);
+    loadFromRenderedText(wTimer);
+    loadFromRenderedText(bTimer);
+    renderWidgets(buttons, wTimer, bTimer);
     for (int i = 0; i < (int)Pieces.size(); i++) {
         render(Pieces[i], whiteDown);
     }
-    renderTimer(wTimer, bTimer);
 
     //renderButton({"online", "resign", "turn"}) ;
     
 }
 
 // TODO: All the render functions can be summarized into one function
-void RenderWindow::renderTimer(Timer &wTimer, Timer &bTimer) {
-    wTimer.w = 0; 
-    wTimer.h = 0; 
-    wTimer.y = 0; 
-    wTimer.x = 0; 
-
-    bTimer.w = 0; 
-    bTimer.h = 0; 
-    bTimer.y = 0; 
-    bTimer.x = 0; 
-
-    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-    SDL_RenderCopy(renderer, wTimer.texture, NULL, &wTimer);
-    SDL_RenderCopy(renderer, wTimer.texture, NULL, &bTimer);
-    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-}
 
 bool RenderWindow::displayWelcomeMessage(std::string text) {
     std::string welcomeText = text;

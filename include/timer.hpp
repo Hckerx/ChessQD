@@ -13,7 +13,7 @@ public:
     bool isPaused;
     bool isStarted;
     SDL_Color textColor = { 0, 0, 0, 255 };
-    std::stringstream timeText;
+    std::string timeText;
     SDL_Texture* texture = NULL;
 
 private:
