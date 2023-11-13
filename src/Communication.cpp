@@ -4,8 +4,6 @@
 #include <boost/asio.hpp>
 #include "Communication.hpp"
 
-
-
 using boost::asio::ip::tcp;
 
 
@@ -13,6 +11,7 @@ Communication::Communication()
 try : socket(io_context) {
 
     try {
+        //connect to existing game
         std::cout << socket.is_open() << std::endl;
         socket.connect(tcp::endpoint(boost::asio::ip::address::from_string("127.0.0.1"), 12345));
         isConnected = true;
@@ -23,6 +22,7 @@ try : socket(io_context) {
         isServer = false;
     } 
     catch (std::exception& e) {
+        //else create game
         std::cout << socket.is_open() << std::endl;
         socket.close();
         std::thread init(&Communication::init, this);
@@ -42,24 +42,19 @@ void Communication::send(std::string message) {
     int bytes = boost::asio::write(socket, boost::asio::buffer(message));
     std::cout << "bytes_transferred:" << bytes << std::endl;
 }
+//accept incoming connections
 void Communication::init(){
     acceptor = new tcp::acceptor(io_context, tcp::endpoint(tcp::v4(), 12345));
     std::cout << socket.is_open() << std::endl;
-    acceptor->async_accept(socket,[this](const boost::system::error_code& error) {
-    // if (!error) {
-    // std::cout << "how did we get here?" << std::endl;
-    // isConnected = true;
-    // isServer = true;
-    // isWhite = std::rand() % 2 == 0;
-    // send(isWhite ? "black" : "white");       
-    // received = true;
-    // std::thread receiveThread(&Communication::receive, this);
-    // receiveThread.detach();
-    // } else {
+    acceptor->async_accept(socket,[](const boost::system::error_code& error) {
+     if (!error) {
+     std::cout << "how did we get here?" << std::endl;
+     } else {
          std::cerr << "Error accepting connection: " << error.message() << std::endl;
-    // }
+     }
 });  
 std::thread receiveThread(&Communication::receive, this);
+receiveThread.detach();
 }
 
 
@@ -80,7 +75,6 @@ void Communication::receive() {
     boost::asio::streambuf receiveBuffer;  
     std::cout << "How did we really get here" << std::endl;
     while (true) {
-        std::cout << socket.is_open() << std::endl;
         if (socket.is_open()) {
         boost::asio::read_until(socket, receiveBuffer, '\n');
         data = boost::asio::buffer_cast<const char*>(receiveBuffer.data());

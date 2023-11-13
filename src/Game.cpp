@@ -81,11 +81,11 @@ void Game::run() {
 
 	wTimer.timeText = std::to_string(wTimer.getTicks() / 1000.f);
 	bTimer.timeText = std::to_string(bTimer.getTicks() / 1000.f); //necessary?
-    std::cout << wTimer.timeText << std::endl;
-    std::cout << wTimer.getTicks() << std::endl;
-    std::cout << wTimer.isStarted << std::endl;
-    std::cout << wTimer.isPaused << std::endl;
-    std::cout << bTimer.timeText << std::endl;
+    // std::cout << wTimer.timeText << std::endl;
+    // std::cout << wTimer.getTicks() << std::endl;
+    // std::cout << wTimer.isStarted << std::endl;
+    // std::cout << wTimer.isPaused << std::endl;
+    // std::cout << bTimer.timeText << std::endl;
    
    
         handleEvents();
