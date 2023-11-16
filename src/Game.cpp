@@ -127,15 +127,22 @@ void Game::placePiece() {
                 }
                 
                 if (!handleProtomotion(selectedPiece, sizeOfPieces != Pieces.size())) {
-                   
-                        if (wTimer.isStarted) {
-                            wTimer.pause();
-                            bTimer.start();
-                        } else {
+                    if (moveHistory.size() == 2) {
+                        bTimer.start();
+                    } else if (moveHistory.size() == 3) {
+                        bTimer.pause();
+                        wTimer.start();
+                    } else {
+                        if (wTimer.isPaused) {
+                            std::cout << "unpausing white" << std::endl;
+                            wTimer.unpause();
                             bTimer.pause();
-                            wTimer.start();
+                        } else {
+                            std::cout << "pausing white" << std::endl;
+                            bTimer.unpause();
+                            wTimer.pause();
                         }
-
+                    }
                     whiteTurn = !whiteTurn;
                     //         ++halfMoveNumber;
                     moveHistory.push_back(FenExport(Pieces));

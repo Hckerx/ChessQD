@@ -8,6 +8,7 @@ public:
     void start();
     void pause();
     void stop();
+    void unpause();
     void reset();
     Uint32 getTicks() const;
     bool isPaused;

@@ -1,4 +1,5 @@
 #include "timer.hpp"
+#include <iostream>
 #include "SDL2/SDL.h"
 
 Timer::Timer() {
@@ -15,38 +16,36 @@ void Timer::start() {
 }
 
 void Timer::pause(){
-    isStarted = true;
-    pausedTime = getTicks(); 
-    isPaused = !isPaused;
-    if (!isPaused){
-        pausedTicks += (getTicks() - pausedTime);
+    if (isStarted && !isPaused) {
+        isPaused = true;
+        pausedTicks = SDL_GetTicks() - startTicks;
+        startTicks = 0;
+    }
+}
+void Timer::unpause() {
+    if (isStarted && isPaused) {
+        std::cout << "unpause" << std::endl;
+        isPaused = false;
+        startTicks = SDL_GetTicks() - pausedTicks;
+        pausedTicks = 0;
     }
 }
 
 void Timer::stop() {
     isStarted = false;
     isPaused = false;
-}
-
-void Timer::reset() {
     startTicks = 0;
     pausedTicks = 0;
-    isPaused = false;
-    isStarted = false;
 }
 
-
 Uint32 Timer::getTicks() const {
+    uint32_t time = 0;
     if (isStarted) {
-        if (isPaused)
-        {
-            return pausedTime;
+        if (isPaused) {
+            time = pausedTicks;
+        } else {
+            time = SDL_GetTicks() - startTicks;
         }
-        else
-        {
-          return SDL_GetTicks() - startTicks - pausedTicks;
-        }  
-        
     }
-    return 0;
+    return time;
 }
