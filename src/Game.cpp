@@ -45,7 +45,6 @@ Game::Game(std::string fen) : window("ChessQLD") {
     if (false) { /*if online button clicked*/
         communication = new Communication();
         isPlayingOnline = true;
-        //communication->io_context.run();     
     }
 
     run();       
@@ -69,7 +68,7 @@ void Game::run() {
         }
 
         if (isPlayingOnline) {
-        whiteDown = communication->isWhite;
+            whiteDown = communication->isWhite;
         if (whiteTurn != isWhite()) {
             std::string read = communication->read();
             if (read != "") {
@@ -81,11 +80,6 @@ void Game::run() {
 
 	wTimer.timeText = std::to_string(wTimer.getTicks() / 1000.f);
 	bTimer.timeText = std::to_string(bTimer.getTicks() / 1000.f); //necessary?
-    // std::cout << wTimer.timeText << std::endl;
-    // std::cout << wTimer.getTicks() << std::endl;
-    // std::cout << wTimer.isStarted << std::endl;
-    // std::cout << wTimer.isPaused << std::endl;
-    // std::cout << bTimer.timeText << std::endl;
    
    
         handleEvents();
@@ -211,7 +205,6 @@ void Game::handleCheckmate() {
 
 //prolly hashmaps of all pieces' moves im too stupid for this
 void Game::handleEvents() {
-    
     while (SDL_PollEvent(&event))
     {  switch (event.type)
         {

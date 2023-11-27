@@ -29,32 +29,33 @@ void Communication::send(std::string message) {
     std::cout << "Sending: " << message << std::endl;
     boost::asio::async_write(
         socket, boost::asio::buffer(message),
-        [this](const boost::system::error_code& ec, std::size_t /*bytes_transferred*/) {
+        [](const boost::system::error_code& ec, std::size_t /*bytes_transferred*/) {
             if (ec) {
                 std::cerr << "Error sending message: " << ec.message() << std::endl;
             }
         });
-}
-void Communication::init(){
-    acceptor = new tcp::acceptor(io_context, tcp::endpoint(tcp::v4(), 12345));
-    std::cout << socket.is_open() << std::endl;
-    acceptor->async_accept(socket, [this](const boost::system::error_code& ec) {
-        if (!ec) {
-            std::cout << "Connection accepted" << std::endl;
-            asyncReceive(); // Start asynchronous receive operation
-        } else {
-            std::cerr << "Error accepting connection: " << ec.message() << std::endl;
-        }
-    });
-}
+    }
 
-void Communication::asyncReceive() {
-    std::cout << "socket.is_open()" << std::endl;
-    boost::asio::async_read_until(
-        socket, receiveBuffer, '\n',
-        [this](const boost::system::error_code& ec, std::size_t /*bytes_transferred*/) {
+    void Communication::init() {
+        acceptor = new tcp::acceptor(io_context, tcp::endpoint(tcp::v4(), 12345));
+        std::cout << socket.is_open() << std::endl;
+        acceptor->async_accept(socket, [this](const boost::system::error_code& ec) {
             if (!ec) {
-                processData(); // Process the received data
+                std::cout << "Connection accepted" << std::endl;
+                asyncReceive(); // Start asynchronous receive operation
+            } else {
+                std::cerr << "Error accepting connection: " << ec.message() << std::endl;
+            }
+        });
+    }
+
+    void Communication::asyncReceive() {
+        std::cout << "socket.is_open()" << std::endl;
+        boost::asio::async_read_until(
+            socket, receiveBuffer, '\n',
+            [this](const boost::system::error_code& ec, std::size_t /*bytes_transferred*/) {
+                if (!ec) {
+                    processData(); // Process the received data
                 asyncReceive(); // Continue asynchronous receive operation
             } else {
                 std::cerr << "Error receiving data: " << ec.message() << std::endl;

@@ -16,6 +16,7 @@ public:
     std::string noAsyncReceive();
     boost::asio::io_context io_context;
     bool isConnected = false;
+    void asyncReceive();
 
     
     tcp::acceptor* acceptor = nullptr;
@@ -34,6 +35,9 @@ public:
         socket.close();
     }
 private:
+    
+    void processData();
+    boost::asio::streambuf receiveBuffer;
     std::thread receiveThread;
     void handle_read(const boost::system::error_code& error, size_t bytes_transferred);
     tcp::socket socket;
