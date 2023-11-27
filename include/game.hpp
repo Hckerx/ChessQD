@@ -29,7 +29,8 @@ private:
     }
 
 
-    TTF_Font* ChessQLDfont;
+    Timer wTimer;
+    Timer bTimer;
     bool gameRunning = true;
     bool PieceSelected = false; //Does user hold leftclick on piece
     bool whiteTurn = true;
@@ -39,14 +40,14 @@ private:
     int halfMoveNumber = 0;
     int fullMoveNumber = 0; //needed?
     int state = 5; //state of the game (draw, checkmate, closed)
-    int counter = 0; //needed?
+    int counter = 0; //move forwards and backwards
 
     std::array<Button*, 3> buttons;
 
     // RenderWindow stuff
     RenderWindow window; //displayed main window
     std::vector<glm::ivec2> highlightMoves = {{1000,1000}}; //vector of moves to highlight
-    std::vector<glm::ivec2> lastMoves = {{1000, 1000}}; //vector of last moves??
+    std::vector<glm::ivec2> lastMoves = {{1000, 1000}}; //vector of last moves?? CHANGE NAME
 
     std::shared_ptr<Piece> lastPiece;
 

@@ -11,6 +11,8 @@ release:
 toexe:
 	x86_64-w64-mingw32-g++ -g -c src/*.cpp -I include -std=c++17 -Wall -m64 && x86_64-w64-mingw32-g++ *.o -g -o bin/debug/main -L -lSDL2main -lSDL2 -lSDL2_image -lSDL2_ttf -lws2_32 && ./bin/debug/main && rm *.o
 
+build:
+	clang++ -g -c src/*.cpp -I include -std=c++17 -Wall -m64 && clang++ *.o -g -o bin/debug/main -L -lSDL2main -lSDL2 -lSDL2_image -lSDL2_ttf && rm *.o
 
 clean:
 ifeq ($(OS),Windows_NT)

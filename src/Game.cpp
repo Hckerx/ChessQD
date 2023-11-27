@@ -33,24 +33,15 @@
 
 //constructor of class Game (the main class)
 Game::Game(std::string fen) : window("ChessQLD") {
+    
+    Pieces = FenImport(fen);
+    moveHistory.push_back(fen);
 
-    // init font
-    //
-
-    ChessQLDfont = TTF_OpenFont("bin/debug/res/font/REFOLTER.otf", 128);
-    if (ChessQLDfont == NULL) {
-        throw "Font's not working"; 
-        
-    }
-
-    window.initFont(ChessQLDfont);
-    buttons = {new Button("resign", ChessQLDfont), new Button("online", ChessQLDfont), new Button("rotate", ChessQLDfont)};
+    wTimer = Timer();
+    bTimer = Timer();
+    buttons = {new Button("resign"), new Button("online"), new Button("rotate")};
     window.initButtons(buttons);
    
-    //importing given FEN-notation in the pieces array
-    Pieces = FenImport(fen);
-
-    moveHistory.push_back(fen);
     if (false) { /*if online button clicked*/
         communication = new Communication();
         isPlayingOnline = true;
@@ -66,8 +57,7 @@ Game::~Game() {
 
 
 void Game::run() {
-    
-    window.fullRender(highlightMoves, lastMoves, Pieces, whiteDown,buttons);
+    window.fullRender(highlightMoves, lastMoves, Pieces, whiteDown,buttons, &wTimer, &bTimer);
     while (gameRunning)
     {
         
@@ -77,56 +67,53 @@ void Game::run() {
             state = 2;
             break;
         }
-        if (counter <= 0) 
-            counter = 0;
-        
+
+        if (isPlayingOnline) {
+        whiteDown = communication->isWhite;
+        if (whiteTurn != isWhite()) {
+            std::string read = communication->read();
+            if (read != "") {
+                Pieces = FenImport(read);
+                moveHistory.push_back(FenExport(Pieces));
+            }
+        }
+    }
+
+	wTimer.timeText = std::to_string(wTimer.getTicks() / 1000.f);
+	bTimer.timeText = std::to_string(bTimer.getTicks() / 1000.f); //necessary?
+    // std::cout << wTimer.timeText << std::endl;
+    // std::cout << wTimer.getTicks() << std::endl;
+    // std::cout << wTimer.isStarted << std::endl;
+    // std::cout << wTimer.isPaused << std::endl;
+    // std::cout << bTimer.timeText << std::endl;
+   
+   
         handleEvents();
     
     // TODO: add a way to continue running code while waiting for response
 
 
 
-        window.fullRender(highlightMoves, std::vector<glm::ivec2>(lastMoves.end() - 2, lastMoves.end()), Pieces, whiteDown,buttons);
+        window.fullRender(highlightMoves, std::vector<glm::ivec2>(lastMoves.end() - 2, lastMoves.end()), Pieces, whiteDown,buttons, &wTimer, &bTimer);
         if (isPromoting) {
             window.displayPromotionOptions(lastMoves[lastMoves.size() - 1], whiteTurn);
         }
         window.display();
     }
     //0=white lost 1=black lost 2=draw else=quit
-    if (state==2) 
-        window.displayWelcomeMessage("Draw");
-        
-    else if (state==0) 
+    if (state==2){
+        gameRunning = false;
+        window.displayWelcomeMessage("Draw");        
+    }
+    else if (state==0) {                   
+        gameRunning = false;
         window.displayWelcomeMessage("White lost");
-
-    else if (state==1) 
+}
+    else if (state==1){
+            gameRunning = false;
             window.displayWelcomeMessage("Black lost");
-    
+    }
 }
-
-
-void Game::DragPiece() {
-    glm::vec2 newPos = getMousePosition(whiteDown,window.squareSize);
-    newPos -= 0.5;
-    selectedPiece->setPos(newPos);
-}
-
-
-void Game::selectPiece() {
-    glm::ivec2 MousePosition = getMousePosition(whiteDown,window.squareSize);
-    selectedPiece = getMatchingPiece(MousePosition, Pieces);
-    
-    if (selectedPiece != nullptr) {
-        selectedPiece->findMoves(Pieces);     
-        highlightMoves = {selectedPiece->getPos()};
-        for (auto i: selectedPiece->legalMoves) 
-            highlightMoves.push_back(i);
-       
-        PieceSelected = true;
-    } 
-
-}
-
 
 void Game::placePiece() {
     glm::ivec2 MousePosition = getMousePosition(whiteDown,window.squareSize);
@@ -138,7 +125,24 @@ void Game::placePiece() {
                 if (rotate_board) {
                     whiteDown=!whiteDown;
                 }
+                
                 if (!handleProtomotion(selectedPiece, sizeOfPieces != Pieces.size())) {
+                    if (moveHistory.size() == 2) {
+                        bTimer.start();
+                    } else if (moveHistory.size() == 3) {
+                        bTimer.pause();
+                        wTimer.start();
+                    } else {
+                        if (wTimer.isPaused) {
+                            std::cout << "unpausing white" << std::endl;
+                            wTimer.unpause();
+                            bTimer.pause();
+                        } else {
+                            std::cout << "pausing white" << std::endl;
+                            bTimer.unpause();
+                            wTimer.pause();
+                        }
+                    }
                     whiteTurn = !whiteTurn;
                     //         ++halfMoveNumber;
                     moveHistory.push_back(FenExport(Pieces));
@@ -149,14 +153,12 @@ void Game::placePiece() {
                 lastMoves.push_back(selectedPiece->getPos());
                 highlightMoves = {{1000,1000}};
                 if (isPlayingOnline) {
-                    std::string temp = FenExport(Pieces);
+                    std::string temp = FenExport(Pieces); //WRONG PROMOTION IGNORED
                     communication->send(temp);
                 }
+          
             } 
-        //}
-        // else {
-        // Pieces = FenImport(moveHistory[moveHistory.size() - 1]);
-        // }
+    
     } else {
         counter = 0;
         Pieces = FenImport(moveHistory[moveHistory.size() - 1]);
@@ -175,9 +177,7 @@ bool Game::handleProtomotion(std::shared_ptr<Piece> selectedPiece, bool Captured
             isPromoting = true;
             return true;
         }
-    } else if (derivedPtr == nullptr || !Captured) {
-       halfMoveNumber += 1; 
-    }
+    } 
     return false;
 }
 void Game::handleCheckmate() {
@@ -206,37 +206,24 @@ void Game::handleCheckmate() {
         else {
             state = 1;
         }
-        gameRunning = false;
     }
 }
 
 //prolly hashmaps of all pieces' moves im too stupid for this
 void Game::handleEvents() {
-    if (isPlayingOnline) {
-        whiteDown = communication->isWhite;
-        if (whiteTurn != isWhite()) {
-            std::string read = communication->read();
-            if (read != "") {
-                Pieces = FenImport(read);
-                moveHistory.push_back(FenExport(Pieces));
-            }
-        }
-    }
+    
     while (SDL_PollEvent(&event))
-    {
-        switch (event.type)
+    {  switch (event.type)
         {
             case SDL_MOUSEBUTTONDOWN:
                 if (event.button.button == SDL_BUTTON_LEFT)
                 {
-                    if(event.button.clicks == 1){
                         if (buttons[0]->hovered()) {
                             if (whiteTurn) {
                                 state = 0;
                             } else {
                                 state = 1;
                             }
-                            gameRunning = false;
                             break;
                         }
                             if (buttons[1]->hovered()){
@@ -252,32 +239,15 @@ void Game::handleEvents() {
                             if (buttons[2]->hovered()) {
                             rotate_board = !rotate_board;
                         }
-                    }
-                   
-                   
-                    //std::array<bool, 3> buttonsClicked = window.checkIfButtonClicked({Mouse_x, Mouse_y});
-                    // if (buttonsClicked[2]) {
-                    //         rotate_board = !rotate_board;
-                    // }
-                    // if (buttonsClicked[1]) {
-                    //     if (whiteTurn) {
-                    //         state = 0;
-                    //     } else {
-                    //         state = 1;
-                    //     }
-                    //     gameRunning = false;
-                    //     break;
-                    // }
-
-                    if (!isPromoting)
-                            selectPiece();
+                  
+                    if (isPromoting)
+                        handlePromotionPieceSelection(getMousePosition(whiteDown, window.squareSize));       
 
                     else
-                    {
-                        handlePromotionPieceSelection(getMousePosition(whiteDown, window.squareSize));
-
-                    }
-                } else if (event.button.button == SDL_BUTTON_RIGHT) {
+                       selectPiece();
+                } 
+                
+                else if (event.button.button == SDL_BUTTON_RIGHT) {
                     glm::ivec2 mousePos = getMousePosition(whiteDown, window.squareSize);
                     std::vector<glm::ivec2>::iterator position = std::find(highlightMoves.begin(), highlightMoves.end(), mousePos);
                     if (position == highlightMoves.end()) {
@@ -286,11 +256,14 @@ void Game::handleEvents() {
                         highlightMoves.erase(position);
                     } 
                 }
+
                 break;
+
             case SDL_QUIT:
                 state = 3;
                 gameRunning = false;
                 break;
+           
             case SDL_MOUSEBUTTONUP:
                 if (event.button.button == SDL_BUTTON_LEFT && selectedPiece != nullptr)// && !isPromoting
                     placePiece();
@@ -334,46 +307,62 @@ void Game::handleEvents() {
 
 void Game::handlePromotionPieceSelection(glm::vec2 selection){
     if ((int)selection.x == lastMoves[lastMoves.size() -1].x) {
+        Pieces.erase(std::remove(Pieces.begin(), Pieces.end(), lastPiece), Pieces.end());
         switch (whiteTurn ? (int)selection.y : 7 - (int)selection.y) {
             case 0: 
-                Pieces.erase(std::remove(Pieces.begin(), Pieces.end(), lastPiece), Pieces.end());
                 Pieces.push_back(std::make_shared<Queen>(lastMoves[lastMoves.size()-1], whiteTurn));
-                isPromoting = false;
-                whiteTurn = !whiteTurn;
-                handleCheckmate();
-                moveHistory.push_back(FenExport(Pieces));
                 break;
             case 1: 
-                Pieces.erase(std::remove(Pieces.begin(), Pieces.end(), lastPiece), Pieces.end());
                 Pieces.push_back(std::make_shared<Rook>(lastMoves[lastMoves.size()-1], whiteTurn));
-                isPromoting = false;
-                whiteTurn = !whiteTurn;
-                handleCheckmate();
-                moveHistory.push_back(FenExport(Pieces));
                 break;
             case 2: 
-                Pieces.erase(std::remove(Pieces.begin(), Pieces.end(), lastPiece), Pieces.end());
                 Pieces.push_back(std::make_shared<Bishop>(lastMoves[lastMoves.size()-1], whiteTurn));
-                isPromoting = false;
-                whiteTurn = !whiteTurn;
-                handleCheckmate();
-                moveHistory.push_back(FenExport(Pieces));
                 break;
             case 3: 
-                Pieces.erase(std::remove(Pieces.begin(), Pieces.end(), lastPiece), Pieces.end());
                 Pieces.push_back(std::make_shared<Knight>(lastMoves[lastMoves.size()-1], whiteTurn));
-                isPromoting = false;
-                whiteTurn = !whiteTurn;
-                //++halfMoveNumber;
-                handleCheckmate();
-                moveHistory.push_back(FenExport(Pieces));
                 break;
             default: 
                 break;
         } 
+
+        isPromoting = false;
+        whiteTurn = !whiteTurn;
+        handleCheckmate();
+        moveHistory.push_back(FenExport(Pieces));
+    
+            if (wTimer.isStarted) {
+                wTimer.pause();
+                bTimer.start();
+            } else {
+                bTimer.pause();
+                wTimer.start();
+
+            }
+
     } 
 }
 
+void Game::DragPiece() {
+    glm::vec2 newPos = getMousePosition(whiteDown,window.squareSize);
+    newPos -= 0.5;
+    selectedPiece->setPos(newPos);
+}
+
+
+void Game::selectPiece() {
+    glm::ivec2 MousePosition = getMousePosition(whiteDown,window.squareSize);
+    selectedPiece = getMatchingPiece(MousePosition, Pieces);
+    
+    if (selectedPiece != nullptr) {
+        selectedPiece->findMoves(Pieces);     
+        highlightMoves = {selectedPiece->getPos()};
+        for (auto i: selectedPiece->legalMoves) 
+            highlightMoves.push_back(i);
+       
+        PieceSelected = true;
+    } 
+
+}
 
 std::vector<std::shared_ptr<Piece>> Game::FenImport(std::string FenString) {
     std::vector<std::shared_ptr<Piece>> piecesVector;

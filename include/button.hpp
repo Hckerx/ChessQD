@@ -6,8 +6,7 @@
 class Button : public SDL_Rect
 {
 public:
-    Button(std::string name, TTF_Font* font);
-    TTF_Font* ChessQLDfont;
+    Button(std::string name);
     bool clicked();
     SDL_Surface* getSurface();
     void updateRect();
@@ -15,11 +14,12 @@ public:
     SDL_Point point;
     bool hovered();
     std::string name;
-    void initButton(TTF_Font* font, SDL_Renderer* renderer);
+    void initButton(SDL_Texture* textTexture, SDL_Texture* textHoveredTexture);
     SDL_Texture* getTexture();
-private:
-    SDL_Texture* textTexture;
-    SDL_Texture* textTextureHovered;
     SDL_Color color = {255, 255, 255};
     SDL_Color hoveredColor = {255, 0, 0};
+private:
+SDL_Texture* Texture;
+SDL_Texture* TextureHovered;
+    
 };

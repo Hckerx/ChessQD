@@ -1,4 +1,6 @@
 #include <SDL2/SDL_rect.h>
+#include <SDL2/SDL_render.h>
+#include <SDL2/SDL_surface.h>
 #include <SDL2/SDL_video.h>
 #include <cstdint>
 #include <glm/fwd.hpp>
@@ -34,6 +36,11 @@ RenderWindow::RenderWindow(const char* p_title)
 
     if (TTF_Init() == -1)
         std::cout << "TTF_init has failed. Error: " << SDL_GetError() << std::endl;
+
+    ChessQLDfont = TTF_OpenFont("bin/debug/res/font/REFOLTER.otf", 128);
+    if (ChessQLDfont == NULL) {
+        std::cerr << "Failed to load font! SDL_ttf Error: %s\n", TTF_GetError();
+    }
     SDL_DisplayMode DM;
     SDL_GetCurrentDisplayMode(0, &DM);
     int height = DM.h < DM.w ? DM.h*0.90 : DM.w * 0.90;
@@ -47,7 +54,6 @@ RenderWindow::RenderWindow(const char* p_title)
     }
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
     SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
-
     // Todo
     SDL_Surface* icon = IMG_Load("bin/debug/res/gfx/icon.png");
     SDL_SetWindowIcon(window, icon);
@@ -58,13 +64,56 @@ RenderWindow::RenderWindow(const char* p_title)
 
 }
 
-void RenderWindow::initFont(TTF_Font* font) {
-    ChessQLDfont = font;
-}
+
 void RenderWindow::initButtons(std::array<Button*, 3> buttons) {
+    SDL_Surface* textSurface;
+    SDL_Surface* textHoveredSurface;
+    SDL_Texture* textTexture;
+    SDL_Texture* textTextureHovered;
     for (uint8_t i = 0; i<buttons.size(); i++) {
-        buttons[i]->initButton(ChessQLDfont, renderer);
+        textSurface = TTF_RenderText_Blended(ChessQLDfont, buttons[i]->name.c_str(), buttons[i]->color);
+        textHoveredSurface = TTF_RenderText_Blended(ChessQLDfont, buttons[i]->name.c_str(), buttons[i]->hoveredColor);
+    if (!textSurface || !textHoveredSurface) {
+        fprintf(stderr, "Failed to render text surface: %s\n", TTF_GetError());
     }
+    textTextureHovered = SDL_CreateTextureFromSurface(renderer, textHoveredSurface);
+    SDL_SetTextureBlendMode(textTextureHovered, SDL_BLENDMODE_BLEND);
+    textTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
+    SDL_SetTextureBlendMode(textTexture, SDL_BLENDMODE_BLEND);
+    buttons[i]->initButton(textTexture,textTextureHovered);
+    }
+}
+
+void RenderWindow::freeTimer(Timer *timer) {
+	//Free texture if it exists
+	if( timer->texture != NULL )
+	{
+		SDL_DestroyTexture(timer->texture );
+		timer->texture = NULL;
+	}
+}
+void RenderWindow::loadFromRenderedText(Timer *timer) {
+
+    freeTimer(timer);
+
+	//Render text surface
+	SDL_Surface* textSurface = TTF_RenderText_Solid( ChessQLDfont, timer->timeText.c_str(), timer->textColor );
+	if( textSurface != NULL )
+	{
+		//Create texture from surface pixels
+        timer->texture = SDL_CreateTextureFromSurface( renderer, textSurface );
+		if( texture == NULL )
+		{
+			printf( "Unable to create texture from rendered text! SDL Error: %s\n", SDL_GetError() );
+		}
+
+		//Get rid of old surface
+		SDL_FreeSurface( textSurface );
+	}
+	else
+	{
+		printf( "Unable to render text surface! SDL_ttf Error: %s\n", TTF_GetError() );
+	}
 }
 
 SDL_Texture* RenderWindow::loadTexture(const char* p_filePath)
@@ -115,22 +164,34 @@ void RenderWindow::render(std::shared_ptr<Piece>& p_piece, bool whiteDown)
 
     SDL_RenderCopy(renderer, texture, &src, &dst);
 }
-int RenderWindow::renderButton(std::array<Button*, 3> buttons) {
-    
-    for (uint8_t i = 0; i<buttons.size(); i++) {
-        buttons[i]->w = windowx/(2*buttons.size());
+int RenderWindow::renderWidgets(std::array<Button*, 3> buttons, Timer* wTimer, Timer* bTimer) {
+
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+    uint8_t i = 0;
+    for (i = 0; i<buttons.size(); i++) {
+        buttons[i]->w = windowx/(2*(buttons.size()+2));
         buttons[i]->h = windowy*0.05;
         buttons[i]->y = windowy *0.95;
-        buttons[i]->x = i*(windowx/buttons.size()) + (windowx/(4*buttons.size()));
-        
-        textTexture = buttons[i]->getTexture();
+        buttons[i]->x = i*(windowx/(buttons.size()+2)) + (windowx/(4*(buttons.size()+2)));
 
         // dst
-        SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-        SDL_RenderCopy(renderer, textTexture, NULL, buttons[i]);
-        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+        SDL_RenderCopy(renderer, buttons[i]->getTexture(), NULL, buttons[i]);
     }
 
+    wTimer->w = windowx/(2*(buttons.size()+2)); 
+    wTimer->h = windowy*0.05; 
+    wTimer->y = windowy *0.95; 
+    wTimer->x = i*(windowx/(buttons.size()+2)) + (windowx/(4*(buttons.size()+2))); 
+
+    bTimer->w = windowx/(2*(buttons.size()+2)); 
+    bTimer->h = windowy*0.05; 
+    bTimer->y = windowy *0.95; 
+    bTimer->x = (i+1)*(windowx/(buttons.size()+2)) + (windowx/(4*(buttons.size()+2))); 
+
+
+    SDL_RenderCopy(renderer, wTimer->texture, NULL, wTimer);
+    SDL_RenderCopy(renderer, bTimer->texture, NULL, bTimer);
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
     return 0;
 }
 
@@ -174,11 +235,13 @@ void RenderWindow::display()
 
 
 void RenderWindow::fullRender(std::vector<glm::ivec2> highlight, std::vector<glm::ivec2> lastMoves,
-                              std::vector<std::shared_ptr<Piece>>& Pieces, bool whiteDown,std::array<Button*, 3> buttons){
+                            std::vector<std::shared_ptr<Piece>>& Pieces, bool whiteDown,std::array<Button*, 3> buttons, Timer* wTimer, Timer* bTimer) {
     clear();
     
     renderbg(highlight, lastMoves,  whiteDown);
-    renderButton(buttons);
+    loadFromRenderedText(wTimer);
+    loadFromRenderedText(bTimer);
+    renderWidgets(buttons, wTimer, bTimer);
     for (int i = 0; i < (int)Pieces.size(); i++) {
         render(Pieces[i], whiteDown);
     }
@@ -187,6 +250,7 @@ void RenderWindow::fullRender(std::vector<glm::ivec2> highlight, std::vector<glm
     
 }
 
+// TODO: All the render functions can be summarized into one function
 
 bool RenderWindow::displayWelcomeMessage(std::string text) {
     std::string welcomeText = text;

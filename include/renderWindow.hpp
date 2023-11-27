@@ -7,6 +7,7 @@
 #include <SDL2/SDL_ttf.h>
 #include "button.hpp"
 #include "piece.hpp"
+#include "timer.hpp"
 
 
 class RenderWindow 
@@ -15,8 +16,7 @@ public:
 	RenderWindow(const char* p_title);
 	bool displayWelcomeMessage(std::string text);
 	void cleanUp();
-	void fullRender(std::vector<glm::ivec2> highlight, std::vector<glm::ivec2> lastMoves, 
-					std::vector<std::shared_ptr<Piece>>& Pieces, bool whiteDown,std::array<Button*, 3>);
+    void fullRender(std::vector<glm::ivec2> highlight, std::vector<glm::ivec2> lastMoves, std::vector<std::shared_ptr<Piece>>& Pieces, bool whiteDown,std::array<Button*, 3> buttons, Timer* wTimer, Timer* bTimer);
     int displayPromotionOptions(glm::vec2 pos, bool white);
     int squareSize;
 	void updateSquareSize() {
@@ -24,19 +24,19 @@ public:
         squareSize = std::min(windowx, (int)(windowy*0.95))/8;
 	}
 	void display();
-    void initFont(TTF_Font* font);
     void initButtons(std::array<Button*, 3> buttons);
 
 private:
 
-	int renderButton(std::array<Button*, 3> buttons);
+    void loadFromRenderedText(Timer *timer);
+    int renderWidgets(std::array<Button*, 3> buttons, Timer* wTimer, Timer* bTimer);
 	SDL_Texture* texture;
 	SDL_Window* window;
 	SDL_Renderer* renderer;
+    void freeTimer(Timer *timer);
     TTF_Font* ChessQLDfont;
 	int windowx;
 	int windowy;
-    SDL_Texture* textTexture;
 	void clear();
 	void render(std::shared_ptr<Piece>& p_piece, bool whiteDown);
 	void renderbg(std::vector<glm::ivec2> highlight, std::vector<glm::ivec2> lastMoves, bool whiteDown);

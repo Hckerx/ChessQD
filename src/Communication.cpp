@@ -1,141 +1,90 @@
-#include <boost/asio/buffer.hpp>
-#include <cstdio>
-#include <iostream>
 #include <boost/asio.hpp>
 #include "Communication.hpp"
 
-
-
 using boost::asio::ip::tcp;
 
-
-Communication::Communication()
-try : socket(io_context) {
-
+Communication::Communication() : socket(io_context) {
     try {
+        // Connect to existing game
+        std::cout << socket.is_open() << std::endl;
         socket.connect(tcp::endpoint(boost::asio::ip::address::from_string("127.0.0.1"), 12345));
         isConnected = true;
-        std::thread receiveThread(&Communication::receive, this);
-        receiveThread.detach();
+        send("white");
+        isWhite = false;
+        asyncReceive(); // Start asynchronous receive operation
         isServer = false;
+    } catch (std::exception& e) {
+        // Else create game
+        std::cout << socket.is_open() << std::endl;
         std::cout << "socket connected" << std::endl;
     } 
     catch (std::exception& e) {
         socket.close();
-        std::thread init(&Communication::init, this);
-        init.detach();
-        std::cout << "accepting" << std::endl;
-    }      
+        init(); // Start server initialization
+    }
 }
-catch (std::exception& e)
-{ 
-    std::cerr << "Exception: " << e.what() << std::endl;    
-} 
-
-
 
 void Communication::send(std::string message) {
     message += '\n';
     std::cout << "Sending: " << message << std::endl;
-    int bytes = boost::asio::write(socket, boost::asio::buffer(message));
-    std::cout << "bytes_transferred:" << bytes << std::endl;
+    boost::asio::async_write(
+        socket, boost::asio::buffer(message),
+        [this](const boost::system::error_code& ec, std::size_t /*bytes_transferred*/) {
+            if (ec) {
+                std::cerr << "Error sending message: " << ec.message() << std::endl;
+            }
+        });
 }
 void Communication::init(){
-    std::cout << "init" << std::endl;
     acceptor = new tcp::acceptor(io_context, tcp::endpoint(tcp::v4(), 12345));
-    acceptor->async_accept(socket,[this](const boost::system::error_code& error) {
-    if (!error) {
-    std::cout << "how did we get here?" << std::endl;
-    isConnected = true;
-    isServer = true;
-    isWhite = std::rand() % 2 == 0;
-    send(isWhite ? "black" : "white");       
-    received = true;
-    std::thread receiveThread(&Communication::receive, this);
-    receiveThread.detach();
-    } else {
-        std::cerr << "Error accepting connection: " << error.message() << std::endl;
-    }
-});   
+    std::cout << socket.is_open() << std::endl;
+    acceptor->async_accept(socket, [this](const boost::system::error_code& ec) {
+        if (!ec) {
+            std::cout << "Connection accepted" << std::endl;
+            asyncReceive(); // Start asynchronous receive operation
+        } else {
+            std::cerr << "Error accepting connection: " << ec.message() << std::endl;
+        }
+    });
 }
 
-
-// std::string Communication::receive() {
-//     boost::asio::streambuf buffer;
-//     boost::asio::read_until(socket, buffer, '\n');
-//     std::string data = boost::asio::buffer_cast<const char*>(buffer.data());
-//     if (!data.empty() && data.back() == '\n') {
-//         data.pop_back();
-//     }
-//     return data;
-// }
-//
-
-
-void Communication::receive() {
-    while (true) {
-        std::cout << "How did we really get here" << std::endl;
-        boost::asio::streambuf receiveBuffer;  
-        boost::asio::read_until(socket, receiveBuffer, '\n');
-        data = boost::asio::buffer_cast<const char*>(receiveBuffer.data());
-        std::cout << "Received: " << data << std::endl;
-        if (!data.empty() && data.back() == '\n') {
-            data.pop_back();
-        }
-        if (data == "close") {
-            socket.close();
-            return;
-        }
-        if (data == "black") {
-            isWhite = false; 
-            data = "";
-            received = true;
-        } 
-        else if (data == "white") {
-            isWhite = true;
-            data = "";
-            received = true;
-        }
-    }
+void Communication::asyncReceive() {
+    std::cout << "socket.is_open()" << std::endl;
+    boost::asio::async_read_until(
+        socket, receiveBuffer, '\n',
+        [this](const boost::system::error_code& ec, std::size_t /*bytes_transferred*/) {
+            if (!ec) {
+                processData(); // Process the received data
+                asyncReceive(); // Continue asynchronous receive operation
+            } else {
+                std::cerr << "Error receiving data: " << ec.message() << std::endl;
+            }
+        });
 }
 
-std::string Communication::read(){
-    
+void Communication::processData() {
+    std::istream is(&receiveBuffer);
+    std::getline(is, data, '\n');
+    std::cout << "Received: " << data << std::endl;
+
+    if (data == "close") {
+        socket.close();
+    } else if (data == "black") {
+        isWhite = false;
+        received = true;
+    } else if (data == "white") {
+        isWhite = true;
+        received = true;
+    }
+
+    data.clear(); // Clear the buffer for the next read
+}
+
+std::string Communication::read() {
     if (received) {
-        std::string tempdata = data;
-        data = "";
-        return tempdata;
-    }
-    else {
+        received = false;
+        return data;
+    } else {
         return "";
     }
 }
-
-//void Communication::receive() {
-//    received = false;
-//    std::cout << "is receiving in async" << std::endl;
-//    boost::asio::async_read_until(socket, receiveBuffer, '\n', boost::bind(&Communication::handle_read, this, boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
-//}
-// We need to implement the handle_read function, which is called when the asynchronous read operation initiated by async_read_until has finished.
-// void Communication::handle_read(const boost::system::error_code& error, size_t bytes_transferred) {
-//     std::cout << "is handling" << std::endl;
-//     if (!error) {
-
-//         //std::string data = boost::asio::buffer_cast<const char*>(receiveBuffer.data());
-//         std::istream is(&receiveBuffer);
-//         std::string line;
-//         std::getline(is, line);
-
-//         if (!line.empty() && line.back() == '\n') {
-//             line.pop_back();
-//         }
-//         received = true;
-//         // receivedString = line;
-//         std::cout << "Received: Async" << line << std::endl;
-//     } else {
-//         std::cout << "Error: " << error.message() << std::endl;
-//     }
-// }
-
-
-
