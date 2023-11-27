@@ -97,6 +97,9 @@ void RenderWindow::loadFromRenderedText(Timer *timer) {
     freeTimer(timer);
 
 	//Render text surface
+    if (ChessQLDfont == NULL) {
+        std::cerr << "Font is null" << std::endl;
+    }
 	SDL_Surface* textSurface = TTF_RenderText_Solid( ChessQLDfont, timer->timeText.c_str(), timer->textColor );
 	if( textSurface != NULL )
 	{

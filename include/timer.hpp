@@ -14,7 +14,7 @@ public:
     bool isPaused;
     bool isStarted;
     SDL_Color textColor = { 0, 0, 0, 255 };
-    std::string timeText;
+    std::string timeText = "00:00";
     SDL_Texture* texture = NULL;
 
 private:
