@@ -62,27 +62,27 @@ void Game::run() {
         }
         if (isPlayingOnline) {
             whiteDown = communication->isWhite;
-            if (whiteTurn != isWhite()) {
-                std::string read = communication->read();
-                if (read != "") {
-                    if (read == "l") {
-                        if (isWhite()) {
-                            state = 0;
-                        } else {
-                            state = 1;
-                        }
-                        break;
-                    } else if (read == "c") {
-                        communication->close();
-                        delete communication;
-                        communication = nullptr;
-                        isPlayingOnline = false;
-                        io_context.stop();
-                        break;
-                    } else if (read == "d") {
-                        state = 2;
-                        break;
+            std::string read = communication->read();
+            if (!read.empty()) {
+                if (read == "l") {
+                    if (isWhite()) {
+                        state = 0;
+                    } else {
+                        state = 1;
                     }
+                    break;
+                } else if (read == "close") {
+                    communication->close();
+                    delete communication;
+                    communication = nullptr;
+                    isPlayingOnline = false;
+                    io_context.stop();
+                    break;
+                } else if (read == "d") {
+                    state = 2;
+                    break;
+                }
+            if (whiteTurn != isWhite()) {
                     Pieces = FenImport(read);
                     moveHistory.push_back(FenExport(Pieces));
                 }
@@ -163,7 +163,7 @@ void Game::placePiece() {
                 lastMoves.push_back(oldPos);
                 lastMoves.push_back(selectedPiece->getPos());
                 highlightMoves = {{1000,1000}};
-                if (isPlayingOnline) {
+                if (isPlayingOnline && state == -1) {
                     std::cout << "should send" << std::endl;
                     std::string temp = FenExport(Pieces); //WRONG PROMOTION IGNORED
                     communication->send(temp);
@@ -218,7 +218,7 @@ void Game::handleCheckmate() {
         else if (whiteTurn) {
             std::cout << "white lost" << std::endl;
             state = 0;
-            if (isPlayingOnline && isWhite()) {
+            if (isPlayingOnline && !isWhite()) {
                 std::cout << "sending l" << std::endl;
                 communication->send("l");
             }
@@ -226,7 +226,7 @@ void Game::handleCheckmate() {
         else {
             std::cout << "black lost" << std::endl;
             state = 1;
-            if (isPlayingOnline && !isWhite()) {
+            if (isPlayingOnline && isWhite()) {
                 std::cout << "sending l" << std::endl;
                 communication->send("l");
             }

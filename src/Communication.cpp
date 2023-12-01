@@ -62,6 +62,7 @@ void Communication::processData() {
     std::getline(is, data, '\n');
     received = true;
 
+    std::cout << data << std::endl;
     if (data == "close") {
         close();
     } else if (data == "black") {
