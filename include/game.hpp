@@ -40,7 +40,7 @@ private:
     bool isPromoting = false; //needed??????
     int halfMoveNumber = 0;
     int fullMoveNumber = 0; //needed?
-    int state = 5; //state of the game (draw, checkmate, closed)
+    int state = -1; //state of the game (draw, checkmate, closed)
     int counter = 0; //move forwards and backwards
 
     std::array<Button*, 3> buttons;

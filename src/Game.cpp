@@ -41,12 +41,6 @@ Game::Game(std::string fen) : window("ChessQLD") {
     bTimer = Timer();
     buttons = {new Button("resign"), new Button("online"), new Button("rotate")};
     window.initButtons(buttons);
-   
-    // if (false) { /*if online button clicked*/
-    //     communication = new Communication();
-    //     isPlayingOnline = true;
-    // }
-
     run();       
 }
 
@@ -76,6 +70,24 @@ void Game::run() {
             if (whiteTurn != isWhite()) {
                 std::string read = communication->read();
                 if (read != "") {
+                    if (read == "l") {
+                        if (isWhite()) {
+                            state = 0;
+                        } else {
+                            state = 1;
+                        }
+                        break;
+                    } else if (read == "c") {
+                        communication->close();
+                        delete communication;
+                        communication = nullptr;
+                        isPlayingOnline = false;
+                        io_context.stop();
+                        break;
+                    } else if (read == "d") {
+                        state = 2;
+                        break;
+                    }
                     Pieces = FenImport(read);
                     moveHistory.push_back(FenExport(Pieces));
                 }
@@ -97,19 +109,25 @@ void Game::run() {
             window.displayPromotionOptions(lastMoves[lastMoves.size() - 1], whiteTurn);
         }
         window.display();
+        if (state != -1) {
+            break;
+        }
     }
     //0=white lost 1=black lost 2=draw else=quit
     if (state==2){
         gameRunning = false;
         window.displayWelcomeMessage("Draw");        
+        return;
     }
     else if (state==0) {                   
         gameRunning = false;
         window.displayWelcomeMessage("White lost");
-}
+    return;
+    }
     else if (state==1){
-            gameRunning = false;
-            window.displayWelcomeMessage("Black lost");
+        gameRunning = false;
+        window.displayWelcomeMessage("Black lost");
+        return;
     }
 }
 
@@ -155,7 +173,6 @@ void Game::placePiece() {
                     std::string temp = FenExport(Pieces); //WRONG PROMOTION IGNORED
                     communication->send(temp);
                 }
-          
             } 
     
     } else {
@@ -180,6 +197,7 @@ bool Game::handleProtomotion(std::shared_ptr<Piece> selectedPiece, bool Captured
     return false;
 }
 void Game::handleCheckmate() {
+    std::cout << "handling checkmate" << std::endl;
     bool no_legal_moves = true;
     bool check = false;
     for (auto i : Pieces) {
@@ -196,14 +214,27 @@ void Game::handleCheckmate() {
     }
 
     if (no_legal_moves) {
+        std::cout << "no legal moves" << std::endl;
         if (!check) {
+            std::cout << "king is not in check" << std::endl;
             state = 2;
+            communication->send("d");
         }
         else if (whiteTurn) {
+            std::cout << "white lost" << std::endl;
             state = 0;
+            if (isPlayingOnline && isWhite()) {
+                std::cout << "sending l" << std::endl;
+                communication->send("l");
+            }
         }
         else {
+            std::cout << "black lost" << std::endl;
             state = 1;
+            if (isPlayingOnline && !isWhite()) {
+                std::cout << "sending l" << std::endl;
+                communication->send("l");
+            }
         }
     }
 }
@@ -227,16 +258,19 @@ void Game::handleEvents() {
                             if (buttons[1]->hovered()){
                                 std::cout << "clicked online button" << std::endl;
                                 if (!isPlayingOnline && communication == nullptr) {
+                                    Pieces = FenImport("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
                                     std::thread t([&](){
                                         boost::asio::io_context::work work(io_context);
                                         io_context.run();
-                                        std::cout << "this shouldnt run" << std::endl;
                                     });
                                     t.detach();
                                     communication = new Communication(io_context);
                                     // start a thread which starts the io_context.run()
                                 }
                                 else {
+                                    Pieces = FenImport("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+                                    communication->send("close");
+                                    communication->close();
                                     delete communication;
                                     communication = nullptr;
                                     isPlayingOnline = false;
