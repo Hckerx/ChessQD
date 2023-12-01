@@ -18,6 +18,7 @@ private:
     //std::unique_ptr<Communication> communication = nullptr;
     Communication* communication = nullptr;
 
+    boost::asio::io_context io_context;  
     //Game Logic
 
     bool isPlayingOnline = false; //maybe other place?

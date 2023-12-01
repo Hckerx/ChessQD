@@ -42,10 +42,10 @@ Game::Game(std::string fen) : window("ChessQLD") {
     buttons = {new Button("resign"), new Button("online"), new Button("rotate")};
     window.initButtons(buttons);
    
-    if (false) { /*if online button clicked*/
-        communication = new Communication();
-        isPlayingOnline = true;
-    }
+    // if (false) { /*if online button clicked*/
+    //     communication = new Communication();
+    //     isPlayingOnline = true;
+    // }
 
     run();       
 }
@@ -66,16 +66,20 @@ void Game::run() {
             state = 2;
             break;
         }
-
-        if (isPlayingOnline) {
-            whiteDown = communication->isWhite;
-        if (whiteTurn != isWhite()) {
-            std::string read = communication->read();
-            if (read != "") {
-                Pieces = FenImport(read);
-                moveHistory.push_back(FenExport(Pieces));
+        if (communication != nullptr) {
+            if (communication->isConnected) {
+                isPlayingOnline = true;
             }
         }
+        if (isPlayingOnline) {
+            whiteDown = communication->isWhite;
+            if (whiteTurn != isWhite()) {
+                std::string read = communication->read();
+                if (read != "") {
+                    Pieces = FenImport(read);
+                    moveHistory.push_back(FenExport(Pieces));
+                }
+            }
     }
 
 	wTimer.timeText = std::to_string(wTimer.getTicks() / 1000.f);
@@ -147,6 +151,7 @@ void Game::placePiece() {
                 lastMoves.push_back(selectedPiece->getPos());
                 highlightMoves = {{1000,1000}};
                 if (isPlayingOnline) {
+                    std::cout << "should send" << std::endl;
                     std::string temp = FenExport(Pieces); //WRONG PROMOTION IGNORED
                     communication->send(temp);
                 }
@@ -221,12 +226,21 @@ void Game::handleEvents() {
                         }
                             if (buttons[1]->hovered()){
                                 std::cout << "clicked online button" << std::endl;
-                                isPlayingOnline = !isPlayingOnline;
-                                if (isPlayingOnline) {
-                                    communication = new Communication();
+                                if (!isPlayingOnline && communication == nullptr) {
+                                    std::thread t([&](){
+                                        boost::asio::io_context::work work(io_context);
+                                        io_context.run();
+                                        std::cout << "this shouldnt run" << std::endl;
+                                    });
+                                    t.detach();
+                                    communication = new Communication(io_context);
+                                    // start a thread which starts the io_context.run()
                                 }
                                 else {
                                     delete communication;
+                                    communication = nullptr;
+                                    isPlayingOnline = false;
+                                    io_context.stop();
                                 }
                             }
                             if (buttons[2]->hovered()) {

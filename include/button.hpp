@@ -16,7 +16,7 @@ public:
     std::string name;
     void initButton(SDL_Texture* textTexture, SDL_Texture* textHoveredTexture);
     SDL_Texture* getTexture();
-    SDL_Color color = {255, 255, 255};
+    SDL_Color color = {0, 0, 0};
     SDL_Color hoveredColor = {255, 0, 0};
 private:
 SDL_Texture* Texture;
