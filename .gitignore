@@ -1,4 +1,5 @@
 *.o
+*.tmp
 .vscode/
 .cache/
 bin/debug/main
