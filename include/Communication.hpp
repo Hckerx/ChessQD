@@ -9,7 +9,12 @@ public:
     bool received = false;
     boost::asio::io_context& io_context;
     Communication(boost::asio::io_context& io_context);
-    void close();
+    void close() {
+        socket.close();
+        if (acceptor != nullptr) {
+            acceptor->close();
+        }
+    }
     bool isWhite = true;
     void send(std::string message);
     void receive();
