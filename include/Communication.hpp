@@ -7,14 +7,14 @@ class Communication
 {
 public:
     bool received = false;
-    Communication();
+    boost::asio::io_context& io_context;
+    Communication(boost::asio::io_context& io_context);
     void close();
     bool isWhite = true;
     void send(std::string message);
     void receive();
     [[nodiscard]] std::string read();
     std::string noAsyncReceive();
-    boost::asio::io_context io_context;
     bool isConnected = false;
     void asyncReceive();
 
@@ -24,7 +24,7 @@ public:
     ~Communication() {
         std::cout << "Communication destructor" << std::endl;
         if (isConnected) {
-            send("closse");
+            send("close");
             acceptor->close();
         }
         if (acceptor != nullptr) {
