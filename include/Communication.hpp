@@ -3,28 +3,37 @@
 #include <iostream>
 
 using boost::asio::ip::tcp;
-class Communication
-{
+
+class Communication {
 public:
     bool received = false;
-    boost::asio::io_context& io_context;
-    Communication(boost::asio::io_context& io_context);
+    boost::asio::io_context &io_context;
+
+    Communication(boost::asio::io_context &io_context);
+
     void close() {
         socket.close();
         if (acceptor != nullptr) {
             acceptor->close();
         }
     }
+
     bool isWhite = true;
+
     void send(std::string message);
+
     void receive();
+
     [[nodiscard]] std::string read();
+
     std::string noAsyncReceive();
+
     bool isConnected = false;
+
     void asyncReceive();
 
-    
-    tcp::acceptor* acceptor = nullptr;
+
+    tcp::acceptor *acceptor = nullptr;
 
     ~Communication() {
         std::cout << "Communication destructor" << std::endl;
@@ -34,20 +43,25 @@ public:
         }
         if (acceptor != nullptr) {
             std::cout << "closing acceptor" << std::endl;
-            
+
             delete acceptor;
         }
         socket.close();
     }
+
 private:
-    
+
     void processData();
+
     boost::asio::streambuf receiveBuffer;
     std::thread receiveThread;
-    void handle_read(const boost::system::error_code& error, size_t bytes_transferred);
+
+    void handle_read(const boost::system::error_code &error, size_t bytes_transferred);
+
     tcp::socket socket;
     bool isServer = false;
     std::string data;
+
     void init();
 };
 

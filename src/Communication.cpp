@@ -3,7 +3,7 @@
 
 using boost::asio::ip::tcp;
 
-Communication::Communication(boost::asio::io_context& io_context) :io_context(io_context), socket(io_context) {
+Communication::Communication(boost::asio::io_context &io_context) : io_context(io_context), socket(io_context) {
     try {
         // Connect to existing game
         socket.connect(tcp::endpoint(boost::asio::ip::address::from_string("127.0.0.1"), 12345));
@@ -12,7 +12,7 @@ Communication::Communication(boost::asio::io_context& io_context) :io_context(io
         isWhite = false;
         asyncReceive(); // Start asynchronous receive operation
         isServer = false;
-    } catch (std::exception& e) {
+    } catch (std::exception &e) {
         // Else create game
         init(); // Start server initialization
     }
@@ -21,20 +21,20 @@ Communication::Communication(boost::asio::io_context& io_context) :io_context(io
 void Communication::send(std::string message) {
     message += '\n';
     boost::asio::async_write(
-        socket, boost::asio::buffer(message),
-        [](const boost::system::error_code& ec, std::size_t /*bytes_transferred*/) {
-            if (ec) {
-                std::cerr << "Error sending message: " << ec.message() << std::endl;
-            }
-        });
-    }
+            socket, boost::asio::buffer(message),
+            [](const boost::system::error_code &ec, std::size_t /*bytes_transferred*/) {
+                if (ec) {
+                    std::cerr << "Error sending message: " << ec.message() << std::endl;
+                }
+            });
+}
 
 void Communication::init() {
     // create a new socket
     // check if socket is open
     socket.close();
     acceptor = new tcp::acceptor(io_context, tcp::endpoint(tcp::v4(), 12345));
-    acceptor->async_accept(socket, [this](const boost::system::error_code& ec) {
+    acceptor->async_accept(socket, [this](const boost::system::error_code &ec) {
         if (!ec) {
             isConnected = true;
             asyncReceive(); // Start asynchronous receive operation
@@ -44,17 +44,17 @@ void Communication::init() {
     });
 }
 
-    void Communication::asyncReceive() {
-        boost::asio::async_read_until(
+void Communication::asyncReceive() {
+    boost::asio::async_read_until(
             socket, receiveBuffer, '\n',
-            [this](const boost::system::error_code& ec, std::size_t /*bytes_transferred*/) {
+            [this](const boost::system::error_code &ec, std::size_t /*bytes_transferred*/) {
                 if (!ec) {
                     processData(); // Process the received data
                     asyncReceive(); // Continue asynchronous receive operation
-            } else {
-                std::cerr << "Error receiving data: " << ec.message() << std::endl;
-            }
-        });
+                } else {
+                    std::cerr << "Error receiving data: " << ec.message() << std::endl;
+                }
+            });
 }
 
 void Communication::processData() {

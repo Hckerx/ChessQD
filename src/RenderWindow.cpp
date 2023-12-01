@@ -7,7 +7,9 @@
 #include <string>
 #include <vector>
 #include <array>
+
 #define SDL_MAIN_HANDLED
+
 #include <SDL2/SDL_blendmode.h>
 
 #include <SDL2/SDL.h>
@@ -27,9 +29,9 @@
 #define RESIGN 1
 #define ONLINE 0
 
-RenderWindow::RenderWindow(const char* p_title)
-{ //SDL initiation
-    if (SDL_Init(SDL_INIT_VIDEO) > 0) std::cout << "HEY.. SDL_Init HAS FAILED. SDL_ERROR: " << SDL_GetError() << std::endl;
+RenderWindow::RenderWindow(const char *p_title) { //SDL initiation
+    if (SDL_Init(SDL_INIT_VIDEO) > 0)
+        std::cout << "HEY.. SDL_Init HAS FAILED. SDL_ERROR: " << SDL_GetError() << std::endl;
 
     if (!(IMG_Init(IMG_INIT_PNG)))
         std::cout << "IMG_init has failed. Error: " << SDL_GetError() << std::endl;
@@ -43,19 +45,19 @@ RenderWindow::RenderWindow(const char* p_title)
     }
     SDL_DisplayMode DM;
     SDL_GetCurrentDisplayMode(0, &DM);
-    int height = DM.h < DM.w ? DM.h*0.90 : DM.w * 0.90;
-    
-    squareSize = (float)height/8*0.95;
-    window = SDL_CreateWindow(p_title, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, squareSize * 8, height, SDL_WINDOW_RESIZABLE| SDL_WINDOW_SHOWN); //| SDL_WINDOW_RESIZABLE
+    int height = DM.h < DM.w ? DM.h * 0.90 : DM.w * 0.90;
 
-    if (window == NULL)
-    {
+    squareSize = (float) height / 8 * 0.95;
+    window = SDL_CreateWindow(p_title, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, squareSize * 8, height,
+                              SDL_WINDOW_RESIZABLE | SDL_WINDOW_SHOWN); //| SDL_WINDOW_RESIZABLE
+
+    if (window == NULL) {
         std::cout << "Window failed to init. Error: " << SDL_GetError() << std::endl;
     }
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
     SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
     // Todo
-    SDL_Surface* icon = IMG_Load("bin/debug/res/gfx/icon.png");
+    SDL_Surface *icon = IMG_Load("bin/debug/res/gfx/icon.png");
     SDL_SetWindowIcon(window, icon);
 
     SDL_ShowCursor(1);
@@ -65,62 +67,57 @@ RenderWindow::RenderWindow(const char* p_title)
 }
 
 
-void RenderWindow::initButtons(std::array<Button*, 3> buttons) {
-    SDL_Surface* textSurface;
-    SDL_Surface* textHoveredSurface;
-    SDL_Texture* textTexture;
-    SDL_Texture* textTextureHovered;
-    for (uint8_t i = 0; i<buttons.size(); i++) {
+void RenderWindow::initButtons(std::array<Button *, 3> buttons) {
+    SDL_Surface *textSurface;
+    SDL_Surface *textHoveredSurface;
+    SDL_Texture *textTexture;
+    SDL_Texture *textTextureHovered;
+    for (uint8_t i = 0; i < buttons.size(); i++) {
         textSurface = TTF_RenderText_Blended(ChessQLDfont, buttons[i]->name.c_str(), buttons[i]->color);
         textHoveredSurface = TTF_RenderText_Blended(ChessQLDfont, buttons[i]->name.c_str(), buttons[i]->hoveredColor);
-    if (!textSurface || !textHoveredSurface) {
-        fprintf(stderr, "Failed to render text surface: %s\n", TTF_GetError());
-    }
-    textTextureHovered = SDL_CreateTextureFromSurface(renderer, textHoveredSurface);
-    SDL_SetTextureBlendMode(textTextureHovered, SDL_BLENDMODE_BLEND);
-    textTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
-    SDL_SetTextureBlendMode(textTexture, SDL_BLENDMODE_BLEND);
-    buttons[i]->initButton(textTexture,textTextureHovered);
+        if (!textSurface || !textHoveredSurface) {
+            fprintf(stderr, "Failed to render text surface: %s\n", TTF_GetError());
+        }
+        textTextureHovered = SDL_CreateTextureFromSurface(renderer, textHoveredSurface);
+        SDL_SetTextureBlendMode(textTextureHovered, SDL_BLENDMODE_BLEND);
+        textTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
+        SDL_SetTextureBlendMode(textTexture, SDL_BLENDMODE_BLEND);
+        buttons[i]->initButton(textTexture, textTextureHovered);
     }
 }
 
 void RenderWindow::freeTimer(Timer *timer) {
-	//Free texture if it exists
-	if( timer->texture != NULL )
-	{
-		SDL_DestroyTexture(timer->texture );
-		timer->texture = NULL;
-	}
+    //Free texture if it exists
+    if (timer->texture != NULL) {
+        SDL_DestroyTexture(timer->texture);
+        timer->texture = NULL;
+    }
 }
+
 void RenderWindow::loadFromRenderedText(Timer *timer) {
 
     freeTimer(timer);
 
-	//Render text surface
+    //Render text surface
     if (ChessQLDfont == NULL) {
         std::cerr << "Font is null" << std::endl;
     }
-	SDL_Surface* textSurface = TTF_RenderText_Solid( ChessQLDfont, timer->timeText.c_str(), timer->textColor );
-	if( textSurface != NULL )
-	{
-		//Create texture from surface pixels
-        timer->texture = SDL_CreateTextureFromSurface( renderer, textSurface );
-		if( texture == NULL )
-		{
-			printf( "Unable to create texture from rendered text! SDL Error: %s\n", SDL_GetError() );
-		}
+    SDL_Surface *textSurface = TTF_RenderText_Solid(ChessQLDfont, timer->timeText.c_str(), timer->textColor);
+    if (textSurface != NULL) {
+        //Create texture from surface pixels
+        timer->texture = SDL_CreateTextureFromSurface(renderer, textSurface);
+        if (texture == NULL) {
+            printf("Unable to create texture from rendered text! SDL Error: %s\n", SDL_GetError());
+        }
 
-		//Get rid of old surface
-		SDL_FreeSurface( textSurface );
-	}
-	else
-	{
-		printf( "Unable to render text surface! SDL_ttf Error: %s\n", TTF_GetError() );
-	}
+        //Get rid of old surface
+        SDL_FreeSurface(textSurface);
+    } else {
+        printf("Unable to render text surface! SDL_ttf Error: %s\n", TTF_GetError());
+    }
 }
 
-SDL_Texture* RenderWindow::loadTexture(const char* p_filePath)
-{
+SDL_Texture *RenderWindow::loadTexture(const char *p_filePath) {
     texture = IMG_LoadTexture(renderer, p_filePath);
 
     if (texture == NULL)
@@ -129,8 +126,7 @@ SDL_Texture* RenderWindow::loadTexture(const char* p_filePath)
     return texture;
 }
 
-void RenderWindow::cleanUp()
-{
+void RenderWindow::cleanUp() {
 
     TTF_CloseFont(ChessQLDfont);
     TTF_Quit();
@@ -139,14 +135,12 @@ void RenderWindow::cleanUp()
 }
 
 
-void RenderWindow::clear()
-{
+void RenderWindow::clear() {
     SDL_RenderClear(renderer);
 }
 
-void RenderWindow::render(std::shared_ptr<Piece>& p_piece, bool whiteDown)
-{
-    SDL_Rect src; 
+void RenderWindow::render(std::shared_ptr <Piece> &p_piece, bool whiteDown) {
+    SDL_Rect src;
     src.x = p_piece->getCurrentFrame().x;
     src.y = p_piece->getCurrentFrame().y;
     src.w = p_piece->getCurrentFrame().w;
@@ -157,38 +151,38 @@ void RenderWindow::render(std::shared_ptr<Piece>& p_piece, bool whiteDown)
     if (whiteDown) {
         dst.x = p_piece->getPos().x * squareSize;
         dst.y = p_piece->getPos().y * squareSize;
-    }
-    else {
-        dst.x = squareSize*8 - (p_piece->getPos().x * squareSize + squareSize);
-        dst.y = squareSize*8 - (p_piece->getPos().y * squareSize + squareSize);
+    } else {
+        dst.x = squareSize * 8 - (p_piece->getPos().x * squareSize + squareSize);
+        dst.y = squareSize * 8 - (p_piece->getPos().y * squareSize + squareSize);
     }
     dst.w = squareSize;
     dst.h = squareSize;
 
     SDL_RenderCopy(renderer, texture, &src, &dst);
 }
-int RenderWindow::renderWidgets(std::array<Button*, 3> buttons, Timer* wTimer, Timer* bTimer) {
+
+int RenderWindow::renderWidgets(std::array<Button *, 3> buttons, Timer *wTimer, Timer *bTimer) {
     int i;
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-    for ( i=0;i<buttons.size(); i++) {
-        buttons[i]->w = windowx/(2*(buttons.size()+2));
-        buttons[i]->h = windowy*0.05;
-        buttons[i]->y = windowy *0.95;
-        buttons[i]->x = i*(windowx/(buttons.size()+2)) + (windowx/(4*(buttons.size()+2)));
+    for (i = 0; i < buttons.size(); i++) {
+        buttons[i]->w = windowx / (2 * (buttons.size() + 2));
+        buttons[i]->h = windowy * 0.05;
+        buttons[i]->y = windowy * 0.95;
+        buttons[i]->x = i * (windowx / (buttons.size() + 2)) + (windowx / (4 * (buttons.size() + 2)));
 
         // dst
         SDL_RenderCopy(renderer, buttons[i]->getTexture(), NULL, buttons[i]);
     }
 
-    wTimer->w = windowx/(2*(buttons.size()+2)); 
-    wTimer->h = windowy*0.05; 
-    wTimer->y = windowy *0.95; 
-    wTimer->x = i*(windowx/(buttons.size()+2)) + (windowx/(4*(buttons.size()+2))); 
+    wTimer->w = windowx / (2 * (buttons.size() + 2));
+    wTimer->h = windowy * 0.05;
+    wTimer->y = windowy * 0.95;
+    wTimer->x = i * (windowx / (buttons.size() + 2)) + (windowx / (4 * (buttons.size() + 2)));
 
-    bTimer->w = windowx/(2*(buttons.size()+2)); 
-    bTimer->h = windowy*0.05; 
-    bTimer->y = windowy *0.95; 
-    bTimer->x = (i+1)*(windowx/(buttons.size()+2)) + (windowx/(4*(buttons.size()+2))); 
+    bTimer->w = windowx / (2 * (buttons.size() + 2));
+    bTimer->h = windowy * 0.05;
+    bTimer->y = windowy * 0.95;
+    bTimer->x = (i + 1) * (windowx / (buttons.size() + 2)) + (windowx / (4 * (buttons.size() + 2)));
 
 
     SDL_RenderCopy(renderer, wTimer->texture, NULL, wTimer);
@@ -198,8 +192,8 @@ int RenderWindow::renderWidgets(std::array<Button*, 3> buttons, Timer* wTimer, T
 }
 
 
-
-void RenderWindow::renderbg(std::vector<glm::ivec2> highlight = {{1000,1000}}, std::vector<glm::ivec2> lastMoves = {{1000, 1000}}, bool whiteDown=true) {
+void RenderWindow::renderbg(std::vector <glm::ivec2> highlight = {{1000, 1000}},
+                            std::vector <glm::ivec2> lastMoves = {{1000, 1000}}, bool whiteDown = true) {
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     updateSquareSize();
     for (int i = 0; i < 8; i++) {
@@ -207,49 +201,48 @@ void RenderWindow::renderbg(std::vector<glm::ivec2> highlight = {{1000,1000}}, s
             SDL_Rect rect = {j * squareSize, i * squareSize, squareSize, squareSize};
             if ((i + j) % 2 == 0) {
                 SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-                } else {
-                SDL_SetRenderDrawColor(renderer, 139,69,19, 255);
+            } else {
+                SDL_SetRenderDrawColor(renderer, 139, 69, 19, 255);
             }
             SDL_RenderFillRect(renderer, &rect);
-            for (glm::ivec2 k : lastMoves)
-            {
-                if ((whiteDown && k == glm::ivec2(j,i))||(!whiteDown && k == glm::ivec2(8-(j+1), 8-(i+1)))) {
-                    
-                        SDL_SetRenderDrawColor(renderer, 255,255,0, 190);
-                        SDL_RenderFillRect(renderer, &rect);
-                } 
+            for (glm::ivec2 k: lastMoves) {
+                if ((whiteDown && k == glm::ivec2(j, i)) || (!whiteDown && k == glm::ivec2(8 - (j + 1), 8 - (i + 1)))) {
+
+                    SDL_SetRenderDrawColor(renderer, 255, 255, 0, 190);
+                    SDL_RenderFillRect(renderer, &rect);
+                }
             }
-            for (glm::ivec2 k : highlight)
-            {
-                if ((whiteDown && k == glm::ivec2(j,i))||(!whiteDown &&k == glm::ivec2(8-(j+1), 8-(i+1)))) {
-                        SDL_SetRenderDrawColor(renderer, 255,0,0, 200);
-                        SDL_RenderFillRect(renderer, &rect);
+            for (glm::ivec2 k: highlight) {
+                if ((whiteDown && k == glm::ivec2(j, i)) || (!whiteDown && k == glm::ivec2(8 - (j + 1), 8 - (i + 1)))) {
+                    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 200);
+                    SDL_RenderFillRect(renderer, &rect);
+                }
             }
         }
-    }}
+    }
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 }
 
-void RenderWindow::display()
-{
+void RenderWindow::display() {
     SDL_RenderPresent(renderer);
 }
 
 
-void RenderWindow::fullRender(std::vector<glm::ivec2> highlight, std::vector<glm::ivec2> lastMoves,
-                            std::vector<std::shared_ptr<Piece>>& Pieces, bool whiteDown,std::array<Button*, 3> buttons, Timer* wTimer, Timer* bTimer) {
+void RenderWindow::fullRender(std::vector <glm::ivec2> highlight, std::vector <glm::ivec2> lastMoves,
+                              std::vector <std::shared_ptr<Piece>> &Pieces, bool whiteDown,
+                              std::array<Button *, 3> buttons, Timer *wTimer, Timer *bTimer) {
     clear();
-    
-    renderbg(highlight, lastMoves,  whiteDown);
+
+    renderbg(highlight, lastMoves, whiteDown);
     loadFromRenderedText(wTimer);
     loadFromRenderedText(bTimer);
     renderWidgets(buttons, wTimer, bTimer);
-    for (int i = 0; i < (int)Pieces.size(); i++) {
+    for (int i = 0; i < (int) Pieces.size(); i++) {
         render(Pieces[i], whiteDown);
     }
 
     //renderButton({"online", "resign", "turn"}) ;
-    
+
 }
 
 // TODO: All the render functions can be summarized into one function
@@ -257,9 +250,9 @@ void RenderWindow::fullRender(std::vector<glm::ivec2> highlight, std::vector<glm
 bool RenderWindow::displayWelcomeMessage(std::string text) {
     std::string welcomeText = text;
     SDL_Rect textRect;
-    SDL_Texture* textTexture;
+    SDL_Texture *textTexture;
     SDL_Color textColor = {255, 0, 0};
-    SDL_Surface* textSurface = TTF_RenderText_Blended(ChessQLDfont, welcomeText.c_str(), textColor);
+    SDL_Surface *textSurface = TTF_RenderText_Blended(ChessQLDfont, welcomeText.c_str(), textColor);
     if (!textSurface) {
         fprintf(stderr, "Failed to render text surface: %s\n", TTF_GetError());
         return 1;
@@ -277,8 +270,8 @@ bool RenderWindow::displayWelcomeMessage(std::string text) {
     // Loop until the "PLAY" button is pressed
     while (!playButtonPressed) {
         updateSquareSize();
-        textRect.w = windowx/1.01;
-        textRect.h = windowy/5;
+        textRect.w = windowx / 1.01;
+        textRect.h = windowy / 5;
         textRect.x = (windowx - textRect.w) / 2;
         textRect.y = (windowy - textRect.h) / 2;
         // dst
@@ -300,12 +293,11 @@ bool RenderWindow::displayWelcomeMessage(std::string text) {
                 //   // Set the flag to true and exit the loop
                 playButtonPressed = true;
             } else if (event.type == SDL_KEYDOWN) {
-                switch (event.key.keysym.sym)
-                {
-                    case SDLK_q: 
+                switch (event.key.keysym.sym) {
+                    case SDLK_q:
                         SDL_DestroyTexture(textTexture);
                         SDL_FreeSurface(textSurface);
-                    return false;
+                        return false;
                 }
             }
         }
@@ -319,8 +311,8 @@ bool RenderWindow::displayWelcomeMessage(std::string text) {
 
     SDL_DisplayMode DM;
     SDL_GetCurrentDisplayMode(0, &DM);
-    int height = DM.h < DM.w ? DM.h*0.9 : DM.w;
-    SDL_SetWindowSize(window, height, height);  
+    int height = DM.h < DM.w ? DM.h * 0.9 : DM.w;
+    SDL_SetWindowSize(window, height, height);
     return true;
 }
 
@@ -333,31 +325,30 @@ int RenderWindow::displayPromotionOptions(glm::vec2 pos, bool white) {
 
 
     SDL_SetRenderDrawColor(renderer, 166, 168, 171, 200);
-    int calculations = (int)pos.y*squareSize - (white ? 0 : 3*squareSize);
-    SDL_Rect rect = {(int)pos.x*squareSize, calculations, (squareSize ), (squareSize * 4)};
+    int calculations = (int) pos.y * squareSize - (white ? 0 : 3 * squareSize);
+    SDL_Rect rect = {(int) pos.x * squareSize, calculations, (squareSize), (squareSize * 4)};
     SDL_RenderFillRect(renderer, &rect);
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-    SDL_Rect outline = {(int)pos.x*squareSize, calculations, (squareSize ), (squareSize * 4)};
+    SDL_Rect outline = {(int) pos.x * squareSize, calculations, (squareSize), (squareSize * 4)};
     SDL_RenderDrawRect(renderer, &outline);
     int y;
     if (white) {
         y = 128;
-    }
-    else {
+    } else {
         y = 0;
     }
-    for (int i = 128; i<=128*4; i+=128) {
-        SDL_Rect src; 
+    for (int i = 128; i <= 128 * 4; i += 128) {
+        SDL_Rect src;
         src.h = 128;
         src.w = 128;
-        src.y = y; 
-        src.x = 128*5-i; 
+        src.y = y;
+        src.x = 128 * 5 - i;
         SDL_Rect dst;
-        dst.x = pos.x* squareSize;
+        dst.x = pos.x * squareSize;
         if (white) {
-            dst.y = (pos.y+(int)((i-128)/128)) * squareSize;
+            dst.y = (pos.y + (int) ((i - 128) / 128)) * squareSize;
         } else {
-            dst.y = (pos.y-(int)((i-128)/128)) * squareSize;
+            dst.y = (pos.y - (int) ((i - 128) / 128)) * squareSize;
         }
         dst.w = squareSize;
         dst.h = squareSize;

@@ -5,13 +5,12 @@
 Timer::Timer() {
 }
 
-void Timer::startPause(){
+void Timer::startPause() {
     if (!isPaused) {
         isPaused = true;
         pausedTicks = SDL_GetTicks() - startTicks;
         startTicks = 0;
-    }
-    else {
+    } else {
         std::cout << "pause" << std::endl;
         isPaused = false;
         startTicks = SDL_GetTicks() - pausedTicks;
@@ -27,9 +26,9 @@ void Timer::stop() {
 
 Uint32 Timer::getTicks() const {
     uint32_t time;
-        if (isPaused) {
-            return pausedTicks;
-        } else {
-            return SDL_GetTicks() - startTicks;
-        }
+    if (isPaused) {
+        return pausedTicks;
+    } else {
+        return SDL_GetTicks() - startTicks;
+    }
 }

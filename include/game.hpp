@@ -1,4 +1,5 @@
 #include <array>
+
 #define SDL_MAIN_HANDLED
 
 #include <memory>
@@ -7,8 +8,8 @@
 #include "piece.hpp"
 #include <iostream>
 #include "Communication.hpp"
-class Game
-{
+
+class Game {
 
 private:
     // SDL specific stuff
@@ -16,16 +17,16 @@ private:
 
     // Communication
     //std::unique_ptr<Communication> communication = nullptr;
-    Communication* communication = nullptr;
+    Communication *communication = nullptr;
 
-    boost::asio::io_context io_context;  
+    boost::asio::io_context io_context;
     //Game Logic
 
     bool isPlayingOnline = false; //maybe other place?
-    bool isWhite(){
-            if (communication != nullptr) {
-                return communication->isWhite;
-            }
+    bool isWhite() {
+        if (communication != nullptr) {
+            return communication->isWhite;
+        }
         return false;
     }
 
@@ -43,34 +44,43 @@ private:
     int state = -1; //state of the game (draw, checkmate, closed)
     int counter = 0; //move forwards and backwards
 
-    std::array<Button*, 3> buttons;
+    std::array<Button *, 3> buttons;
 
     // RenderWindow stuff
     RenderWindow window; //displayed main window
-    std::vector<glm::ivec2> highlightMoves = {{1000,1000}}; //vector of moves to highlight
-    std::vector<glm::ivec2> lastMoves = {{1000, 1000}}; //vector of last moves?? CHANGE NAME
+    std::vector <glm::ivec2> highlightMoves = {{1000, 1000}}; //vector of moves to highlight
+    std::vector <glm::ivec2> lastMoves = {{1000, 1000}}; //vector of last moves?? CHANGE NAME
 
-    std::shared_ptr<Piece> lastPiece;
+    std::shared_ptr <Piece> lastPiece;
 
     // Pieces 
-    std::shared_ptr<Piece> selectedPiece;
-    std::vector<std::shared_ptr<Piece>> Pieces;
-    std::vector<std::string> moveHistory;
+    std::shared_ptr <Piece> selectedPiece;
+    std::vector <std::shared_ptr<Piece>> Pieces;
+    std::vector <std::string> moveHistory;
 
     void run();
 
-    std::vector<std::shared_ptr<Piece>> FenImport(std::string FenString);
-    std::string FenExport(std::vector<std::shared_ptr<Piece>> piecesVector);
+    std::vector <std::shared_ptr<Piece>> FenImport(std::string FenString);
+
+    std::string FenExport(std::vector <std::shared_ptr<Piece>> piecesVector);
+
     void handleEvents();
+
     void handleCheckmate();
-    bool handlePromotion(std::shared_ptr<Piece> selectedPiece, bool Captured);
+
+    bool handlePromotion(std::shared_ptr <Piece> selectedPiece, bool Captured);
+
     void selectPiece();
+
     void handlePromotionPieceSelection(glm::vec2 selection);
+
     void DragPiece();
+
     void placePiece();
 
 public:
-    Game(std::string fen); 
+    Game(std::string fen);
+
     ~Game();
 
 };

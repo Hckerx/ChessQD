@@ -5,21 +5,21 @@
 
 //A button class inheriting from the SDL_Rect object.
 Button::Button(std::string name)
-:SDL_Rect(), name(name){} //HELP FIXME
+        : SDL_Rect(), name(name) {} //HELP FIXME
 
-void Button::initButton(SDL_Texture* textTexture, SDL_Texture* textHoveredTexture){
+void Button::initButton(SDL_Texture *textTexture, SDL_Texture *textHoveredTexture) {
     Texture = textTexture;
     TextureHovered = textHoveredTexture;
 }
 
-SDL_Texture* Button::getTexture(){
+SDL_Texture *Button::getTexture() {
     if (hovered())
         return TextureHovered;
     return Texture;
 }
 
 bool Button::hovered() {
-        SDL_GetMouseState(&Mouse_x,&Mouse_y);
-        point = {Mouse_x,Mouse_y};
-        return SDL_PointInRect(&point,this);
+    SDL_GetMouseState(&Mouse_x, &Mouse_y);
+    point = {Mouse_x, Mouse_y};
+    return SDL_PointInRect(&point, this);
 }
