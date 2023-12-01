@@ -1,18 +1,13 @@
 //necessary for windows
 #include <functional>
 #include <future>
-#include <thread>
-#include <chrono>
-#include <array>
 #define SDL_MAIN_HANDLED
 
 
 #include <glm/gtx/string_cast.hpp>
 #include <memory>
 #include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
 #include <iostream>
-#include <vector>
 #include <bits/stdc++.h>
 
 #include "renderWindow.hpp"
@@ -29,7 +24,7 @@
 
 #define RESIGN 1
 #define ONLINE 0
-// TODO: Threefold FIVEFOLD seventy move rule insufficent material?
+// TODO: Threefold FIVEFOLD seventy move rule insufficient material?
 
 //constructor of class Game (the main class)
 Game::Game(std::string fen) : window("ChessQLD") {
@@ -120,7 +115,7 @@ void Game::placePiece() {
                     whiteDown=!whiteDown;
                 }
                 
-                if (!handleProtomotion(selectedPiece, sizeOfPieces != Pieces.size())) {
+                if (!handlePromotion(selectedPiece, sizeOfPieces != Pieces.size())) {
                     if (moveHistory.size() == 2) {
                         bTimer.start();
                     } else if (moveHistory.size() == 3) {
@@ -162,7 +157,7 @@ void Game::placePiece() {
     PieceSelected = false;
 }
 
-bool Game::handleProtomotion(std::shared_ptr<Piece> selectedPiece, bool Captured)
+bool Game::handlePromotion(std::shared_ptr<Piece> selectedPiece, bool Captured)
 {
     std::shared_ptr<Pawn> derivedPtr = std::dynamic_pointer_cast<Pawn>(selectedPiece);
     if (derivedPtr != nullptr )

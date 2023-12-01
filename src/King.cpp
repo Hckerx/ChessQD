@@ -6,71 +6,65 @@
 #include <iostream>
 King::King(glm::vec2 p_pos, bool white)
 :Piece(p_pos, white){
-    if (white) {
+    if (white)
         currentFrame.y = 128;
-    }
-    else {
+    else
         currentFrame.y = 0;
-    }
+
     currentFrame.x = 128*5;
     currentFrame.w = 128;
     currentFrame.h = 128;
 }
 
 void King::findMovesWithoutCheck(std::vector<std::shared_ptr<Piece>> &Pieces) {
-    // FIXME add special Rules rochade
     legalMoves.clear();
-    findIndMoves(Pieces, pos[0] + 1, pos[1] + 1);
-    findIndMoves(Pieces, pos[0] + 1, pos[1] - 1);
-    findIndMoves(Pieces, pos[0] - 1, pos[1] + 1);
-    findIndMoves(Pieces, pos[0] - 1, pos[1] - 1);
-    findIndMoves(Pieces, pos[0], pos[1] - 1);
-    findIndMoves(Pieces, pos[0], pos[1] + 1);
-    // prevent recursion??
+    findIndMoves(Pieces, pos.x + 1, pos.y + 1);
+    findIndMoves(Pieces, pos.x + 1, pos.y - 1);
+    findIndMoves(Pieces, pos.x - 1, pos.y + 1);
+    findIndMoves(Pieces, pos.x - 1, pos.y - 1);
+    findIndMoves(Pieces, pos.x, pos.y - 1);
+    findIndMoves(Pieces, pos.x, pos.y + 1);
 
-    // For Castling Only
-    if (findIndMoves(Pieces, pos[0] - 1, pos[1]) && !hasMoved) {
+    // For Castling long castle
+    if (findIndMoves(Pieces, pos.x - 1, pos.y) && !hasMoved) {
         pos.x = pos.x - 1;
         if (!isKingInCheck(Pieces)) {
             pos.x = pos.x - 2;
             if (!isKingInCheck(Pieces)) {
                 pos.x = pos.x + 3;
 
-                std::shared_ptr<Piece> piece =
-                getMatchingPiece(glm::vec2{pos[0] - 4, pos[1]}, Pieces);
+                std::shared_ptr<Piece> piece = getMatchingPiece(glm::vec2{pos.x - 4, pos.y}, Pieces);
                 std::shared_ptr<Rook> rook = std::dynamic_pointer_cast<Rook>(piece);
                 if (rook != nullptr) {
                     if (!rook->hasMoved) {
                         rook->findMovesWithoutCheck(Pieces);
                         for (auto i : rook->legalMoves) {
-                            if (i == glm::vec2{pos[0] - 3, pos[1]}) {
-                                findIndMoves(Pieces, pos[0] - 2, pos[1]);
+                            if (i == glm::vec2{pos.x - 3, pos.y}) {
+                                findIndMoves(Pieces, pos.x - 2, pos.y);
                             }
                         }
                     }
                 }
-            } else {
-                pos.x = pos[0] + 3;
-            }
-        } else {
-            pos.x = pos[0] + 1;
-        }
+            } else
+                pos.x = pos.x + 3;
+        } else
+            pos.x = pos.x + 1;
     }
-
-    if (findIndMoves(Pieces, pos[0] + 1, pos[1]) && !hasMoved) {
-        pos.x = pos[0] + 1;
+// For Castling short castle
+    if (findIndMoves(Pieces, pos.x + 1, pos.y) && !hasMoved) {
+        pos.x = pos.x + 1;
         if (!isKingInCheck(Pieces)) {
-            pos.x = pos[0] - 1;
+            pos.x = pos.x - 1;
             std::shared_ptr<Piece> piece =
-            getMatchingPiece(glm::vec2{pos[0] + 3, pos[1]}, Pieces);
+            getMatchingPiece(glm::vec2{pos.x + 3, pos.y}, Pieces);
             std::shared_ptr<Rook> rook = std::dynamic_pointer_cast<Rook>(piece);
             if (rook != nullptr) {
                 if (!rook->hasMoved) {
-                    findIndMoves(Pieces, pos[0] + 2, pos[1]);
+                    findIndMoves(Pieces, pos.x + 2, pos.y);
                 }
             }
         }   else {
-            pos.x = pos[0] - 1;
+            pos.x = pos.x - 1;
         }
     }
 }
@@ -89,32 +83,15 @@ bool King::move(glm::vec2 newPos, glm::vec2 oldPos, std::vector<std::shared_ptr<
         }
         hasMoved = true;
         return true;
-    } else {
+    } else
         return false;
-    }
 }
-
+//looks for every move if King is in check
 bool King::isKingInCheck(std::vector<std::shared_ptr<Piece>>& Pieces) {
-    glm::vec2 kingPos;
-    for (auto i : Pieces) {
-        std::shared_ptr<King> derivedPtr = std::dynamic_pointer_cast<King>(i); 
-        if (derivedPtr != nullptr && i->white == white) {
-            kingPos = i->pos; 
-        }
-        // else if (derivedPtr != nullptr && i->white != white) 
-        // {
-        //     derivedPtr->isCastling = true;
-        //     i->findMovesWithoutCheck(Pieces);
-        // }
- 
-    }
-    // for piece in pieces
-    //     piece.findmoves
-
     for (auto& i : Pieces) {
         if (i->white != white) {
             for (glm::vec2 j : i->legalMoves) {
-                if (j == pos) { //kingPos
+                if (j == pos) {
                     return true;
                 }
             }    

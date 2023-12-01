@@ -62,7 +62,7 @@ private:
     std::string FenExport(std::vector<std::shared_ptr<Piece>> piecesVector);
     void handleEvents();
     void handleCheckmate();
-    bool handleProtomotion(std::shared_ptr<Piece> selectedPiece, bool Captured);
+    bool handlePromotion(std::shared_ptr<Piece> selectedPiece, bool Captured);
     void selectPiece();
     void handlePromotionPieceSelection(glm::vec2 selection);
     void DragPiece();

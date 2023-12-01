@@ -1,8 +1,6 @@
 #include "bishop.hpp"
 #include "piece.hpp"
 
-#include <iostream>
-
 Bishop::Bishop(glm::vec2 p_pos, bool white)
 :Piece(p_pos, white){
         if (white) {

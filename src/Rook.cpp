@@ -21,31 +21,31 @@ Rook::Rook(glm::vec2 p_pos, bool white)
 void Rook::findMovesWithoutCheck(std::vector<std::shared_ptr<Piece>>& Pieces) {
     legalMoves.clear();
     // erst x
-    int pos_x = pos[0]+1;
+    int pos_x = pos.x+1;
     for (int8_t i = pos_x; i < 8; i++)
     {
-        if(!findIndMoves(Pieces,i,pos[1])){
+        if(!findIndMoves(Pieces,i,pos.y)){
             break;
         }
     }
-    pos_x = pos[0]-1;
+    pos_x = pos.x-1;
     for (int8_t i = pos_x; i >= 0; i--)
     {
-        if(!findIndMoves(Pieces,i,pos[1])){
+        if(!findIndMoves(Pieces,i,pos.y)){
             break;
         }
     }
-    int pos_y = pos[1]+1;
+    int pos_y = pos.y+1;
     for (int8_t i = pos_y; i < 8; i++)
     {
-        if(!findIndMoves(Pieces,pos[0],i)){
+        if(!findIndMoves(Pieces,pos.x,i)){
             break;
         }
     }
     pos_y = pos.y - 1;
     for (int8_t i = pos_y; i >= 0; i-=1)
     {
-        if(!findIndMoves(Pieces,pos[0],i)){
+        if(!findIndMoves(Pieces,pos.x,i)){
             break;
         }
     }

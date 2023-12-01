@@ -168,10 +168,9 @@ void RenderWindow::render(std::shared_ptr<Piece>& p_piece, bool whiteDown)
     SDL_RenderCopy(renderer, texture, &src, &dst);
 }
 int RenderWindow::renderWidgets(std::array<Button*, 3> buttons, Timer* wTimer, Timer* bTimer) {
-
+    int i;
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-    uint8_t i = 0;
-    for (i = 0; i<buttons.size(); i++) {
+    for ( i=0;i<buttons.size(); i++) {
         buttons[i]->w = windowx/(2*(buttons.size()+2));
         buttons[i]->h = windowy*0.05;
         buttons[i]->y = windowy *0.95;
