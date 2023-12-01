@@ -1,8 +1,4 @@
 #include "util.hpp"
-#include <cctype>
-#include <iostream>
-
-#include "renderWindow.hpp"
 #include "pawn.hpp"
 #include "rook.hpp"
 #include "bishop.hpp"

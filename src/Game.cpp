@@ -139,19 +139,19 @@ void Game::placePiece() {
                 
                 if (!handlePromotion(selectedPiece, sizeOfPieces != Pieces.size())) {
                     if (moveHistory.size() == 2) {
-                        bTimer.start();
+                        bTimer.startPause();
                     } else if (moveHistory.size() == 3) {
-                        bTimer.pause();
-                        wTimer.start();
+                        bTimer.startPause();
+                        wTimer.startPause();
                     } else {
                         if (wTimer.isPaused) {
                             std::cout << "unpausing white" << std::endl;
-                            wTimer.unpause();
-                            bTimer.pause();
+                            wTimer.startPause();
+                            bTimer.startPause();
                         } else {
                             std::cout << "pausing white" << std::endl;
-                            bTimer.unpause();
-                            wTimer.pause();
+                            bTimer.startPause();
+                            wTimer.startPause();
                         }
                     }
                     whiteTurn = !whiteTurn;
@@ -365,16 +365,10 @@ void Game::handlePromotionPieceSelection(glm::vec2 selection){
         whiteTurn = !whiteTurn;
         handleCheckmate();
         moveHistory.push_back(FenExport(Pieces));
-    
-            if (wTimer.isStarted) {
-                wTimer.pause();
-                bTimer.start();
-            } else {
-                bTimer.pause();
-                wTimer.start();
-
-            }
-
+                wTimer.startPause();
+                bTimer.startPause()
+                bTimer.startPause();
+                wTimer.startPause();
     } 
 }
 
@@ -383,7 +377,6 @@ void Game::DragPiece() {
     newPos -= 0.5;
     selectedPiece->setPos(newPos);
 }
-
 
 void Game::selectPiece() {
     glm::ivec2 MousePosition = getMousePosition(whiteDown,window.squareSize);
@@ -396,8 +389,7 @@ void Game::selectPiece() {
             highlightMoves.push_back(i);
        
         PieceSelected = true;
-    } 
-
+    }
 }
 
 std::vector<std::shared_ptr<Piece>> Game::FenImport(std::string FenString) {
@@ -408,7 +400,6 @@ std::vector<std::shared_ptr<Piece>> Game::FenImport(std::string FenString) {
     int pos = FenString.find(delimeter);
     std::string PositionFen = FenString.substr(0, pos);
     std::string metadataFen = FenString.substr(pos+1);
-
 
 
     for (char c : PositionFen) {
@@ -662,7 +653,6 @@ std::string Game::FenExport(std::vector<std::shared_ptr<Piece>> piecesVector) {
                         }
                     }
                 }
-
             }
         }
     }
