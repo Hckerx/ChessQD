@@ -42,7 +42,7 @@ private:
     int halfMoveNumber = 0;
     int fullMoveNumber = 0; //needed?
     int state = -1; //state of the game (draw, checkmate, closed)
-    int counter = 0; //move forwards and backwards
+    ulong counter = 0; //move forwards and backwards
 
     std::array<Button *, 3> buttons;
 
@@ -51,7 +51,7 @@ private:
     std::vector <glm::ivec2> highlightMoves = {{1000, 1000}}; //vector of moves to highlight
     std::vector <glm::ivec2> lastMoves = {{1000, 1000}}; //vector of last moves?? CHANGE NAME
 
-    std::shared_ptr <Piece> lastPiece;
+    std::shared_ptr <Piece> lastPiece; //FIXME WHATS THTA NAME
 
     // Pieces 
     std::shared_ptr <Piece> selectedPiece;
@@ -59,28 +59,17 @@ private:
     std::vector <std::string> moveHistory;
 
     void run();
-
-    std::vector <std::shared_ptr<Piece>> FenImport(std::string FenString);
-
-    std::string FenExport(std::vector <std::shared_ptr<Piece>> piecesVector);
-
+   
     void handleEvents();
-
     void handleCheckmate();
-
     bool handlePromotion(std::shared_ptr <Piece> selectedPiece, bool Captured);
-
     void selectPiece();
-
     void handlePromotionPieceSelection(glm::vec2 selection);
-
     void DragPiece();
-
     void placePiece();
+     std::vector <std::shared_ptr<Piece>> FenImport(std::string FenString);
 
 public:
-    Game(std::string fen);
-
+    explicit Game(std::string fen);
     ~Game();
-
 };
