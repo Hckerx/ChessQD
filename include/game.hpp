@@ -60,12 +60,12 @@ private:
    
     void handleEvents();
     void handleCheckmate();
-    bool handlePromotion(std::shared_ptr <Piece> selectedPiece, bool Captured);
+    bool handlePromotion(const std::shared_ptr<Piece> &selectedPiece, bool Captured);
     void selectPiece();
     void handlePromotionPieceSelection(glm::vec2 selection);
     void DragPiece();
     void placePiece();
-     std::vector <std::shared_ptr<Piece>> FenImport(std::string FenString);
+    std::vector <std::shared_ptr<Piece>> FenImport(const std::string &FenString);
 
 public:
     explicit Game(std::string fen);

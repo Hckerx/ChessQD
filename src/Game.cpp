@@ -144,51 +144,73 @@ void Game::run() {
 }
 
 void Game::placePiece() {
+    // Get the mouse position in board coordinates
     glm::ivec2 MousePosition = getMousePosition(whiteDown, window.squareSize);
+    
+    // Store the old position of the selected piece
     glm::vec2 oldPos = highlightMoves[0];
+    
+    // Get the current number of pieces on the board
     ulong sizeOfPieces = Pieces.size();
+    
+    // Check if it's the first move of the game
     if (counter == 0) {
-        //if ((isPlayingOnline && (communication->isWhite == whiteTurn)) || !isPlayingOnline) {
+        // Check if it's the player's turn and if move is possible
         if (selectedPiece->move(MousePosition, highlightMoves[0], Pieces, whiteTurn, isPlayingOnline, isWhite())) {
+            
+            // Rotate the board if needed
             if (rotate_board) {
                 whiteDown = !whiteDown;
             }
 
+            // Check for pawn promotion and handle it
             if (!handlePromotion(selectedPiece, sizeOfPieces != Pieces.size())) {
+                // Start or pause the timer based on move history
                 if (moveHistory.size() == 1) 
                     bTimer.startPause(); 
                 else {
-                        wTimer.startPause();
-                        bTimer.startPause();
+                    wTimer.startPause();
+                    bTimer.startPause();
                 }
+
+                // Switch turns and update move history
                 whiteTurn = !whiteTurn;
-                //         ++halfMoveNumber;
                 moveHistory.push_back(FenExport(Pieces,whiteTurn,halfMoveNumber));
             }
+
+            // Check for checkmate and update the game state
             handleCheckmate();
+
+            // Store the selected piece and its movement in lastMoves
             lastPiece = selectedPiece;
             lastMoves.emplace_back(oldPos);
             lastMoves.emplace_back(selectedPiece->getPos());
+
+            // Reset the highlightMoves
             highlightMoves = {{1000, 1000}};
+
+            // Send the move to the opponent in online play
             if (isPlayingOnline && state == -1) {
                 std::cout << "should send" << std::endl;
-                std::string temp = FenExport(Pieces,whiteTurn,halfMoveNumber); //WRONG PROMOTION IGNORED
+                std::string temp = FenExport(Pieces,whiteTurn,halfMoveNumber); // WRONG PROMOTION IGNORED
                 communication->send(temp);
             }
         }
-
     } else {
+        // Reset the counter and restore the previous board state
         counter = 0;
         Pieces = FenImport(moveHistory[moveHistory.size() - 1]);
     }
 
-    //highlightMoves.push_back(selectedPiece->getPos());
+    // Reset PieceSelected flag
     PieceSelected = false;
 }
 
-bool Game::handlePromotion(std::shared_ptr<Piece> selectedPiece, bool Captured) {
+bool Game::handlePromotion(const std::shared_ptr<Piece> &selectedPiece, bool Captured) {
+    // get piece and check if it's a pawn
     std::shared_ptr <Pawn> derivedPtr = std::dynamic_pointer_cast<Pawn>(selectedPiece);
     if (derivedPtr != nullptr) {
+        // check if the pawn is on the last rank and return true if it is
         if (((selectedPiece->getPos().y == 0 && whiteTurn) || (selectedPiece->getPos().y == 7 && !whiteTurn))) {
             isPromoting = true;
             return true;
@@ -198,14 +220,14 @@ bool Game::handlePromotion(std::shared_ptr<Piece> selectedPiece, bool Captured) 
 }
 
 void Game::handleCheckmate() {
-    std::cout << "handling checkmate" << std::endl;
+    // Check if there are no legal moves left
     bool no_legal_moves = true;
     bool check = false;
     for (const auto& i: Pieces) {
         if (i->white == whiteTurn && !i->findMoves(Pieces)) {
             no_legal_moves = false;
         }
-
+        // Check if the king is in check
         std::shared_ptr <King> kingPointerDerived = std::dynamic_pointer_cast<King>(i);
         if (kingPointerDerived != nullptr && i->white == whiteTurn) {
             if (i->isKingInCheck(Pieces)) {
@@ -213,9 +235,10 @@ void Game::handleCheckmate() {
             }
         }
     }
-
+    // Update the game state based on the checkmate status
     if (no_legal_moves) {
         std::cout << "no legal moves" << std::endl;
+        // send state to opponent and update game state
         if (!check) {
             std::cout << "king is not in check" << std::endl;
             state = 2;
@@ -238,12 +261,19 @@ void Game::handleCheckmate() {
     }
 }
 
-//prolly hashmaps of all pieces' moves im too stupid for this
+/**
+* Handles all SDL events
+* @param void
+* @return void
+*
+*/
 void Game::handleEvents() {
     while (SDL_PollEvent(&event)) {
         switch (event.type) {
             case SDL_MOUSEBUTTONDOWN:
+                // Check if the left mouse button is pressed and handle the button clicks
                 if (event.button.button == SDL_BUTTON_LEFT) {
+                    // Check if the resign button is pressed and handle the resign
                     if (buttons[0]->hovered()) {
                         if (whiteTurn) {
                             state = 0;
@@ -252,8 +282,10 @@ void Game::handleEvents() {
                         }
                         break;
                     }
+                    // Check if the online button is pressed and handle the online play
                     if (buttons[1]->hovered()) {
                         std::cout << "clicked online button" << std::endl;
+                        // If the player is not playing online, start the communication. If not, close the communication
                         if (!isPlayingOnline && communication == nullptr) {
                             textBox ipBox = textBox(window.windowx / 2 - window.windowx/4, window.windowy / 2 - window.windowy/4);
                             std::string ip = window.TextBox(ipBox);
@@ -281,19 +313,21 @@ void Game::handleEvents() {
                             io_context.stop();
                         }
                     }
+                    // Toggle automatic board rotation
                     if (buttons[2]->hovered()) {
                         rotate_board = !rotate_board;
                     }
 
+                    // Check if a piece is promoting and handle the promotion else select a piece
                     if (isPromoting)
                         handlePromotionPieceSelection(getMousePosition(whiteDown, window.squareSize));
-
                     else
                         selectPiece();
+
+                // Check if the right mouse button is pressed and highlight the selected field
                 } else if (event.button.button == SDL_BUTTON_RIGHT) {
                     glm::ivec2 mousePos = getMousePosition(whiteDown, window.squareSize);
-                    auto position = std::find(highlightMoves.begin(), highlightMoves.end(),
-                                                                           mousePos);
+                    auto position = std::find(highlightMoves.begin(), highlightMoves.end(), mousePos);
                     if (position == highlightMoves.end()) {
                         highlightMoves.push_back(mousePos);
                     } else if (std::distance(highlightMoves.begin(), position) != 0) {
@@ -303,16 +337,17 @@ void Game::handleEvents() {
 
                 break;
 
+            // Check if the window is closed and quit the game
             case SDL_QUIT:
                 state = 3;
                 gameRunning = false;
                 break;
-
+            // Check if the mouse button is released and place the piece
             case SDL_MOUSEBUTTONUP:
                 if (event.button.button == SDL_BUTTON_LEFT && selectedPiece != nullptr)// && !isPromoting
                     placePiece();
                 break;
-
+            // Check buttons to move forwards and backwards in the move history
             case SDL_KEYDOWN:
                 switch (event.key.keysym.sym) {
                     case SDLK_DOWN:
@@ -347,9 +382,16 @@ void Game::handleEvents() {
         }
     }
 }
-
+/**
+* Handles the promotion of a pawn
+* @param glm::vec2 selection
+* @return void
+* 
+*/
 void Game::handlePromotionPieceSelection(glm::vec2 selection) {
+    // Check if the selection is valid and promote the pawn
     if ((int) selection.x == lastMoves[lastMoves.size() - 1].x) {
+        // Remove the pawn and add the new piece
         Pieces.erase(std::remove(Pieces.begin(), Pieces.end(), lastPiece), Pieces.end());
         switch (whiteTurn ? (int) selection.y : 7 - (int) selection.y) {
             case 0:
@@ -367,39 +409,54 @@ void Game::handlePromotionPieceSelection(glm::vec2 selection) {
             default:
                 break;
         }
-
+        // Reset the promotion flag and switch turns
         isPromoting = false;
         whiteTurn = !whiteTurn;
         handleCheckmate();
         moveHistory.push_back(FenExport(Pieces,whiteTurn,halfMoveNumber));
+        // continue the timers
         wTimer.startPause();
         bTimer.startPause();
-        bTimer.startPause();
-        wTimer.startPause();
     }
 }
 
+/**
+* Drags the selected piece
+* @param void
+* @return void
+*/
 void Game::DragPiece() {
     glm::vec2 newPos = getMousePosition(whiteDown, window.squareSize);
     newPos -= 0.5;
     selectedPiece->setPos(newPos);
 }
 
+/**
+* Selects a piece
+* @param void
+* @return void
+*/
 void Game::selectPiece() {
+    // Get the mouse position in board coordinates
     glm::ivec2 MousePosition = getMousePosition(whiteDown, window.squareSize);
     selectedPiece = getMatchingPiece(MousePosition, Pieces);
-
+    // check if piece exists on the selected field
     if (selectedPiece != nullptr) {
         selectedPiece->findMoves(Pieces);
         highlightMoves = {selectedPiece->getPos()};
         for (auto i: selectedPiece->legalMoves)
-            highlightMoves.push_back(i);
+            highlightMoves.emplace_back(i);
 
         PieceSelected = true;
     }
 }
 
-std::vector <std::shared_ptr<Piece>> Game::FenImport(std::string FenString) {
+/**
+* Returns a Pieces list of a FEN string
+* @param std::string FenString
+* @return std::vector <std::shared_ptr<Piece>>
+*/
+std::vector <std::shared_ptr<Piece>> Game::FenImport(const std::string &FenString) {
     std::vector <std::shared_ptr<Piece>> piecesVector;
     int countx = 0;
     int county = 0;
@@ -408,7 +465,7 @@ std::vector <std::shared_ptr<Piece>> Game::FenImport(std::string FenString) {
     std::string PositionFen = FenString.substr(0, pos);
     std::string metadataFen = FenString.substr(pos + 1);
 
-
+    // Loop through the FEN string and create the pieces
     for (char c: PositionFen) {
         if (std::isdigit(c)) {
             int i = c - '0';
