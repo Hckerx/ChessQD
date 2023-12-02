@@ -8,7 +8,7 @@
 #include "piece.hpp"
 #include <glm/gtx/string_cast.hpp>
 #include <map>
-
+//finds the piece on a given position or returns nullptr
 std::shared_ptr <Piece> getMatchingPiece(glm::vec2 field, std::vector <std::shared_ptr<Piece>> &Pieces) {
 
     for (auto &i: Pieces) {
@@ -18,7 +18,7 @@ std::shared_ptr <Piece> getMatchingPiece(glm::vec2 field, std::vector <std::shar
     }
     return nullptr;
 }
-
+//gets the mousepositions relative to the board
 glm::vec2 getMousePosition(bool whiteDown, int squareSize) {
     int Mouse_x, Mouse_y;
     float Mousex, Mousey;
@@ -40,6 +40,7 @@ glm::vec2 getMousePosition(bool whiteDown, int squareSize) {
     return glm::vec2{Mousex, Mousey};
 }
 
+//Converts board position into valid FEN-string
 std::string FenExport(const std::vector <std::shared_ptr<Piece>>& piecesVector,bool whiteTurn,int halfMoveNumber) {
     std::map <std::string, std::shared_ptr<Piece>> posMap;
     std::string FenExportString;

@@ -85,8 +85,8 @@ void Game::run() {
             }
         }
 
-        wTimer.timeText = std::to_string((float)wTimer.getTicks() / 1000.f);
-        bTimer.timeText = std::to_string((float)bTimer.getTicks() / 1000.f); //TODO necessary?
+        wTimer.timeText = std::to_string((float)wTimer.getTime());
+        bTimer.timeText = std::to_string((float)bTimer.getTime()); //TODO necessary?
 
 
         handleEvents();

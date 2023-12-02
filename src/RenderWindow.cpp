@@ -100,14 +100,14 @@ void RenderWindow::loadFromRenderedText(Timer *timer) {
     freeTimer(timer);
 
     //Render text surface
-    if (ChessQLDfont == NULL) {
+    if (ChessQLDfont == nullptr) {
         std::cerr << "Font is null" << std::endl;
     }
     SDL_Surface *textSurface = TTF_RenderText_Solid(ChessQLDfont, timer->timeText.c_str(), timer->textColor);
-    if (textSurface != NULL) {
+    if (textSurface != nullptr) {
         //Create texture from surface pixels
         timer->texture = SDL_CreateTextureFromSurface(renderer, textSurface);
-        if (texture == NULL) {
+        if (texture == nullptr) {
             printf("Unable to create texture from rendered text! SDL Error: %s\n", SDL_GetError());
         }
 
@@ -123,7 +123,7 @@ void RenderWindow::loadFromRenderedText(Timer *timer) {
 SDL_Texture *RenderWindow::loadTexture(const char *p_filePath) {
     texture = IMG_LoadTexture(renderer, p_filePath);
 
-    if (texture == NULL)
+    if (texture == nullptr)
         std::cout << "Failed to load texture. Error: " << SDL_GetError() << std::endl;
 
     return texture;

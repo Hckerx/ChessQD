@@ -1,21 +1,18 @@
 #include "timer.hpp"
-#include <iostream>
-#include "SDL2/SDL.h"
+#include <SDL2/SDL_timer.h>
 
-Timer::Timer() {
+Timer::Timer() : SDL_Rect() {
 }
 
 void Timer::startPause() {
     if (!isPaused) {
-        isPaused = true;
         pausedTicks = SDL_GetTicks() - startTicks;
         startTicks = 0;
     } else {
-        std::cout << "pause" << std::endl;
-        isPaused = false;
         startTicks = SDL_GetTicks() - pausedTicks;
         pausedTicks = 0;
     }
+    isPaused=!isPaused;
 }
 
 void Timer::stop() {
@@ -23,12 +20,11 @@ void Timer::stop() {
     startTicks = 0;
     pausedTicks = 0;
 }
-
-Uint32 Timer::getTicks() const {
-    uint32_t time;
+//returns current timer time
+float Timer::getTime() const {
     if (isPaused) {
-        return pausedTicks;
+        return (float)pausedTicks / 1000.f;
     } else {
-        return SDL_GetTicks() - startTicks;
+        return (float)(SDL_GetTicks() - startTicks) / 1000.f;
     }
 }
