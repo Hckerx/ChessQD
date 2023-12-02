@@ -9,13 +9,14 @@ public:
     bool received = false;
     boost::asio::io_context &io_context;
 
-    Communication(boost::asio::io_context &io_context);
+    Communication(boost::asio::io_context &io_context, std::string ip);
 
     void close() {
-        socket.close();
-        if (acceptor != nullptr) {
+        if (acceptor != nullptr && isConnected) {
             acceptor->close();
+            delete acceptor;
         }
+        socket.close();
     }
 
     bool isWhite = true;
@@ -36,17 +37,7 @@ public:
     tcp::acceptor *acceptor = nullptr;
 
     ~Communication() {
-        std::cout << "Communication destructor" << std::endl;
-        if (isConnected) {
-            send("close");
-            acceptor->close();
-        }
-        if (acceptor != nullptr) {
-            std::cout << "closing acceptor" << std::endl;
-
-            delete acceptor;
-        }
-        socket.close();
+        close();
     }
 
 private:

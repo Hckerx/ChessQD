@@ -1,12 +1,12 @@
 #include <boost/asio.hpp>
-#include "Communication.hpp"
+#include "communication.hpp"
 
 using boost::asio::ip::tcp;
 
-Communication::Communication(boost::asio::io_context &io_context) : io_context(io_context), socket(io_context) {
+Communication::Communication(boost::asio::io_context &io_context, std::string ip) : io_context(io_context), socket(io_context) {
     try {
         // Connect to existing game
-        socket.connect(tcp::endpoint(boost::asio::ip::address::from_string("127.0.0.1"), 12345));
+        socket.connect(tcp::endpoint(boost::asio::ip::address::from_string(ip), 12345));
         isConnected = true;
         send("white");
         isWhite = false;

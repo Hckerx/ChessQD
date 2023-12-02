@@ -1,6 +1,7 @@
 #include <SDL2/SDL_rect.h>
 #include <SDL2/SDL_render.h>
 #include <SDL2/SDL_surface.h>
+#include <SDL2/SDL_timer.h>
 #include <SDL2/SDL_video.h>
 #include <cstdint>
 #include <glm/fwd.hpp>
@@ -116,6 +117,8 @@ void RenderWindow::loadFromRenderedText(Timer *timer) {
         printf("Unable to render text surface! SDL_ttf Error: %s\n", TTF_GetError());
     }
 }
+
+
 
 SDL_Texture *RenderWindow::loadTexture(const char *p_filePath) {
     texture = IMG_LoadTexture(renderer, p_filePath);
@@ -244,8 +247,78 @@ void RenderWindow::fullRender(std::vector <glm::ivec2> highlight, std::vector <g
     //renderButton({"online", "resign", "turn"}) ;
 
 }
+void RenderWindow::renderTextBox(textBox& textBox) {
+    TTF_SetFontSize(ChessQLDfont, 64);
+    if (textBox.text.empty()) {
+        textBox.text = " "; // sdl_ttf doesn't render text without any characters, so we add a space
+    }
+    if (ChessQLDfont == nullptr) {
+        std::cerr << "failed to render text!" << std::endl;
+    }
+    if (renderer == nullptr) {
+        std::cerr << "failed to render text!" << std::endl;
+    }
+
+    SDL_Surface *textsurface = TTF_RenderText_Blended_Wrapped(ChessQLDfont, textBox.text.c_str(), textBox.textcolor, windowx/2);
+    SDL_Texture *texttexture = SDL_CreateTextureFromSurface(renderer, textsurface);
+    if (textsurface == nullptr){
+        std::cerr << "failed to create text surface!" << std::endl;
+    }
+    if (texttexture == nullptr) {
+        std::cerr << "failed to create text texture!" << std::endl;
+    }
+
+    SDL_Rect textrect = {textBox.x, textBox.y, textsurface->w, textsurface->h};
+
+    SDL_Rect rect = {textBox.x, textBox.y, windowx/2, textsurface->h};
+    SDL_RenderFillRect(renderer, &rect);
+
+
+
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+    SDL_RenderDrawRect(renderer, &rect);
+    SDL_RenderCopy(renderer, texttexture, nullptr, &textrect);
+
+    SDL_FreeSurface(textsurface);
+    SDL_DestroyTexture(texttexture);
+
+    // render the cursor
+    if (textBox.cursorvisible) {
+        uint32_t currenttime = SDL_GetTicks();
+        if (currenttime - textBox.lastcursortoggletime >= textBox.cursorblinkrate) {
+            textBox.cursorvisible = !textBox.cursorvisible;
+            textBox.lastcursortoggletime = currenttime;
+        }
+
+        if (textBox.cursorvisible) {
+            int cursorx = textBox.x + textrect.w + 2; // adjust the cursor position as needed
+            SDL_RenderDrawLine(renderer, cursorx, textBox.y + 2, cursorx, textBox.y + textrect.h - 2);
+        }
+    }
+    SDL_RenderPresent(renderer);
+    TTF_SetFontSize(ChessQLDfont, 128);
+}
+std::string RenderWindow::TextBox(textBox textBox) {
+
+    while (!textBox.isDone) {
+        SDL_Event event;
+        while (SDL_PollEvent(&event)) {
+            if (event.type == SDL_QUIT) {
+                // If the user closes the window, exit the loop and the function
+                textBox.isDone = true;
+                return "quit";
+            }
+            textBox.handleEvent(event);
+        }
+        renderTextBox(textBox);
+    }
+    return textBox.text;
+}
+
+
 
 // TODO: All the render functions can be summarized into one function
+
 
 bool RenderWindow::displayWelcomeMessage(std::string text) {
     std::string welcomeText = text;

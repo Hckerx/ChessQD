@@ -11,12 +11,14 @@
 #include "button.hpp"
 #include "piece.hpp"
 #include "timer.hpp"
+#include "textBox.hpp"
 
 
 class RenderWindow {
 public:
-    RenderWindow(const char *p_title);
+    explicit RenderWindow(const char *p_title);
 
+    void renderTextBox(textBox& textBox);
     bool displayWelcomeMessage(std::string text);
 
     void cleanUp();
@@ -29,6 +31,7 @@ public:
 
     int squareSize;
 
+    std::string TextBox(textBox textBox);
     void updateSquareSize() {
         SDL_GetWindowSize(window, &windowx, &windowy);
         squareSize = std::min(windowx, (int) (windowy * 0.95)) / 8;
@@ -36,6 +39,8 @@ public:
 
     void display();
 
+    int windowx;
+    int windowy;
     void initButtons(std::array<Button *, 3> buttons);
 
 private:
@@ -51,8 +56,6 @@ private:
     void freeTimer(Timer *timer);
 
     TTF_Font *ChessQLDfont;
-    int windowx;
-    int windowy;
 
     void clear();
 

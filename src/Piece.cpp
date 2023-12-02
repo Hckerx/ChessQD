@@ -4,7 +4,14 @@
 #include "util.hpp"
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
-#include "Communication.hpp"
+#include "communication.hpp"
+#include <cstdlib>
+#include <iostream>
+
+#include <ctime>
+
+#include "glm/gtx/string_cast.hpp"
+#include "glm/ext.hpp"
 #include <algorithm>
 #include <king.hpp>
 #include <pawn.hpp>

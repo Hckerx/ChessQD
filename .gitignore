@@ -3,7 +3,6 @@
 .vscode/
 .cache/
 bin/debug/main
-compile_commands.json
 compile_flags.txt
 main.exe
 bin/debug/main.exe
