@@ -4,12 +4,8 @@
 #include <vector>
 #include "renderWindow.hpp"
 #include "piece.hpp"
-<<<<<<< HEAD
-#include "Communication.hpp"
-=======
-#include <iostream>
 #include "communication.hpp"
->>>>>>> 0f8f233 (progress)
+#include <iostream>
 
 class Game {
 
