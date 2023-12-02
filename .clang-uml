@@ -1,0 +1,17 @@
+compilation_database_dir: .
+output_directory: diagrams
+diagrams:
+  myproject_class:
+    type: class
+    glob:
+      - src/*.cc
+    using_namespace: myproject
+    include:
+      namespaces:
+        - myproject
+    exclude:
+      namespaces:
+        - myproject::detail
+    plantuml:
+      after:
+        - 'note left of {{ alias("MyProjectMain") }}: Main class of myproject library.'
