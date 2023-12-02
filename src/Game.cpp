@@ -102,15 +102,9 @@ void Game::run() {
             }
         }
 
-<<<<<<< HEAD
-        // Update timers
-        wTimer.timeText = std::to_string((float)wTimer.getTicks() / 1000.f);
-        bTimer.timeText = std::to_string((float)bTimer.getTicks() / 1000.f);
-=======
         wTimer.timeText = std::to_string((float)wTimer.getTime());
         bTimer.timeText = std::to_string((float)bTimer.getTime()); //TODO necessary?
 
->>>>>>> 226ff0aa2a0a5d2ab44fae376a3534e8133fd3f4
 
         // Handle user input events
         handleEvents();
