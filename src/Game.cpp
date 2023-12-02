@@ -90,7 +90,7 @@ void Game::run() {
         }
 
         wTimer.timeText = std::to_string(wTimer.getTicks() / 1000.f);
-        bTimer.timeText = std::to_string(bTimer.getTicks() / 1000.f); //necessary?
+        bTimer.timeText = std::to_string(bTimer.getTicks() / 1000.f); //TODO necessary?
 
 
         handleEvents();

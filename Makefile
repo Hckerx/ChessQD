@@ -8,7 +8,7 @@ endif
 release:
 	clang++ -c src/*.cpp -std=c++14 -O3 -Wall -m64 -I include && g++ *.o -o bin/release/main -s -L -lboost_system -lSDL2main -lSDL2 -lSDL2_image &&  ./bin/release/main
 
-toexe:
+to_exe:
 	x86_64-w64-mingw32-g++ -g -c src/*.cpp -I include -std=c++17 -Wall -m64 && x86_64-w64-mingw32-g++ *.o -g -o bin/debug/main -L -lSDL2main -lSDL2 -lSDL2_image -lSDL2_ttf -lws2_32 && ./bin/debug/main && rm *.o
 
 build:
