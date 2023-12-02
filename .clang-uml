@@ -1,17 +1,11 @@
 compilation_database_dir: .
 output_directory: diagrams
 diagrams:
-  myproject_class:
+  ChessQLD:
     type: class
     glob:
-      - src/*.cc
-    using_namespace: myproject
-    include:
-      namespaces:
-        - myproject
-    exclude:
-      namespaces:
-        - myproject::detail
+      - src/*.cpp
+      - include/*.hpp
     plantuml:
       after:
-        - 'note left of {{ alias("MyProjectMain") }}: Main class of myproject library.'
+        - 'note left of {{ alias("ChessQLD") }}: Main class of myproject library.'
