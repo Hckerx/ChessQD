@@ -6,3 +6,5 @@ bin/debug/main
 compile_flags.txt
 main.exe
 bin/debug/main.exe
+compile_commands.json
+compile_commands.events.json

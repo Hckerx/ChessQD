@@ -1,10 +1,5 @@
-//
-// Created by daniel on 02.12.23.
-//
+
 #include "textBox.hpp"
-#include "SDL2/SDL.h"
-#include "SDL2/SDL_ttf.h"
-#include <iostream>
 #include <string>
 void textBox::handleEvent(SDL_Event &event) {
     if (event.type == SDL_TEXTINPUT) {

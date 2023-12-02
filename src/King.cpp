@@ -3,8 +3,6 @@
 #include "util.hpp"
 #include "rook.hpp"
 
-#include <iostream>
-
 King::King(glm::vec2 p_pos, bool white)
         : Piece(p_pos, white) {
     if (white)

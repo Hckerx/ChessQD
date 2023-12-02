@@ -1,8 +1,6 @@
 #include "queen.hpp"
 #include "piece.hpp"
 
-#include <iostream>
-
 Queen::Queen(glm::vec2 p_pos, bool white)
         : Piece(p_pos, white) {
     if (white) {

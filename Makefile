@@ -1,3 +1,5 @@
+#Easy way to build project with different configuration "all:" is the default
+
 all:
 ifeq ($(OS),Windows_NT)
 	clang++ -g -c src/*.cpp -I include --std=c++17 -Wall -m64 && clang++ *.o -g -o bin/debug/main -L -lmingw32 -lSDL2 -lSDL2_image -lSDL2_ttf && start bin/debug/main.exe && del *.o
@@ -16,8 +18,7 @@ build:
 
 clean:
 ifeq ($(OS),Windows_NT)
-	del *.o
-	
+	del *.o	
 else 
 	rm *.o
 endif
