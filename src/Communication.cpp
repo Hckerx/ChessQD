@@ -2,20 +2,23 @@
 #include "communication.hpp"
 
 using boost::asio::ip::tcp;
+using std::string;
 
-Communication::Communication(boost::asio::io_context &io_context, std::string ip) : io_context(io_context), socket(io_context) {
-    try {
-        // Connect to existing game
-        socket.connect(tcp::endpoint(boost::asio::ip::address::from_string(ip), 12345));
-        isConnected = true;
-        send("white");
-        isWhite = false;
-        asyncReceive(); // Start asynchronous receive operation
-        isServer = false;
-    } catch (std::exception &e) {
-        // Else create game
-        init(); // Start server initialization
-    }
+Communication::Communication(boost::asio::io_context &io_context, const string& ip)
+    : io_context(io_context), socket(io_context) {
+  try {
+    // Connect to existing game
+    socket.connect(
+        tcp::endpoint(boost::asio::ip::address::from_string(ip), 12345));
+    isConnected = true;
+    send("white");
+    isWhite = false;
+    asyncReceive(); // Start asynchronous receive operation
+    isServer = false;
+  } catch (std::exception &e) {
+    // Else create game
+    init(); // Start server initialization
+  }
 }
 
 void Communication::send(std::string message) {

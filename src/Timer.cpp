@@ -2,7 +2,7 @@
 #include <iostream>
 #include "SDL2/SDL.h"
 
-Timer::Timer() {
+Timer::Timer() : SDL_Rect() {
 }
 
 void Timer::startPause() {
@@ -25,7 +25,6 @@ void Timer::stop() {
 }
 
 Uint32 Timer::getTicks() const {
-    uint32_t time;
     if (isPaused) {
         return pausedTicks;
     } else {

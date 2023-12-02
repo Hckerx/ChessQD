@@ -9,7 +9,7 @@ public:
     bool received = false;
     boost::asio::io_context &io_context;
 
-    Communication(boost::asio::io_context &io_context, std::string ip);
+    Communication(boost::asio::io_context &io_context, const std::string& ip);
 
     void close() {
         if (acceptor != nullptr && isConnected) {

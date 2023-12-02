@@ -1,12 +1,14 @@
 //necessary for windows
 #define SDL_MAIN_HANDLED
 
+// import libraries
 #include <glm/gtx/string_cast.hpp>
 #include <memory>
 #include <SDL2/SDL.h>
 #include <iostream>
 #include <bits/stdc++.h>
 
+// import files
 #include "renderWindow.hpp"
 #include "util.hpp"
 #include "pawn.hpp"
@@ -18,21 +20,23 @@
 #include "piece.hpp"
 #include "game.hpp"
 
-
+// define constants
 #define RESIGN 1
 #define ONLINE 0
+#define defaultFen "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
 // TODO: Threefold FIVEFOLD seventy move rule insufficient material?
 
 //constructor of class Game (the main class)
 Game::Game(std::string fen) : window("ChessQLD") {
-
+    // import default fen
     Pieces = FenImport(fen);
     moveHistory.push_back(fen);
-
+    // create Timers and Buttons
     wTimer = Timer();
     bTimer = Timer();
     buttons = {new Button("resign"), new Button("online"), new Button("rotate")};
     window.initButtons(buttons);
+    // start Game
     run();
 }
 
@@ -42,32 +46,43 @@ Game::~Game() {
 
 
 void Game::run() {
+    // First render to display the initial game board
     window.fullRender(highlightMoves, lastMoves, Pieces, whiteDown, buttons, &wTimer, &bTimer);
-    while (gameRunning) {
 
+    while (gameRunning) {
+        // Check if a piece is selected for dragging
         if (PieceSelected)
             DragPiece();
+
+        // Check for the 50-move rule
         if (halfMoveNumber >= 50) {
-            state = 2;
+            state = 2;  // Set state to draw if 50-move rule is reached
             break;
         }
+
+        // Check for online play
         if (communication != nullptr) {
             if (communication->isConnected) {
                 isPlayingOnline = true;
             }
         }
+
         if (isPlayingOnline) {
+            // Update player color and handle online communication
             whiteDown = communication->isWhite;
             std::string read = communication->read();
+
             if (!read.empty()) {
+                // Handle online commands
                 if (read == "l") {
                     if (isWhite()) {
-                        state = 0;
+                        state = 0;  // White lost
                     } else {
-                        state = 1;
+                        state = 1;  // Black lost
                     }
                     break;
                 } else if (read == "close") {
+                    // Close communication in case of disconnect
                     communication->close();
                     delete communication;
                     communication = nullptr;
@@ -75,36 +90,43 @@ void Game::run() {
                     io_context.stop();
                     break;
                 } else if (read == "d") {
-                    state = 2;
+                    state = 2;  // Draw
                     break;
                 }
+
+                // Update the game state based on the received FEN string
                 if (whiteTurn != isWhite()) {
                     Pieces = FenImport(read);
-                    moveHistory.push_back(FenExport(Pieces,whiteTurn,halfMoveNumber));
+                    moveHistory.push_back(FenExport(Pieces, whiteTurn, halfMoveNumber));
                 }
             }
         }
 
+        // Update timers
         wTimer.timeText = std::to_string((float)wTimer.getTicks() / 1000.f);
-        bTimer.timeText = std::to_string((float)bTimer.getTicks() / 1000.f); //TODO necessary?
+        bTimer.timeText = std::to_string((float)bTimer.getTicks() / 1000.f);
 
-
+        // Handle user input events
         handleEvents();
 
-        // TODO: add a way to continue running code while waiting for response
-
-
-
+        // Update the game display
         window.fullRender(highlightMoves, std::vector<glm::ivec2>(lastMoves.end() - 2, lastMoves.end()), Pieces,
                           whiteDown, buttons, &wTimer, &bTimer);
+
+        // Display promotion options if a pawn is promoting
         if (isPromoting) {
             window.displayPromotionOptions(lastMoves[lastMoves.size() - 1], whiteTurn);
         }
+
+        // Display the updated game window
         window.display();
+
+        // Check for game end conditions
         if (state != -1) {
             break;
         }
     }
+    // Display end-game messages based on the final state
     //0=white lost 1=black lost 2=draw else=quit
     if (state == 2) {
         gameRunning = false;

@@ -27,7 +27,7 @@ void Pawn::findMovesWithoutCheck(std::vector <std::shared_ptr<Piece>> &Pieces) {
         if (((pos.y == 6 && white) || pos.y == 1) &&
             getMatchingPiece(glm::vec2{pos.x, pos.y - 2 * step}, Pieces) == nullptr) {
             if (!(pos.x > 7 || pos.x < 0 || pos.y - 2 * step > 7 || pos.y - 2 * step < 0)) {
-                legalMoves.push_back(glm::vec2(pos.x, pos.y - 2 * step));
+                legalMoves.emplace_back(pos.x, pos.y - 2 * step);
             }
         }
     }
@@ -48,7 +48,7 @@ void Pawn::findMovesWithoutCheck(std::vector <std::shared_ptr<Piece>> &Pieces) {
     std::shared_ptr <Pawn> hypoPawn = std::dynamic_pointer_cast<Pawn>(hypoPiece); // was macht das?
     if (hypoPawn != nullptr) {
         if (hypoPawn->isEnPassantVulnerable) {
-            legalMoves.push_back(glm::vec2{pos.x - 1, pos.y - step});
+            legalMoves.emplace_back(pos.x - 1, pos.y - step);
         }
     }
 
@@ -56,7 +56,7 @@ void Pawn::findMovesWithoutCheck(std::vector <std::shared_ptr<Piece>> &Pieces) {
     hypoPawn = std::dynamic_pointer_cast<Pawn>(hypoPiece); // was macht das?
     if (hypoPawn != nullptr) {
         if (hypoPawn->isEnPassantVulnerable) {
-            legalMoves.push_back(glm::vec2{pos.x + 1, pos.y - step});
+            legalMoves.emplace_back(pos.x + 1, pos.y - step);
         }
     }
 }
@@ -81,8 +81,7 @@ bool Pawn::move(glm::vec2 newPos, glm::vec2 oldPos, std::vector <std::shared_ptr
                         hypoPiece = getMatchingPiece(glm::vec2{newPos.x, newPos.y + step}, Pieces);
                     }
 
-                    std::vector < std::shared_ptr < Piece >> ::iterator
-                    position = std::find(Pieces.begin(), Pieces.end(), hypoPiece);
+                    auto position = std::find(Pieces.begin(), Pieces.end(), hypoPiece);
                     if (position != Pieces.end()) { // == myVector.end() means the element was not found
                         Pieces.erase(position);
                     }

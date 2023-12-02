@@ -20,7 +20,7 @@ Piece::Piece(glm::vec2 p_pos, bool white)
         : pos(p_pos), white(white) {
 }
 
-SDL_Rect Piece::getCurrentFrame() {
+SDL_Rect Piece::getCurrentFrame() const {
     return currentFrame;
 }
 
@@ -30,12 +30,12 @@ bool Piece::findIndMoves(std::vector <std::shared_ptr<Piece>> &Pieces, float x, 
         return false;
     }
     if (hypotheticalPiece == nullptr) {
-        legalMoves.push_back(glm::vec2(x, y));
+        legalMoves.emplace_back(x, y);
         return true;
     } else if (hypotheticalPiece->white == white) {
         return false;
     } else {
-        legalMoves.push_back(glm::vec2(x, y));
+        legalMoves.emplace_back(x, y);
         return false;
     }
 }
@@ -47,8 +47,7 @@ bool Piece::move(glm::vec2 newPos, glm::vec2 oldPos, std::vector <std::shared_pt
             if (i == newPos) {
                 std::shared_ptr <Piece> hypoPiece = getMatchingPiece(glm::vec2{newPos.x, newPos.y}, Pieces);
                 if (hypoPiece != nullptr) {
-                    std::vector < std::shared_ptr < Piece >> ::iterator
-                    position = std::find(Pieces.begin(), Pieces.end(), hypoPiece);
+                    auto position = std::find(Pieces.begin(), Pieces.end(), hypoPiece);
                     if (position != Pieces.end()) { // == myVector.end() means the element was not found
                         Pieces.erase(position);
                     }
@@ -126,7 +125,7 @@ bool Piece::findMoves(std::vector <std::shared_ptr<Piece>> &Pieces) {
 }
 
 
-bool Piece::isKingInCheck(std::vector <std::shared_ptr<Piece>> &Pieces) {
+bool Piece::isKingInCheck(std::vector <std::shared_ptr<Piece>> &Pieces) const {
     glm::vec2 kingPos;
     for (const auto& i: Pieces) {
         std::shared_ptr <King> derivedPtr = std::dynamic_pointer_cast<King>(i); //was macht das?

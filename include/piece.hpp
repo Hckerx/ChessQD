@@ -34,13 +34,13 @@ public:
 
     virtual void findMovesWithoutCheck(std::vector <std::shared_ptr<Piece>> &Pieces) = 0;
 
-    bool isKingInCheck(std::vector <std::shared_ptr<Piece>> &Pieces);
+    bool isKingInCheck(std::vector <std::shared_ptr<Piece>> &Pieces) const;
 
     bool findMoves(std::vector <std::shared_ptr<Piece>> &Pieces);
 
     std::vector <glm::vec2> legalMoves;
 
-    SDL_Rect getCurrentFrame();
+    [[nodiscard]] SDL_Rect getCurrentFrame() const;
 
     SDL_Rect currentFrame;
     glm::vec2 pos;

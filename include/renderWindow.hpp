@@ -23,9 +23,9 @@ public:
 
     void cleanUp();
 
-    void fullRender(std::vector <glm::ivec2> highlight, std::vector <glm::ivec2> lastMoves,
-                    std::vector <std::shared_ptr<Piece>> &Pieces, bool whiteDown, std::array<Button *, 3> buttons,
-                    Timer *wTimer, Timer *bTimer);
+    void fullRender(const std::vector <glm::ivec2> &highlight, const std::vector <glm::ivec2> &lastMoves,
+                              std::vector <std::shared_ptr<Piece>> &Pieces, bool whiteDown,
+                              std::array<Button *, 3> buttons, Timer *wTimer, Timer *bTimer);
 
     int displayPromotionOptions(glm::vec2 pos, bool white);
 
@@ -61,7 +61,7 @@ private:
 
     void render(std::shared_ptr <Piece> &p_piece, bool whiteDown);
 
-    void renderbg(std::vector <glm::ivec2> highlight, std::vector <glm::ivec2> lastMoves, bool whiteDown);
+    void renderbg(const std::vector <glm::ivec2> &highlight, const std::vector <glm::ivec2> &lastMoves, bool whiteDown);
 
     SDL_Texture *loadTexture(const char *p_filePath);
 };

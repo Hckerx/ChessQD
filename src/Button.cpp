@@ -1,11 +1,12 @@
 #include <SDL2/SDL_rect.h>
 #include <string>
+#include <utility>
 #include "button.hpp"
 #include <SDL2/SDL.h>
 
 //A button class inheriting from the SDL_Rect object.
 Button::Button(std::string name)
-        : SDL_Rect(), name(name) {} //HELP FIXME
+        : SDL_Rect(), name(std::move(name)) {} //HELP FIXME
 
 void Button::initButton(SDL_Texture *textTexture, SDL_Texture *textHoveredTexture) {
     Texture = textTexture;
