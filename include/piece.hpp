@@ -16,7 +16,7 @@ public:
         return pos;
     }
 
-    glm::vec2 getPosCopy() {
+    [[nodiscard]] glm::vec2 getPosCopy() const {
         return pos;
     }
 
@@ -30,7 +30,7 @@ public:
     virtual bool move(glm::vec2 newPos, glm::vec2 oldPos, std::vector <std::shared_ptr<Piece>> &Pieces, bool whiteTurn,
                       bool isPlayingOnline, bool isWhite);
 
-    bool findIndMoves(std::vector <std::shared_ptr<Piece>> &Pieces, int x, int y);
+    bool findIndMoves(std::vector <std::shared_ptr<Piece>> &Pieces, float x, float y);
 
     virtual void findMovesWithoutCheck(std::vector <std::shared_ptr<Piece>> &Pieces) = 0;
 

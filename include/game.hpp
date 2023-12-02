@@ -1,12 +1,9 @@
-#include <array>
-
 #define SDL_MAIN_HANDLED
-
+#include <array>
 #include <memory>
 #include <vector>
 #include "renderWindow.hpp"
 #include "piece.hpp"
-#include <iostream>
 #include "Communication.hpp"
 
 class Game {

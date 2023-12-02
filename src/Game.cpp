@@ -1,9 +1,5 @@
 //necessary for windows
-#include <functional>
-#include <future>
-
 #define SDL_MAIN_HANDLED
-
 
 #include <glm/gtx/string_cast.hpp>
 #include <memory>

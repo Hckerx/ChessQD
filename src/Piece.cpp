@@ -5,13 +5,6 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include "Communication.hpp"
-#include <cstdlib>
-#include <iostream>
-
-#include <ctime>
-
-#include "glm/gtx/string_cast.hpp"
-#include "glm/ext.hpp"
 #include <algorithm>
 #include <king.hpp>
 #include <pawn.hpp>
@@ -24,7 +17,7 @@ SDL_Rect Piece::getCurrentFrame() {
     return currentFrame;
 }
 
-bool Piece::findIndMoves(std::vector <std::shared_ptr<Piece>> &Pieces, int x, int y) {
+bool Piece::findIndMoves(std::vector <std::shared_ptr<Piece>> &Pieces, float x, float y) {
     std::shared_ptr <Piece> hypotheticalPiece = getMatchingPiece(glm::vec2{x, y}, Pieces);
     if (x > 7 || x < 0 || y > 7 || y < 0) {
         return false;
@@ -82,7 +75,7 @@ bool Piece::move(glm::vec2 newPos, glm::vec2 oldPos, std::vector <std::shared_pt
 
 
 bool Piece::findMoves(std::vector <std::shared_ptr<Piece>> &Pieces) {
-    int step;
+    float step;
     if (white) {
         step = 1;
     } else {
@@ -128,7 +121,7 @@ bool Piece::findMoves(std::vector <std::shared_ptr<Piece>> &Pieces) {
 
 bool Piece::isKingInCheck(std::vector <std::shared_ptr<Piece>> &Pieces) {
     glm::vec2 kingPos;
-    for (auto i: Pieces) {
+    for (const auto& i: Pieces) {
         std::shared_ptr <King> derivedPtr = std::dynamic_pointer_cast<King>(i); //was macht das?
         if (derivedPtr != nullptr && i->white == white) {
             kingPos = i->pos;
