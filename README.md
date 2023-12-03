@@ -26,12 +26,13 @@ To install the release version of ChessQD, follow these steps:
 
 2. Download the latest release exe file or ELF file from the available assets.
 
-3. run the file
+3. Run the file
 
 ## Build instructions
 
 ```shell
 git clone https://github.com/Hckerx/ChessQD.git
+//FIXME install dependencies
 make #to build and run or alternatively make build just to build
 ```
 
