@@ -20,7 +20,7 @@ private:
     boost::asio::io_context io_context;
     //Game Logic
 
-    bool isPlayingOnline = false; //maybe other place?
+    bool isPlayingOnline = false;
     bool isWhite() {
         if (communication != nullptr) {
             return communication->isWhite;

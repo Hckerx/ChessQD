@@ -77,7 +77,6 @@ std::string FenExport(const std::vector <std::shared_ptr<Piece>>& piecesVector,b
 
 
         // if at start of the column add number of whitespaces and then a '/' if its not the first one because after row change there is always a '/'
-        //
         if (x == 0 && count != 0) {
             if (whiteSpaces != 0) {
                 FenExportString += std::to_string(whiteSpaces);
@@ -86,13 +85,16 @@ std::string FenExport(const std::vector <std::shared_ptr<Piece>>& piecesVector,b
             whiteSpaces = 0;
 
         }
-        
+        // Since we're using hash maps this is a O(1) operation so SUPER FAST
         auto i = posMap.find(glm::to_string(glm::vec2{x, y}));
         if (i != posMap.end()) {
+            // add whitespaces if there are any
             if (whiteSpaces != 0) {
                 FenExportString += std::to_string(whiteSpaces);
                 whiteSpaces = 0;
             }
+            // check which piece is at the current field and add the correct letter to the string
+            // also check if the piece is a pawn and if it is en passant vulnerable
             std::shared_ptr <Pawn> pawnPointerDerived = std::dynamic_pointer_cast<Pawn>(i->second);
             if (pawnPointerDerived != nullptr) {
                 FenExportString += i->second->white ? "P" : "p";
@@ -113,14 +115,17 @@ std::string FenExport(const std::vector <std::shared_ptr<Piece>>& piecesVector,b
                 FenExportString += i->second->white ? "Q" : "q";
             }
         } else {
+            // if there is no piece at the current field add 1 to the number of whitespaces
             whiteSpaces += 1;
         }
-
+        // increment count needed to check if at the beginning of a new row
         count++;
     }
     FenExportString += ' ';
+    // add the color of the player whose turn it is
     FenExportString += whiteTurn ? 'w' : 'b';
     FenExportString += ' ';
+    // check if castling is possible and add the correct letters to the string
     auto king = posMap.find(glm::to_string(glm::vec2{4, 7}));
     if (king != posMap.end()) {
         std::shared_ptr <King> kingPointerDerived = std::dynamic_pointer_cast<King>(king->second);
@@ -147,7 +152,7 @@ std::string FenExport(const std::vector <std::shared_ptr<Piece>>& piecesVector,b
             }
         }
     }
-
+    // same for black
     king = posMap.find(glm::to_string(glm::vec2{4, 0}));
     if (king != posMap.end()) {
         std::shared_ptr <King> kingPointerDerived = std::dynamic_pointer_cast<King>(king->second);
@@ -174,7 +179,7 @@ std::string FenExport(const std::vector <std::shared_ptr<Piece>>& piecesVector,b
             }
         }
     }
-
+    // Add enPassantSquare and halfMoveNumber Full move number not implemented yet
     FenExportString += ' ' + enPassantSquare + ' ';
     FenExportString += std::to_string(halfMoveNumber);
     FenExportString += " 0";
