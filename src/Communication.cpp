@@ -26,8 +26,8 @@ Communication::Communication(boost::asio::io_context &io_context, const string& 
     : io_context(io_context), socket(io_context) {
   try {
     // Connect to existing game
-    socket.connect(
-        tcp::endpoint(boost::asio::ip::address::from_string(ip), 12345));
+    std::cout << "Trying to connect to " << ip << std::endl;
+    socket.connect(tcp::endpoint(boost::asio::ip::address::from_string(ip), 12345));
     isConnected = true;
     send("white");
     isWhite = false;

@@ -314,7 +314,9 @@ void Game::handleEvents() {
                         if (!isPlayingOnline && communication == nullptr) {
                             textBox ipBox = textBox(window.windowx / 2 - window.windowx/4, window.windowy / 2 - window.windowy/4);
                             std::string ip = window.TextBox(ipBox);
-                            if (ip.empty()) {
+
+                            // some weird character at the end of the string is causing problems 
+                            if (ip.empty() || ip.size() == 1) {
                                 ip = "127.0.0.1";
                             } else if (ip == "close") {
                                 gameRunning = false;
