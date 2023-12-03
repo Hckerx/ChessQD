@@ -50,7 +50,6 @@ glm::vec2 getMousePosition(bool whiteDown, int squareSize) {
     }
     return glm::vec2{Mousex, Mousey};
 }
-
 /**
 * Converts board position into valid FEN-string
 * https://en.wikipedia.org/wiki/Forsyth-Edwards_Notation
@@ -75,7 +74,6 @@ std::string FenExport(const std::vector <std::shared_ptr<Piece>>& piecesVector,b
         int y = (int) count / 8;
         int x = count % 8;
 
-
         // if at start of the column add number of whitespaces and then a '/' if its not the first one because after row change there is always a '/'
         if (x == 0 && count != 0) {
             if (whiteSpaces != 0) {
@@ -83,7 +81,6 @@ std::string FenExport(const std::vector <std::shared_ptr<Piece>>& piecesVector,b
             }
             FenExportString += '/';
             whiteSpaces = 0;
-
         }
         // Since we're using hash maps this is a O(1) operation so SUPER FAST
         auto i = posMap.find(glm::to_string(glm::vec2{x, y}));

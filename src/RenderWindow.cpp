@@ -1,3 +1,4 @@
+#define SDL_MAIN_HANDLED
 #include <SDL2/SDL_rect.h>
 #include <SDL2/SDL_render.h>
 #include <SDL2/SDL_surface.h>
@@ -10,18 +11,13 @@
 #include <vector>
 #include <array>
 
-#define SDL_MAIN_HANDLED
-
 #include <SDL2/SDL_blendmode.h>
-
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>
 #include <iostream>
 
 #include "renderWindow.hpp"
-#include "piece.hpp"
-
 #include "knight.hpp"
 #include "queen.hpp"
 #include "rook.hpp"
@@ -476,19 +472,18 @@ int RenderWindow::displayPromotionOptions(glm::vec2 pos, bool white) {
     SDL_RenderFillRect(renderer, &rect);
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_Rect outline = {(int) pos.x * squareSize, calculations, (squareSize), (squareSize * 4)};
-    SDL_RenderDrawRect(renderer, &outline);
-    int y;
-    if (white) {
-        y = 128;
-    } else {
-        y = 0;
-    }
+    SDL_RenderDrawRect(renderer, &outline); 
+
     // render all the pieces on the sprite this is ugly but it gets the job done
     for (int i = 128; i <= 128 * 4; i += 128) {
         SDL_Rect src;
         src.h = 128;
         src.w = 128;
-        src.y = y;
+        if (white)
+            src.y = 128;
+        else 
+            src.y = 0;
+
         src.x = 128 * 5 - i;
         SDL_Rect dst;
         dst.x = pos.x * squareSize;
@@ -502,7 +497,5 @@ int RenderWindow::displayPromotionOptions(glm::vec2 pos, bool white) {
 
         SDL_RenderCopy(renderer, texture, &src, &dst);
     }
-
-
     return 0;
 }

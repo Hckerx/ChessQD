@@ -1,4 +1,3 @@
-
 #include "textBox.hpp"
 #include <string>
 
@@ -26,6 +25,3 @@ void textBox::handleEvent(SDL_Event &event) {
 std::string textBox::gettext() const{
     return text;
 }
-
-
-

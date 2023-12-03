@@ -35,7 +35,6 @@ void Rook::findMovesWithoutCheck(std::vector <std::shared_ptr<Piece>> &Pieces) {
             break;
     }
 
-
     for (int8_t i = pos.y + 1; i < 8; i++) {
         if (!findIndMoves(Pieces, pos.x, i))
             break;

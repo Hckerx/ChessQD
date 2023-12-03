@@ -10,5 +10,4 @@ public:
               bool isPlayingOnline, bool isWhite) override;
 
     bool hasMoved = true;;
-private:
 };

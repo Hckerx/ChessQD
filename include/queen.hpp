@@ -6,5 +6,4 @@ public:
 
     void findMovesWithoutCheck(std::vector <std::shared_ptr<Piece>> &Pieces) override;
 
-private:
 };

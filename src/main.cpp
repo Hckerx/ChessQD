@@ -1,5 +1,4 @@
 #include "game.hpp"
-#include <cstdlib>
 
 /** main function which starts the game with the default fen
 * @param void

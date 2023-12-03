@@ -2,7 +2,6 @@
 #include <SDL2/SDL_surface.h>
 #include <SDL2/SDL_ttf.h>
 #include <string>
-#include <array>
 
 class Button : public SDL_Rect {
 public:

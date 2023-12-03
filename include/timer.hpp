@@ -20,9 +20,7 @@ public:
     SDL_Texture *texture = nullptr;
 
 private:
-    void free();
 
     uint32_t startTicks = 0;
     uint32_t pausedTicks = 0;
-    uint32_t pausedTime = 0;
 };

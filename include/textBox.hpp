@@ -21,6 +21,5 @@ public:
     bool cursorvisible;
     uint32_t cursorblinkrate;
     uint32_t lastcursortoggletime;
-private:
 };
 

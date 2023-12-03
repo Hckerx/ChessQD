@@ -1,6 +1,5 @@
 #include "timer.hpp"
 #include <SDL2/SDL_timer.h>
-
 /**
 * Timer constructor inheriting from SDL_Rect
  */

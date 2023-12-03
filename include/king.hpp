@@ -15,6 +15,5 @@ public:
     bool isCastling = false;
     bool canCastleKing = true;
     bool canCastleQueen = true;
-private:
 };
 
