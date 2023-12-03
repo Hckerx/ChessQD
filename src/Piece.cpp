@@ -16,14 +16,31 @@
 #include <king.hpp>
 #include <pawn.hpp>
 
+/**
+* constructor for the piece
+* @param p_pos the position of the piece
+* @param white the color of the piece
+*/
 Piece::Piece(glm::vec2 p_pos, bool white)
         : pos(p_pos), white(white) {
 }
 
+/**
+* get the position and size of the piece on the sprite
+* @return SDL_Rect the position and size of the piece on the sprite
+*/
 SDL_Rect Piece::getCurrentFrame() const {
     return currentFrame;
 }
 
+/**
+* Function to get individual moves of the piece
+* by checking if the position is occupied by a piece of the same color and if the position is on the board
+* @param Pieces a vector containing all pieces
+* @param x the x coordinate of the position to check
+* @param y the y coordinate of the position to check
+* @return bool true if the position is empty useful for rook queen and bishop becuase if false they cant move further
+*/
 bool Piece::findIndMoves(std::vector <std::shared_ptr<Piece>> &Pieces, float x, float y) {
     std::shared_ptr <Piece> hypotheticalPiece = getMatchingPiece(glm::vec2{x, y}, Pieces);
     if (x > 7 || x < 0 || y > 7 || y < 0) {
@@ -40,11 +57,24 @@ bool Piece::findIndMoves(std::vector <std::shared_ptr<Piece>> &Pieces, float x, 
     }
 }
 
+/**
+* Default function to move a piece
+* @param newPos the position to move to
+* @param oldPos the position to move from
+* @param Pieces a vector containing all pieces
+* @param whiteTurn true if it is the white players turn
+* @param isPlayingOnline true if the game is played online
+* @param isWhite true if the player is white
+* @return true if the move was successful
+*/
+
 bool Piece::move(glm::vec2 newPos, glm::vec2 oldPos, std::vector <std::shared_ptr<Piece>> &Pieces, bool whiteTurn,
                  bool isPlayingOnline, bool isWhite) {
+    // check for correct turn and online correct turn
     if (whiteTurn == white && (!isPlayingOnline || isWhite == whiteTurn)) {
         for (glm::vec2 i: legalMoves) {
             if (i == newPos) {
+                // if piece moves to a position occupied by an enemy piece delete the enemy piece
                 std::shared_ptr <Piece> hypoPiece = getMatchingPiece(glm::vec2{newPos.x, newPos.y}, Pieces);
                 if (hypoPiece != nullptr) {
                     auto position = std::find(Pieces.begin(), Pieces.end(), hypoPiece);
@@ -54,16 +84,9 @@ bool Piece::move(glm::vec2 newPos, glm::vec2 oldPos, std::vector <std::shared_pt
                 }
 
                 setPos(newPos);
-                // for (auto& i : Pieces) {
-                //     i->legalMoves.clear();
-                // }
-                // for (auto& i : Pieces) {
-                //     i->findMovesWithoutCheck(Pieces);
-                // }
-                // for (auto& i : Pieces) {
-                //     i->findMovesWithoutCheck(Pieces);
-                // }
 
+
+                // since piece has moved no pawn can be vulnerable to en passant anymore
                 for (auto &i: Pieces) {
                     std::shared_ptr <Pawn> derivedPtr = std::dynamic_pointer_cast<Pawn>(i);
                     if (derivedPtr != nullptr) {
@@ -78,8 +101,11 @@ bool Piece::move(glm::vec2 newPos, glm::vec2 oldPos, std::vector <std::shared_pt
     setPos(oldPos);
     return false;
 }
-
-
+/**
+* general function to move pieces
+* @param Pieces a vector containing all pieces
+* @return true if piece has no legal moves
+*/
 bool Piece::findMoves(std::vector <std::shared_ptr<Piece>> &Pieces) {
     float step;
     if (white) {
@@ -94,25 +120,27 @@ bool Piece::findMoves(std::vector <std::shared_ptr<Piece>> &Pieces) {
 
     glm::vec2 oldpos = pos;
 
-    glm::vec2 PfuschKoordinaten;
+    glm::vec2 hypoCoords;
     for (auto move: legalMovescopy) {
-        // check if myself is a pawn
-        hypoPiece = getMatchingPiece(glm::vec2{move.x, move.y}, Pieces);
+        hypoPiece = getMatchingPiece(move, Pieces);
+        // if the piece is a pawn check if it is an en passant move
         if (hypoPiece == nullptr) {
             if (typeid(*this) == typeid(Pawn)) {
                 hypoPiece = getMatchingPiece(glm::vec2{move.x, move.y + step}, Pieces);
             }
         }
+        // check if taking the move would result in the king being in check
         if (hypoPiece != nullptr) {
-            PfuschKoordinaten = hypoPiece->getPos(); // Dies sollte man niemals machen. Wir machen es trotzdem LMFAO
+            hypoCoords = hypoPiece->getPos(); // No one ever should resort to such a dirty trick but it works fuck it
             hypoPiece->setPos({2000, 2000});
             pos = move; //neue position setzten um damit die moves alleer pieces zu überprüfen
             if (!isKingInCheck(Pieces)) {
                 newLegalMoves.push_back(move);
             }
-            hypoPiece->setPos(PfuschKoordinaten);
+            hypoPiece->setPos(hypoCoords);
 
         } else {
+            // check if moving without taking a piece results in check
             pos = move;
             if (!isKingInCheck(Pieces)) {
                 newLegalMoves.push_back(move);
@@ -124,7 +152,11 @@ bool Piece::findMoves(std::vector <std::shared_ptr<Piece>> &Pieces) {
     return legalMoves.empty();
 }
 
-
+/**
+* function to check if the king is in check
+* @param Pieces a vector containing all pieces
+* @return true if king is in check
+*/
 bool Piece::isKingInCheck(std::vector <std::shared_ptr<Piece>> &Pieces) const {
     glm::vec2 kingPos;
     for (const auto& i: Pieces) {

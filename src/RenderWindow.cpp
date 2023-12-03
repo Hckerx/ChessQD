@@ -27,11 +27,15 @@
 #include "rook.hpp"
 #include "bishop.hpp"
 
-// Todo line width of rect
+// define some constants
 #define RESIGN 1
 #define ONLINE 0
 
+/** constructor for the renderwindow
+* @param p_title the title of the window
+*/
 RenderWindow::RenderWindow(const char *p_title) { //SDL initiation
+    // boilerplate code for SDL initiation
     if (SDL_Init(SDL_INIT_VIDEO) > 0)
         std::cout << "HEY.. SDL_Init HAS FAILED. SDL_ERROR: " << SDL_GetError() << std::endl;
 
@@ -41,39 +45,49 @@ RenderWindow::RenderWindow(const char *p_title) { //SDL initiation
     if (TTF_Init() == -1)
         std::cout << "TTF_init has failed. Error: " << SDL_GetError() << std::endl;
 
+    // font
     ChessQLDfont = TTF_OpenFont("bin/debug/res/font/REFOLTER.otf", 128);
     if (ChessQLDfont == nullptr) {
         std::cerr << "Failed to load font! SDL_ttf Error: %s\n", TTF_GetError();
     }
+    // works on all monitors vertical or horizontal since bigger side is used
     SDL_DisplayMode DM;
     SDL_GetCurrentDisplayMode(0, &DM);
     int height = DM.h < DM.w ? DM.h * 0.90 : DM.w * 0.90;
-
+    // calculate square size
     squareSize = (float) height / 8 * 0.95;
+    // create window
     window = SDL_CreateWindow(p_title, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, squareSize * 8, height,
                               SDL_WINDOW_RESIZABLE | SDL_WINDOW_SHOWN); //| SDL_WINDOW_RESIZABLE
 
     if (window == nullptr) {
         std::cout << "Window failed to init. Error: " << SDL_GetError() << std::endl;
     }
+    // renderer
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+    // blendmode to allow transparency, e.g. promotion view
     SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
-    // Todo
-    SDL_Surface *icon = IMG_Load("bin/debug/res/gfx/icon.png");
-    SDL_SetWindowIcon(window, icon);
-
+    // TODO: set icon
+    //SDL_Surface *icon = IMG_Load("bin/debug/res/gfx/icon.png");
+    //SDL_SetWindowIcon(window, icon);
+    // show cursor
     SDL_ShowCursor(1);
-
+    // load sprite
     loadTexture("bin/debug/res/gfx/pieces.png");
 
 }
 
-
+/**
+* Function to initialize the buttons
+* @param buttons an array of buttons
+* @return void
+*/
 void RenderWindow::initButtons(std::array<Button *, 3> buttons) {
     SDL_Surface *textSurface;
     SDL_Surface *textHoveredSurface;
     SDL_Texture *textTexture;
     SDL_Texture *textTextureHovered;
+    // loop through create the texture from surface and set the appropiate members in the button object
     for (auto & button : buttons) {
         textSurface = TTF_RenderText_Blended(ChessQLDfont, button->name.c_str(), button->color);
         textHoveredSurface = TTF_RenderText_Blended(ChessQLDfont, button->name.c_str(), button->hoveredColor);
@@ -87,7 +101,11 @@ void RenderWindow::initButtons(std::array<Button *, 3> buttons) {
         button->initButton(textTexture, textTextureHovered);
     }
 }
-
+/** 
+* function to free timer texture because if not done it will cause memory leaks 
+* @param timer pointer to timer object
+* @return void
+*/
 void RenderWindow::freeTimer(Timer *timer) {
     //Free texture if it exists
     if (timer->texture != nullptr) {
@@ -96,14 +114,21 @@ void RenderWindow::freeTimer(Timer *timer) {
     }
 }
 
+/**
+* Function to create a texture from the time of the timer
+* @param timer pointer to timer object
+* @return void
+*/
 void RenderWindow::loadFromRenderedText(Timer *timer) {
 
+    // free timer texture before creating a new one
     freeTimer(timer);
 
     //Render text surface
     if (ChessQLDfont == nullptr) {
         std::cerr << "Font is null" << std::endl;
     }
+    // create a surface from the text and texture
     SDL_Surface *textSurface = TTF_RenderText_Solid(ChessQLDfont, timer->timeText.c_str(), timer->textColor);
     if (textSurface != nullptr) {
         //Create texture from surface pixels
@@ -120,7 +145,10 @@ void RenderWindow::loadFromRenderedText(Timer *timer) {
 }
 
 
-
+/** function to load texture from file
+* @param p_filePath the path to the file
+* @return SDL_Texture the texture
+*/
 SDL_Texture *RenderWindow::loadTexture(const char *p_filePath) {
     texture = IMG_LoadTexture(renderer, p_filePath);
 
@@ -129,7 +157,10 @@ SDL_Texture *RenderWindow::loadTexture(const char *p_filePath) {
 
     return texture;
 }
-
+/** Function to clean up the renderwindow
+* @param void
+* @return void
+*/
 void RenderWindow::cleanUp() {
 
     TTF_CloseFont(ChessQLDfont);
@@ -138,12 +169,20 @@ void RenderWindow::cleanUp() {
     SDL_Quit();
 }
 
-
+/** Function  to clear the window after each frame
+* @param void
+* @return void
+*/
 void RenderWindow::clear() {
     SDL_RenderClear(renderer);
 }
-
+/** Default function to render a piece
+* @param p_piece the piece to render
+* @param whiteDown true if the white player is down
+* @return void
+*/
 void RenderWindow::render(std::shared_ptr <Piece> &p_piece, bool whiteDown) {
+    // src is the position and size of the piece on the sprite
     SDL_Rect src;
     src.x = p_piece->getCurrentFrame().x;
     src.y = p_piece->getCurrentFrame().y;
@@ -151,6 +190,7 @@ void RenderWindow::render(std::shared_ptr <Piece> &p_piece, bool whiteDown) {
     src.h = p_piece->getCurrentFrame().h;
 
 
+    // dst is the position and size of the piece on the board
     SDL_Rect dst;
     if (whiteDown) {
         dst.x = p_piece->getPos().x * squareSize;
@@ -161,23 +201,30 @@ void RenderWindow::render(std::shared_ptr <Piece> &p_piece, bool whiteDown) {
     }
     dst.w = squareSize;
     dst.h = squareSize;
-
+    // so src which is the position and size of the piece on the sprite is copied to dst which is the position and size of the piece on the board
     SDL_RenderCopy(renderer, texture, &src, &dst);
 }
-
-int RenderWindow::renderWidgets(std::array<Button *, 3> buttons, Timer *wTimer, Timer *bTimer) {
+/** Function to render Timers and Buttons
+* @param buttons an array of buttons
+* @param wTimer pointer white timer
+* @param bTimer pointer black timer
+* @return void
+*/
+void RenderWindow::renderWidgets(std::array<Button *, 3> buttons, Timer *wTimer, Timer *bTimer) {
     int i;
+    // render the buttons centered and evenly spaced on the bottom of the screen
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
     for (i = 0; i < buttons.size(); i++) {
         buttons[i]->w = windowx / (2 * (buttons.size() + 2));
         buttons[i]->h = windowy * 0.05;
         buttons[i]->y = windowy * 0.95;
         buttons[i]->x = i * (windowx / (buttons.size() + 2)) + (windowx / (4 * (buttons.size() + 2)));
-
-        // dst
+        // no reference for src since its the whole texture
+        // render buttons
         SDL_RenderCopy(renderer, buttons[i]->getTexture(), nullptr, buttons[i]);
     }
-
+    // Could've been done in the loop above but im too lazy to change it
+    // Basically ensures the the timers are centeres and evenly spaces as well
     wTimer->w = windowx / (2 * (buttons.size() + 2));
     wTimer->h = windowy * 0.05;
     wTimer->y = windowy * 0.95;
@@ -189,25 +236,35 @@ int RenderWindow::renderWidgets(std::array<Button *, 3> buttons, Timer *wTimer, 
     bTimer->x = (i + 1) * (windowx / (buttons.size() + 2)) + (windowx / (4 * (buttons.size() + 2)));
 
 
+    // render the timers
     SDL_RenderCopy(renderer, wTimer->texture, nullptr, wTimer);
     SDL_RenderCopy(renderer, bTimer->texture, nullptr, bTimer);
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-    return 0;
 }
 
 
+/** Function to render the background
+* @param highlight a vector of positions to highlight
+* @param lastMoves a vector of positions to highlight as last moves
+* @param whiteDown true if the white player is down
+* @return void
+*/
 void RenderWindow::renderbg(const std::vector <glm::ivec2> &highlight = {{1000, 1000}}, const std::vector <glm::ivec2> &lastMoves = {{1000, 1000}}, bool whiteDown = true) {
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+    // always update before rendering the background
     updateSquareSize();
+    // loop through all 64 squares and render them
     for (int i = 0; i < 8; i++) {
         for (int j = 0; j < 8; j++) {
             SDL_Rect rect = {j * squareSize, i * squareSize, squareSize, squareSize};
+            // if the sum of the coordinates is even the square is white else its black
             if ((i + j) % 2 == 0) {
                 SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
             } else {
                 SDL_SetRenderDrawColor(renderer, 139, 69, 19, 255);
             }
             SDL_RenderFillRect(renderer, &rect);
+            // render the last moves and the highlighted squares
             for (glm::ivec2 k: lastMoves) {
                 if ((whiteDown && k == glm::ivec2(j, i)) || (!whiteDown && k == glm::ivec2(8 - (j + 1), 8 - (i + 1)))) {
 
@@ -226,14 +283,33 @@ void RenderWindow::renderbg(const std::vector <glm::ivec2> &highlight = {{1000, 
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 }
 
+/** Function to display the rendered frame
+* @param void
+* @return void
+*/
 void RenderWindow::display() {
     SDL_RenderPresent(renderer);
 }
 
 
+/**
+* Function to render everything
+* @param highlight a vector of positions to highlight
+* @param lastMoves a vector of positions to highlight as last moves
+* @param Pieces a vector containing all pieces
+* @param whiteDown true if the white player is down
+* @param buttons an array of buttons
+* @param wTimer pointer white timer
+* @param bTimer pointer black timer
+* @return void
+*/
 void RenderWindow::fullRender(const std::vector <glm::ivec2> &highlight, const std::vector <glm::ivec2> &lastMoves,
                               std::vector <std::shared_ptr<Piece>> &Pieces, bool whiteDown,
                               std::array<Button *, 3> buttons, Timer *wTimer, Timer *bTimer) {
+    // order is important
+    // first clear the window
+    // then render the background
+    // then pieces and widgets
     clear();
 
     renderbg(highlight, lastMoves, whiteDown);
@@ -243,22 +319,19 @@ void RenderWindow::fullRender(const std::vector <glm::ivec2> &highlight, const s
     for (auto & Piece : Pieces) {
         render(Piece, whiteDown);
     }
-
-    //renderButton({"online", "resign", "turn"}) ;
-
 }
+/** Function to render a text box
+* @param textBox the text box to render
+* @return void
+*/
 void RenderWindow::renderTextBox(textBox& textBox) {
+    // make global textfont size smaller for this function
     TTF_SetFontSize(ChessQLDfont, 64);
     if (textBox.text.empty()) {
         textBox.text = " "; // sdl_ttf doesn't render text without any characters, so we add a space
     }
-    if (ChessQLDfont == nullptr) {
-        std::cerr << "failed to render text!" << std::endl;
-    }
-    if (renderer == nullptr) {
-        std::cerr << "failed to render text!" << std::endl;
-    }
 
+    // create surface and texture
     SDL_Surface *textsurface = TTF_RenderText_Blended_Wrapped(ChessQLDfont, textBox.text.c_str(), textBox.textcolor, windowx/2);
     SDL_Texture *texttexture = SDL_CreateTextureFromSurface(renderer, textsurface);
     if (textsurface == nullptr){
@@ -279,10 +352,11 @@ void RenderWindow::renderTextBox(textBox& textBox) {
     SDL_RenderDrawRect(renderer, &rect);
     SDL_RenderCopy(renderer, texttexture, nullptr, &textrect);
 
+    // free surface and texture
     SDL_FreeSurface(textsurface);
     SDL_DestroyTexture(texttexture);
 
-    // render the cursor
+    // render the cursor not sure if this works lmao
     if (textBox.cursorvisible) {
         uint32_t currenttime = SDL_GetTicks();
         if (currenttime - textBox.lastcursortoggletime >= textBox.cursorblinkrate) {
@@ -295,11 +369,19 @@ void RenderWindow::renderTextBox(textBox& textBox) {
             SDL_RenderDrawLine(renderer, cursorx, textBox.y + 2, cursorx, textBox.y + textrect.h - 2);
         }
     }
+    // since its a new loop we need to manually display the changes
     SDL_RenderPresent(renderer);
     TTF_SetFontSize(ChessQLDfont, 128);
 }
-std::string RenderWindow::TextBox(textBox textBox) {
 
+
+/**
+* Funtion to show and handle the text box
+* @param textBox the text box to render
+* @return std::string the text entered
+*/
+std::string RenderWindow::TextBox(textBox textBox) {
+    // new game loops just for textbox because implementing it in the other loop would be a pain
     while (!textBox.isDone) {
         SDL_Event event;
         while (SDL_PollEvent(&event)) {
@@ -315,15 +397,15 @@ std::string RenderWindow::TextBox(textBox textBox) {
     return textBox.text;
 }
 
-
-
-// TODO: All the render functions can be summarized into one function
-
-
+/**
+* Function to display the welcome message
+* @param text the text to display
+* @return bool true if the user closed the window
+*/
 bool RenderWindow::displayWelcomeMessage(std::string text) {
-    std::string welcomeText = std::move(text);
     SDL_Rect textRect;
     SDL_Texture *textTexture;
+    std::string welcomeText = std::move(text);
     SDL_Color textColor = {255, 0, 0};
     SDL_Surface *textSurface = TTF_RenderText_Blended(ChessQLDfont, welcomeText.c_str(), textColor);
     if (!textSurface) {
@@ -340,7 +422,7 @@ bool RenderWindow::displayWelcomeMessage(std::string text) {
     // Set the flag to false initially
     bool playButtonPressed = false;
 
-    // Loop until the "PLAY" button is pressed
+    // Loop until the "string" button is pressed
     while (!playButtonPressed) {
         updateSquareSize();
         textRect.w = windowx / 1.01;
@@ -358,12 +440,6 @@ bool RenderWindow::displayWelcomeMessage(std::string text) {
                 // If the user closes the window, exit the loop and the function
                 playButtonPressed = true;
             } else if (event.type == SDL_MOUSEBUTTONDOWN) {
-
-                // Check if the "PLAY" button was pressed
-                // int x, y;
-                // SDL_GetMouseState(&x, &y);
-                // if (x >= textRect.x && x <= textRect.x + textRect.w && y >= textRect.y && y <= textRect.y + textRect.h) {
-                //   // Set the flag to true and exit the loop
                 playButtonPressed = true;
             } else if (event.type == SDL_KEYDOWN) {
                 switch (event.key.keysym.sym) {
@@ -374,8 +450,6 @@ bool RenderWindow::displayWelcomeMessage(std::string text) {
                 }
             }
         }
-
-        // Render the text  
     }
 
     // Destroy the texture and free the surface after the loop
@@ -388,15 +462,14 @@ bool RenderWindow::displayWelcomeMessage(std::string text) {
     SDL_SetWindowSize(window, height, height);
     return true;
 }
-
+/** Function to display the promotion options
+* 1 = queen, 2 = rook, 3 = bishop, 4 = knight
+* @param pos the position of the pawn
+* @param white true if the pawn is white
+* @return int which represents that the piece to promotes to
+*/
 int RenderWindow::displayPromotionOptions(glm::vec2 pos, bool white) {
-    // we have to display a bot where are 4 options are displayed and the number returned represents the piece    
-    // 1 = queen, 2 = rook, 3 = bishop, 4 = knight
-    // we have to render the background first
     // create a box that is evenly spaced and display all pieces depending of is bool is set to white or not white or black
-
-
-
     SDL_SetRenderDrawColor(renderer, 166, 168, 171, 200);
     int calculations = (int) pos.y * squareSize - (white ? 0 : 3 * squareSize);
     SDL_Rect rect = {(int) pos.x * squareSize, calculations, (squareSize), (squareSize * 4)};
@@ -410,6 +483,7 @@ int RenderWindow::displayPromotionOptions(glm::vec2 pos, bool white) {
     } else {
         y = 0;
     }
+    // render all the pieces on the sprite this is ugly but it gets the job done
     for (int i = 128; i <= 128 * 4; i += 128) {
         SDL_Rect src;
         src.h = 128;

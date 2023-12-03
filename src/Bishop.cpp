@@ -1,6 +1,12 @@
 #include "bishop.hpp"
 #include "piece.hpp"
 
+/* constructor for the bishop
+* define the bishops position on sprite in bin/debug/res/gfx/pieces.png
+* inherit from piece
+* @param p_pos the position of the bishop
+* @param white the color of the bishop
+*/
 Bishop::Bishop(glm::vec2 p_pos, bool white)
         : Piece(p_pos, white) {
     if (white) {
@@ -13,6 +19,9 @@ Bishop::Bishop(glm::vec2 p_pos, bool white)
     currentFrame.h = 128;
 }
 
+/* finds all possible moves of the bishop
+* @param Pieces a vector containing all pieces
+*/
 void Bishop::findMovesWithoutCheck(std::vector <std::shared_ptr<Piece>> &Pieces) {
     legalMoves.clear();
     for (int8_t i = pos.x + 1; i < 8; i++) {

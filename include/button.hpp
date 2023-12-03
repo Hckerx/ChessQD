@@ -6,7 +6,7 @@
 
 class Button : public SDL_Rect {
 public:
-    Button(std::string name);
+    explicit Button(std::string name);
 
     bool clicked();
 
@@ -14,8 +14,6 @@ public:
 
     void updateRect();
 
-    int Mouse_x, Mouse_y;
-    SDL_Point point;
 
     bool hovered();
 

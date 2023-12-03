@@ -4,6 +4,7 @@
 
 using boost::asio::ip::tcp;
 
+#define defaultFen "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
 class Communication {
 public:
     bool received = false;

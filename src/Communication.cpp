@@ -4,6 +4,24 @@
 using boost::asio::ip::tcp;
 using std::string;
 
+/** 
+* Communication is based on a client a server architecture
+* Additionally, to ensure that the games renders while communicating this class uses asynchronous operations
+* Similar to threading asynchronous operations allow to execute multiple operations at the same time
+* For further information: https://www.baeldung.com/cs/async-vs-multi-threading
+* In simple terms asynchronous operations are functions that don't block the execution of the program, e.g. a web request so
+* the program can continue to execute while the request is being processed
+*/
+
+
+
+/*
+* The constructor of the communication class
+* It first tries to connect to an existing game
+* If this fails it creates a new game
+* @param io_context The io_context of the main program
+* @param ip The ip address of the server
+*/
 Communication::Communication(boost::asio::io_context &io_context, const string& ip)
     : io_context(io_context), socket(io_context) {
   try {
@@ -20,7 +38,10 @@ Communication::Communication(boost::asio::io_context &io_context, const string& 
     init(); // Start server initialization
   }
 }
-
+/**
+* Sends a message to the other player
+* @param message The message to be sent
+*/
 void Communication::send(std::string message) {
     message += '\n';
     boost::asio::async_write(
@@ -31,7 +52,10 @@ void Communication::send(std::string message) {
                 }
             });
 }
-
+/**
+* Creates an acceptor and waits for a connection(server)
+* @param void
+*/
 void Communication::init() {
     // create a new socket
     // check if socket is open
@@ -47,6 +71,12 @@ void Communication::init() {
     });
 }
 
+/**
+* Function that starts asynchronous receive operation
+* Instead of returning the received data it stores it in a variable
+* when the data has been received. This is done because asynchronous operations are non-blocking.
+* @param void
+*/
 void Communication::asyncReceive() {
     boost::asio::async_read_until(
             socket, receiveBuffer, '\n',
@@ -60,6 +90,11 @@ void Communication::asyncReceive() {
             });
 }
 
+/**
+* Processes the received data for special cases
+* @param void
+* @return void
+*/
 void Communication::processData() {
     std::istream is(&receiveBuffer);
     std::getline(is, data, '\n');
@@ -76,7 +111,12 @@ void Communication::processData() {
         data.clear();
     }
 }
-
+/**
+* Function that is called every iteration of the main loop
+* Checks if data has been received and if so returns it
+* @param void
+* @return std::string The received data
+*/
 std::string Communication::read() {
     if (received) {
         received = false;

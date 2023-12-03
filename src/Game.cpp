@@ -23,7 +23,6 @@
 // define constants
 #define RESIGN 1
 #define ONLINE 0
-#define defaultFen "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
 // TODO: Threefold FIVEFOLD seventy move rule insufficient material?
 
 //constructor of class Game (the main class)
@@ -295,7 +294,7 @@ void Game::handleEvents() {
                                 gameRunning = false;
                                 break;
                             }
-                            Pieces = FenImport("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+                            Pieces = FenImport(defaultFen);
                             std::thread t([&]() {
                                 boost::asio::io_context::work work(io_context);
                                 io_context.run();
@@ -304,7 +303,7 @@ void Game::handleEvents() {
                             communication = new Communication(io_context, ip);
                             // start a thread which starts the io_context.run()
                         } else {
-                            Pieces = FenImport("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+                            Pieces = FenImport(defaultFen);
                             communication->send("close");
                             communication->close();
                             delete communication;

@@ -2,6 +2,12 @@
 #include "piece.hpp"
 #include "util.hpp"
 
+/**
+* constructor for the Rook class which inherits from the Piece class
+* sets the position(in the sprite) and color of the Rook
+* @param p_pos
+* @param white
+*/
 Rook::Rook(glm::vec2 p_pos, bool white)
         : Piece(p_pos, white) {
     if (white)
@@ -12,7 +18,11 @@ Rook::Rook(glm::vec2 p_pos, bool white)
     currentFrame.w = 128;
     currentFrame.h = 128;
 }
-
+/**
+* Function that finds all the legal moves of the Rook
+* @param Pieces
+* @return void
+*/
 void Rook::findMovesWithoutCheck(std::vector <std::shared_ptr<Piece>> &Pieces) {
     legalMoves.clear();
 
@@ -36,7 +46,16 @@ void Rook::findMovesWithoutCheck(std::vector <std::shared_ptr<Piece>> &Pieces) {
     }
 }
 
-//for castle hasMoved property must be set
+/* Function to move the Rook
+* Must overload function to set has Moved to true 
+* @param newPos
+* @param oldPos
+* @param Pieces
+* @param whiteTurn
+* @param isPlayingOnline
+* @param isWhite
+* @return bool if the move was successful
+*/
 bool Rook::move(glm::vec2 newPos, glm::vec2 oldPos, std::vector <std::shared_ptr<Piece>> &Pieces, bool whiteTurn,
                 bool isPlayingOnline, bool isWhite) {
     if (Piece::move(newPos, oldPos, Pieces, whiteTurn, isPlayingOnline, isWhite)) {

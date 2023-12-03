@@ -1,6 +1,12 @@
 #include "knight.hpp"
 #include "piece.hpp"
 
+/* constructor for the knight
+* define the knights position on sprite in bin/debug/res/gfx/pieces.png
+* inherit from piece
+* @param p_pos the position of the knight
+* @param white the color of the knight
+*/
 Knight::Knight(glm::vec2 p_pos, bool white)
         : Piece(p_pos, white) {
     if (white)
@@ -11,7 +17,9 @@ Knight::Knight(glm::vec2 p_pos, bool white)
     currentFrame.w = 128;
     currentFrame.h = 128;
 }
-
+/* finds all possible moves of the knight
+* @param Pieces a vector containing all pieces
+*/
 void Knight::findMovesWithoutCheck(std::vector <std::shared_ptr<Piece>> &Pieces) {
     legalMoves.clear();
     findIndMoves(Pieces, pos.x + 2, pos.y + 1);

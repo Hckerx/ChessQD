@@ -8,7 +8,13 @@
 #include "piece.hpp"
 #include <glm/gtx/string_cast.hpp>
 #include <map>
-//finds the piece on a given position or returns nullptr
+
+/** Find the piece which is at the given field if there is one
+* else return nullptr
+* @param field
+* @param Pieces
+* @return std::shared_ptr<Piece> or nullptr if there is no piece at the given field
+*/
 std::shared_ptr <Piece> getMatchingPiece(glm::vec2 field, std::vector <std::shared_ptr<Piece>> &Pieces) {
 
     for (auto &i: Pieces) {
@@ -18,7 +24,12 @@ std::shared_ptr <Piece> getMatchingPiece(glm::vec2 field, std::vector <std::shar
     }
     return nullptr;
 }
-//gets the mousepositions relative to the board
+/**
+* Gets the mousepositions relative to the board
+* @param whiteDown
+* @param squareSize
+* @return glm::vec2 Mouse position
+*/
 glm::vec2 getMousePosition(bool whiteDown, int squareSize) {
     int Mouse_x, Mouse_y;
     float Mousex, Mousey;
@@ -40,21 +51,33 @@ glm::vec2 getMousePosition(bool whiteDown, int squareSize) {
     return glm::vec2{Mousex, Mousey};
 }
 
-//Converts board position into valid FEN-string
+/**
+* Converts board position into valid FEN-string
+* https://en.wikipedia.org/wiki/Forsyth-Edwards_Notation
+* @param piecesVector
+* @param whiteTurn
+* @param halfMoveNumber
+* @return std::string FEN-string
+*/
 std::string FenExport(const std::vector <std::shared_ptr<Piece>>& piecesVector,bool whiteTurn,int halfMoveNumber) {
-    std::map <std::string, std::shared_ptr<Piece>> posMap;
-    std::string FenExportString;
+    std::map <std::string, std::shared_ptr<Piece>> posMap; //en.wikipedia.org/wiki/Hash_table
+    std::string FenExportString; // string to be returned
     std::string enPassantSquare = "-";
+    // fill map with all pieces 
     for (const auto& i: piecesVector) {
         posMap[glm::to_string(i->getPos())] = i;
     }
     int count = 0;
     int whiteSpaces = 0;
+    // loop through all fields
     while (count < 64) {
+        // calculate x and y position
         int y = (int) count / 8;
         int x = count % 8;
 
 
+        // if at start of the column add number of whitespaces and then a '/' if its not the first one because after row change there is always a '/'
+        //
         if (x == 0 && count != 0) {
             if (whiteSpaces != 0) {
                 FenExportString += std::to_string(whiteSpaces);
@@ -63,6 +86,7 @@ std::string FenExport(const std::vector <std::shared_ptr<Piece>>& piecesVector,b
             whiteSpaces = 0;
 
         }
+        
         auto i = posMap.find(glm::to_string(glm::vec2{x, y}));
         if (i != posMap.end()) {
             if (whiteSpaces != 0) {

@@ -1,6 +1,12 @@
 #include "queen.hpp"
 #include "piece.hpp"
 
+/**
+* constructor for the piece
+* define the queens position on sprite in bin/debug/res/gfx/pieces.png
+* @param p_pos the position of the piece
+* @param white the color of the piece
+*/
 Queen::Queen(glm::vec2 p_pos, bool white)
         : Piece(p_pos, white) {
     if (white) {
@@ -12,7 +18,9 @@ Queen::Queen(glm::vec2 p_pos, bool white)
     currentFrame.w = 128;
     currentFrame.h = 128;
 }
-
+/* finds all possible moves of the queen
+* @param Pieces a vector containing all pieces
+*/
 void Queen::findMovesWithoutCheck(std::vector <std::shared_ptr<Piece>> &Pieces) {
     legalMoves.clear();
     for (int8_t i = pos.x + 1; i < 8; i++) {

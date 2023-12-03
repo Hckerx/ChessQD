@@ -47,7 +47,7 @@ private:
 
     void loadFromRenderedText(Timer *timer);
 
-    int renderWidgets(std::array<Button *, 3> buttons, Timer *wTimer, Timer *bTimer);
+    void renderWidgets(std::array<Button *, 3> buttons, Timer *wTimer, Timer *bTimer);
 
     SDL_Texture *texture;
     SDL_Window *window;
