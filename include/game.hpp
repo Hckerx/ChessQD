@@ -68,6 +68,7 @@ private:
     std::vector <std::shared_ptr<Piece>> FenImport(const std::string &FenString);
 
 public:
+
     explicit Game(std::string fen);
     ~Game();
 };

@@ -25,7 +25,10 @@
 #define ONLINE 0
 // TODO: Threefold FIVEFOLD seventy move rule insufficient material?
 
-//constructor of class Game (the main class)
+/** constructor of class Game (the main class)
+* @param void
+* @return void
+*/
 Game::Game(std::string fen) : window("ChessQLD") {
     // import default fen
     Pieces = FenImport(fen);
@@ -39,11 +42,19 @@ Game::Game(std::string fen) : window("ChessQLD") {
     run();
 }
 
+/** Destructor of class Game
+* @param void
+* @return void
+*/
 Game::~Game() {
     window.cleanUp();
 }
 
-
+/**
+* Game loop
+* @param void
+* @return void
+*/
 void Game::run() {
     // First render to display the initial game board
     window.fullRender(highlightMoves, lastMoves, Pieces, whiteDown, buttons, &wTimer, &bTimer);
@@ -141,7 +152,11 @@ void Game::run() {
         return;
     }
 }
-
+/**
+* Places pieces if it works
+* @param void
+* @return void
+*/
 void Game::placePiece() {
     // Get the mouse position in board coordinates
     glm::ivec2 MousePosition = getMousePosition(whiteDown, window.squareSize);
@@ -205,6 +220,12 @@ void Game::placePiece() {
     PieceSelected = false;
 }
 
+/**
+* handles the promotion of a pawn
+* @param std::shared_ptr<Piece> selectedPiece
+* @param bool Captured
+* @return bool
+*/
 bool Game::handlePromotion(const std::shared_ptr<Piece> &selectedPiece, bool Captured) {
     // get piece and check if it's a pawn
     std::shared_ptr <Pawn> derivedPtr = std::dynamic_pointer_cast<Pawn>(selectedPiece);
@@ -218,6 +239,11 @@ bool Game::handlePromotion(const std::shared_ptr<Piece> &selectedPiece, bool Cap
     return false;
 }
 
+/**
+* Handles checkmate
+* @param void
+* @return void
+*/
 void Game::handleCheckmate() {
     // Check if there are no legal moves left
     bool no_legal_moves = true;
@@ -514,6 +540,7 @@ std::vector <std::shared_ptr<Piece>> Game::FenImport(const std::string &FenStrin
     count++;
     count++;
 
+    // Check if castling is possible and update the pieces
     if (metadataFen[count] == '-') {
         for (const auto& i: piecesVector) {
             std::shared_ptr <King> Kings = std::dynamic_pointer_cast<King>(i);
@@ -568,6 +595,7 @@ std::vector <std::shared_ptr<Piece>> Game::FenImport(const std::string &FenStrin
     }
     count++;
 
+    // Check if en passant is possible and update the pieces
     std::string abc = "abcdefgh12345678";
     if (std::find(abc.begin(), abc.end(), metadataFen[count]) != abc.end() &&
         std::find(abc.begin(), abc.end(), metadataFen[count + 1]) != abc.end()) {
@@ -585,6 +613,7 @@ std::vector <std::shared_ptr<Piece>> Game::FenImport(const std::string &FenStrin
         count++;
     }
     count++;
+    // Half and full move numbers
     if (std::isdigit(metadataFen[count]) && std::isdigit(metadataFen[count + 1])) {
         std::string digits;
         digits += metadataFen[count];
