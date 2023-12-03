@@ -1,4 +1,4 @@
-#pragma once
+#pragma once //FIXME
 #define SDL_MAIN_HANDLED
 
 #include <SDL2/SDL_rect.h>
@@ -10,7 +10,6 @@
 #include "piece.hpp"
 #include "timer.hpp"
 #include "textBox.hpp"
-
 
 class RenderWindow {
 public:

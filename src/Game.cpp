@@ -350,7 +350,6 @@ void Game::handleEvents() {
                         highlightMoves.erase(position);
                     }
                 }
-
                 break;
 
             // Check if the window is closed and quit the game

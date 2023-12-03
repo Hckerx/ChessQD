@@ -25,8 +25,8 @@ public:
 
     SDL_Color color = {0, 0, 0};
     SDL_Color hoveredColor = {255, 0, 0};
+
 private:
     SDL_Texture *Texture;
     SDL_Texture *TextureHovered;
-
 };
