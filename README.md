@@ -23,7 +23,7 @@ To install the release version of ChessQD, follow these steps:
 
 1. Visit the [Releases](https://github.com/Hckerx/ChessQD/releases) section of our GitHub repository.
 
-2. Download the latest release exe file or ELD file from the available assets.
+2. Download the latest release exe file or ELF file from the available assets.
 
 3. run the file
 
@@ -47,7 +47,7 @@ Any type of contribution via GitHub Pull Requests is welcome: new features, bug 
 
 
 ## License
-ChessQD is licensed under the GNU General Public License, version 3.0 (GPL-3.0).
+ChessQD is licensed under the GNU General Public License, version 2.0 (GPL-2.0).
 
 ## Support
 If you encounter any issues or have questions, please feel free to open an issue on our GitHub repository.
