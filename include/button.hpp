@@ -1,3 +1,4 @@
+#define SDL_MAIN_HANDLED
 #include <SDL2/SDL_rect.h>
 #include <SDL2/SDL_surface.h>
 #include <SDL2/SDL_ttf.h>

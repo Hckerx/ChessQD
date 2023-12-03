@@ -1,4 +1,5 @@
-#include "SDL2/SDL.h"
+#include <SDL2/SDL_events.h>
+#include <SDL2/SDL_timer.h>
 #include <cstdint>
 #include <string>
 #include <sys/types.h>

@@ -2,7 +2,6 @@
 #include <string>
 #include <utility>
 #include "button.hpp"
-#include <SDL2/SDL.h>
 
 /** A button class inheriting from the SDL_Rect object.
 * It has a name and a texture and can be hovered and clicked.

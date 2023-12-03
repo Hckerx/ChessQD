@@ -1,12 +1,10 @@
 //necessary for windows
-#include <cstdint>
 #define SDL_MAIN_HANDLED
-
 // import libraries
 #include <glm/gtx/string_cast.hpp>
+#include <cstdint>
 #include <memory>
 #include <SDL2/SDL.h>
-#include <iostream>
 #include <bits/stdc++.h>
 
 // import files
@@ -18,7 +16,6 @@
 #include "king.hpp"
 #include "queen.hpp"
 #include "knight.hpp"
-#include "piece.hpp"
 #include "game.hpp"
 // define constants
 #define RESIGN 1
