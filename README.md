@@ -47,7 +47,7 @@ Any type of contribution via GitHub Pull Requests is welcome: new features, bug 
 
 
 ## License
-ChessQD is licensed under the GNU General Public License, version 3.0 (GPL-3.0).
+ChessQD is licensed under the GNU General Public License, version 2.0 (GPL-2.0).
 
 ## Support
 If you encounter any issues or have questions, please feel free to open an issue on our GitHub repository.
