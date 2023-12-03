@@ -23,7 +23,7 @@ To install the release version of ChessQD, follow these steps:
 
 1. Visit the [Releases](https://github.com/Hckerx/ChessQD/releases) section of our GitHub repository.
 
-2. Download the latest release exe file or ELD file from the available assets.
+2. Download the latest release exe file or ELF file from the available assets.
 
 3. run the file
 
