@@ -22,7 +22,7 @@ public:
 private:
     void free();
 
-    Uint32 startTicks = 0;
-    Uint32 pausedTicks = 0;
-    Uint32 pausedTime = 0;
+    uint32_t startTicks = 0;
+    uint32_t pausedTicks = 0;
+    uint32_t pausedTime = 0;
 };

@@ -1,3 +1,4 @@
+#include <sys/types.h>
 #define SDL_MAIN_HANDLED
 #include <array>
 #include <memory>
@@ -40,7 +41,7 @@ private:
     int halfMoveNumber = 0;
     int fullMoveNumber = 0; //needed?
     int state = -1; //state of the game (draw, checkmate, closed)
-    ulong counter = 0; //move forwards and backwards
+    u_long counter = 0; //move forwards and backwards
 
     std::array<Button *, 3> buttons;
 

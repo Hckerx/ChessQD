@@ -211,7 +211,7 @@ void RenderWindow::render(std::shared_ptr <Piece> &p_piece, bool whiteDown) {
 * @return void
 */
 void RenderWindow::renderWidgets(std::array<Button *, 3> buttons, Timer *wTimer, Timer *bTimer) {
-    int i;
+    uint8_t i;
     // render the buttons centered and evenly spaced on the bottom of the screen
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
     for (i = 0; i < buttons.size(); i++) {

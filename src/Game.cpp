@@ -1,4 +1,5 @@
 //necessary for windows
+#include <cstdint>
 #define SDL_MAIN_HANDLED
 
 // import libraries
@@ -19,7 +20,6 @@
 #include "knight.hpp"
 #include "piece.hpp"
 #include "game.hpp"
-
 // define constants
 #define RESIGN 1
 #define ONLINE 0
@@ -165,7 +165,7 @@ void Game::placePiece() {
     glm::vec2 oldPos = highlightMoves[0];
     
     // Get the current number of pieces on the board
-    ulong sizeOfPieces = Pieces.size();
+    u_long sizeOfPieces = Pieces.size();
     
     // Check if it's the first move of the game
     if (counter == 0) {
@@ -486,7 +486,7 @@ std::vector <std::shared_ptr<Piece>> Game::FenImport(const std::string &FenStrin
     int countx = 0;
     int county = 0;
     std::string delimiter = " ";
-    uint pos = FenString.find(delimiter);
+    uint32_t pos = FenString.find(delimiter);
     std::string PositionFen = FenString.substr(0, pos);
     std::string metadataFen = FenString.substr(pos + 1);
 
@@ -599,8 +599,8 @@ std::vector <std::shared_ptr<Piece>> Game::FenImport(const std::string &FenStrin
     std::string abc = "abcdefgh12345678";
     if (std::find(abc.begin(), abc.end(), metadataFen[count]) != abc.end() &&
         std::find(abc.begin(), abc.end(), metadataFen[count + 1]) != abc.end()) {
-        ulong pos_x = abc.find(metadataFen[count]);
-        ulong pos_y = 8 - (metadataFen[count + 1] - '0');
+        u_long pos_x = abc.find(metadataFen[count]);
+        u_long pos_y = 8 - (metadataFen[count + 1] - '0');
         std::shared_ptr <Piece> derivedPtr = getMatchingPiece({pos_x, whiteTurn ? pos_y + 1 : pos_y - 1}, piecesVector);
         std::shared_ptr <Pawn> enPassant = std::dynamic_pointer_cast<Pawn>(derivedPtr);
         if (enPassant != nullptr) {

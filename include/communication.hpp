@@ -1,7 +1,6 @@
 #include <boost/asio.hpp>
-#include <boost/bind.hpp>
 #include <iostream>
-
+#include <boost/bind/bind.hpp>
 using boost::asio::ip::tcp;
 
 #define defaultFen "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
