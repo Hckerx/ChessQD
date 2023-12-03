@@ -27,8 +27,7 @@ Communication::Communication(boost::asio::io_context &io_context, const string& 
     : io_context(io_context), socket(io_context) {
   try {
     // Connect to existing game
-    socket.connect(
-        tcp::endpoint(boost::asio::ip::address::from_string(ip), 12345));
+    socket.connect(tcp::endpoint(boost::asio::ip::address::from_string(ip), 12345));
     isConnected = true;
     send("white");
     isWhite = false;
@@ -101,7 +100,6 @@ void Communication::processData() {
     std::getline(is, data, '\n');
     received = true;
 
-    std::cout << data << std::endl;
     if (data == "close") {
         close();
     } else if (data == "black") {

@@ -205,7 +205,6 @@ void Game::placePiece() {
 
             // Send the move to the opponent in online play
             if (isPlayingOnline && state == -1) {
-                std::cout << "should send" << std::endl;
                 std::string temp = FenExport(Pieces,whiteTurn,halfMoveNumber); // WRONG PROMOTION IGNORED
                 communication->send(temp);
             }
@@ -262,24 +261,18 @@ void Game::handleCheckmate() {
     }
     // Update the game state based on the checkmate status
     if (no_legal_moves) {
-        std::cout << "no legal moves" << std::endl;
         // send state to opponent and update game state
         if (!check) {
-            std::cout << "king is not in check" << std::endl;
             state = 2;
             communication->send("d");
         } else if (whiteTurn) {
-            std::cout << "white lost" << std::endl;
             state = 0;
             if (isPlayingOnline && !isWhite()) {
-                std::cout << "sending l" << std::endl;
                 communication->send("l");
             }
         } else {
-            std::cout << "black lost" << std::endl;
             state = 1;
             if (isPlayingOnline && isWhite()) {
-                std::cout << "sending l" << std::endl;
                 communication->send("l");
             }
         }
@@ -309,12 +302,13 @@ void Game::handleEvents() {
                     }
                     // Check if the online button is pressed and handle the online play
                     if (buttons[1]->hovered()) {
-                        std::cout << "clicked online button" << std::endl;
                         // If the player is not playing online, start the communication. If not, close the communication
                         if (!isPlayingOnline && communication == nullptr) {
                             textBox ipBox = textBox(window.windowx / 2 - window.windowx/4, window.windowy / 2 - window.windowy/4);
                             std::string ip = window.TextBox(ipBox);
-                            if (ip.empty()) {
+
+                            // some weird character at the end of the string is causing problems 
+                            if (ip.empty() || ip.size() == 1) {
                                 ip = "127.0.0.1";
                             } else if (ip == "close") {
                                 gameRunning = false;
