@@ -16,7 +16,7 @@ public:
     explicit RenderWindow(const char *p_title);
 
     void renderTextBox(textBox& textBox);
-    bool displayWelcomeMessage(std::string text);
+    bool displayMessage(std::string text);
 
     void cleanUp();
 

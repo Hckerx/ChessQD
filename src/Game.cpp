@@ -137,15 +137,15 @@ void Game::run() {
     //0=white lost 1=black lost 2=draw else=quit
     if (state == 2) {
         gameRunning = false;
-        window.displayWelcomeMessage("Draw");
+        window.displayMessage("Draw");
         return;
     } else if (state == 0) {
         gameRunning = false;
-        window.displayWelcomeMessage("White lost");
+        window.displayMessage("White lost");
         return;
     } else if (state == 1) {
         gameRunning = false;
-        window.displayWelcomeMessage("Black lost");
+        window.displayMessage("Black lost");
         return;
     }
 }

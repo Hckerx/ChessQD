@@ -21,7 +21,7 @@ void Button::initButton(SDL_Texture *textTexture, SDL_Texture *textHoveredTextur
 * @param void
 * @return the texture of the button
 */
-SDL_Texture *Button::getTexture() {
+SDL_Texture * Button::getTexture() {
     if (hovered())
         return TextureHovered;
     return Texture;

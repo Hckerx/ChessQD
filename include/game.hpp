@@ -46,7 +46,6 @@ private:
     RenderWindow window; //displayed main window
     std::vector <glm::ivec2> highlightMoves = {{1000, 1000}}; //vector of moves to highlight
     std::vector <glm::ivec2> lastMoves = {{1000, 1000}}; //FIXME vector of last moves?? CHANGE NAME
-
     std::shared_ptr <Piece> lastPiece; //FIXME WHATS THTA NAME
 
     // Pieces 

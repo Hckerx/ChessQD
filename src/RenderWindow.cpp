@@ -10,9 +10,7 @@
 #include <utility>
 #include <vector>
 #include <array>
-
 #include <SDL2/SDL_blendmode.h>
-#include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>
 #include <iostream>
@@ -54,7 +52,7 @@ RenderWindow::RenderWindow(const char *p_title) { //SDL initiation
     squareSize = (float) height / 8 * 0.95;
     // create window
     window = SDL_CreateWindow(p_title, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, squareSize * 8, height,
-                              SDL_WINDOW_RESIZABLE | SDL_WINDOW_SHOWN); //| SDL_WINDOW_RESIZABLE
+                              SDL_WINDOW_RESIZABLE | SDL_WINDOW_SHOWN);
 
     if (window == nullptr) {
         std::cout << "Window failed to init. Error: " << SDL_GetError() << std::endl;
@@ -64,8 +62,8 @@ RenderWindow::RenderWindow(const char *p_title) { //SDL initiation
     // blendmode to allow transparency, e.g. promotion view
     SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
     // TODO: set icon
-    //SDL_Surface *icon = IMG_Load("bin/debug/res/gfx/icon.png");
-    //SDL_SetWindowIcon(window, icon);
+    //SDL_Surface *icon = IMG_Load("bin/debug/res/gfx/icon.png"); FIXME
+    //SDL_SetWindowIcon(window, icon); FIXME
     // show cursor
     SDL_ShowCursor(1);
     // load sprite
@@ -125,7 +123,7 @@ void RenderWindow::loadFromRenderedText(Timer *timer) {
         std::cerr << "Font is null" << std::endl;
     }
     // create a surface from the text and texture
-    SDL_Surface *textSurface = TTF_RenderText_Solid(ChessQLDfont, timer->timeText.c_str(), timer->textColor);
+    SDL_Surface *textSurface = TTF_RenderText_Blended(ChessQLDfont, timer->timeText.c_str(), timer->textColor);
     if (textSurface != nullptr) {
         //Create texture from surface pixels
         timer->texture = SDL_CreateTextureFromSurface(renderer, textSurface);
@@ -398,7 +396,7 @@ std::string RenderWindow::TextBox(textBox textBox) {
 * @param text the text to display
 * @return bool true if the user closed the window
 */
-bool RenderWindow::displayWelcomeMessage(std::string text) {
+bool RenderWindow::displayMessage(std::string text) {
     SDL_Rect textRect;
     SDL_Texture *textTexture;
     std::string welcomeText = std::move(text);
@@ -455,7 +453,7 @@ bool RenderWindow::displayWelcomeMessage(std::string text) {
     SDL_DisplayMode DM;
     SDL_GetCurrentDisplayMode(0, &DM);
     int height = DM.h < DM.w ? DM.h * 0.9 : DM.w;
-    SDL_SetWindowSize(window, height, height);
+    SDL_SetWindowSize(window, height, height); //FIXME: WHATS THAT DOING MY MAN
     return true;
 }
 /** Function to display the promotion options
