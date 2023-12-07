@@ -144,10 +144,10 @@ void Game::run() {
         state = -1;
         lastMoves = {{1000,1000}};
         highlightMoves = {{1000,1000}};
-        wTimer.stop();
-        bTimer.stop();
-        FenImport(defaultFen);
-        moveHistory = {};
+        wTimer = Timer();
+        bTimer = Timer();
+        Pieces = FenImport(defaultFen);
+        moveHistory = {defaultFen};
         gameRunning = true;
         run();
     }
