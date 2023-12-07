@@ -64,6 +64,42 @@ void Game::run() {
             state = 2;  // Set state to draw if 50-move rule is reached
             break;
         }
+        // insufficent material
+        if (Pieces.size() <= 2) {
+            state = 2;
+            break;
+        } else if (Pieces.size() == 3) {
+            for (const auto& i: Pieces) {
+                std::shared_ptr <Bishop> derivedPtr = std::dynamic_pointer_cast<Bishop>(i);
+                if (derivedPtr != nullptr) {
+                    state = 2;
+                    break;
+                }
+                std::shared_ptr <Knight> derivedPtr2 = std::dynamic_pointer_cast<Knight>(i);
+                if (derivedPtr2 != nullptr) {
+                    state = 2;
+                    break;
+                }
+            }
+        } else if (Pieces.size() == 4) {
+            int color = -1;
+            // for white
+            for (const auto& i: Pieces) {
+                std::shared_ptr <Bishop> derivedPtr = std::dynamic_pointer_cast<Bishop>(i);
+                if (derivedPtr != nullptr) {
+                    // get position
+                    glm::ivec2 pos = derivedPtr->getPos();
+                    // check if it's on a white field
+                    if (color != -1) {
+                        color = (pos.x + pos.y) % 2;
+                    } else if (color == (pos.x + pos.y) % 2) {
+                        state = 2;
+                        break;
+                    }
+                }
+            }
+        }
+
 
         // Check for online play
         if (communication != nullptr) {
