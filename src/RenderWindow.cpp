@@ -327,7 +327,6 @@ void RenderWindow::fullRender(const std::vector <glm::ivec2> &highlight, const s
 */
 void RenderWindow::renderTextBox(textBox& textBox) {
     // make global textfont size smaller for this function
-    TTF_SetFontSize(ChessQLDfont, 32);
     SDL_Surface* textsurface;
     if (textBox.text.empty()) {
         textBox.text = " "; // so the text box doesnt go invisible
@@ -354,7 +353,6 @@ void RenderWindow::renderTextBox(textBox& textBox) {
 
 
 
-    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
     SDL_RenderDrawRect(renderer, &rect);
     SDL_RenderCopy(renderer, texttexture, nullptr, &textrect);
 
@@ -376,8 +374,6 @@ void RenderWindow::renderTextBox(textBox& textBox) {
         }
     }
     // since its a new loop we need to manually display the changes
-    SDL_RenderPresent(renderer);
-    TTF_SetFontSize(ChessQLDfont, 128);
 }
 
 
@@ -387,19 +383,32 @@ void RenderWindow::renderTextBox(textBox& textBox) {
 * @return std::string the text entered
 */
 std::string RenderWindow::TextBox(textBox textBox) {
+
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+    TTF_SetFontSize(ChessQLDfont, 32);
     // new game loops just for textbox because implementing it in the other loop would be a pain
+    uint16_t frameStart;
+    uint16_t frameTime;
     while (!textBox.isDone) {
+        frameStart = SDL_GetTicks();
         SDL_Event event;
         while (SDL_PollEvent(&event)) {
             if (event.type == SDL_QUIT) {
                 // If the user closes the window, exit the loop and the function
                 textBox.isDone = true;
+                TTF_SetFontSize(ChessQLDfont, 128);
                 return "close";
             }
-            textBox.handleEvent(event);
         }
+        textBox.handleEvent(event);
         renderTextBox(textBox);
+        frameTime = SDL_GetTicks() - frameStart;
+        if (1/60 > frameTime) {
+            SDL_Delay(1/60*1000 - frameTime);
+        }
+        SDL_RenderPresent(renderer);
     }
+    TTF_SetFontSize(ChessQLDfont, 128);
     return textBox.text;
 }
 

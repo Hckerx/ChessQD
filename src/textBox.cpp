@@ -8,15 +8,15 @@
 void textBox::handleEvent(SDL_Event &event) {
     if (event.type == SDL_TEXTINPUT) {
         // remve placeholder when typing
-        if (text == "Enter ip here (Enter for localhost):")
+        if (text == placeholder)
             text = "";
         text += event.text.text;
     } else if (event.type == SDL_KEYDOWN){
         if (event.key.keysym.sym == SDLK_BACKSPACE && !text.empty()) {
             text.pop_back();
         } else if (event.key.keysym.sym == SDLK_RETURN) {
-            if (text == "Enter ip here (Enter for localhost):")
-                text = "localhost";
+            if (text == placeholder)
+                text = "default";
             // do something with the text
 
             

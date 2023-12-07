@@ -26,11 +26,13 @@
 Game::Game(std::string fen) : window("ChessQLD"), wTimer(5*minutes), bTimer(5*minutes) {
     //window.displayMessage("Welcome to ChessQLD");
     // import default fen
+    
     Pieces = FenImport(fen);
     moveHistory.push_back(fen);
     // create Timers and Buttons
     buttons = {new Button("resign"), new Button("online"), new Button("rotate")};
     window.initButtons(buttons);
+
     // start Game
     run();
 }
@@ -51,7 +53,17 @@ Game::~Game() {
 void Game::run() {
     // First render to display the initial game board
     window.fullRender(highlightMoves, lastMoves, Pieces, whiteDown, buttons, &wTimer, &bTimer);
-
+    textBox fenStringBox = textBox("Enter FenString here(Enter for default):", window.windowx / 2 - window.windowx/4, window.windowy / 2 - window.windowy/4);
+    std::string fenString = window.TextBox(fenStringBox);
+    if (fenString == "close") {
+        gameRunning = false;
+        state = 3;
+        return;
+    } else if (fenString != "no" && fenString != "default") {
+        Pieces = FenImport(fenString);
+        moveHistory.clear();
+        moveHistory.push_back(fenString);
+    }
     while (gameRunning) {
         // Check if a piece is selected for dragging
         if (PieceSelected)
@@ -374,11 +386,11 @@ void Game::handleEvents() {
                     if (buttons[1]->hovered()) {
                         // If the player is not playing online, start the communication. If not, close the communication
                         if (!isPlayingOnline && communication == nullptr) {
-                            textBox ipBox = textBox(window.windowx / 2 - window.windowx/4, window.windowy / 2 - window.windowy/4);
+                            textBox ipBox = textBox("Enter ip here(Enter for localhost):",window.windowx / 2 - window.windowx/4, window.windowy / 2 - window.windowy/4);
                             std::string ip = window.TextBox(ipBox);
 
                             // some weird character at the end of the string is causing problems 
-                            if (ip == "localhost") {
+                            if (ip == "default") {
                                 ip = "127.0.0.1";
                             } else if (ip == "close") {
                                 gameRunning = false;

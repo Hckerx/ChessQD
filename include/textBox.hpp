@@ -2,10 +2,12 @@
 #include <SDL2/SDL_timer.h>
 #include <cstdint>
 #include <string>
+#include <utility>
 #include <sys/types.h>
 class textBox {
 public:
-    textBox(int x, int y) :x(x), y(y){
+    textBox(std::string placeholder, int x, int y) :x(x), y(y), placeholder(std::move(placeholder)) {
+        text = placeholder;
         cursorvisible = true;
         cursorblinkrate = 500; // Cursor blink rate in milliseconds
         lastcursortoggletime = SDL_GetTicks();
@@ -16,7 +18,8 @@ public:
 
     int x, y;
     bool isDone = false;
-    std::string text = "Enter ip here (Enter for localhost):";
+    const std::string placeholder;
+    std::string text;
     SDL_Color textcolor = {0, 0, 0, 255};
     bool cursorvisible;
     uint32_t cursorblinkrate;
