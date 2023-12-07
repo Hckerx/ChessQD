@@ -21,12 +21,21 @@ void Timer::startPause() {
     isPaused=!isPaused;
 }
 
+/** Function to reset the timer
+* @param none
+* @return void
+*/
+void Timer::reset() {
+    stop();
+    timeText = "00:00";
+}
+
 /** Function to stop the timer
 * @param none
 * @return void
 */
 void Timer::stop() {
-    isPaused = false;
+    isPaused = true;
     startTicks = 0;
     pausedTicks = 0;
 }
