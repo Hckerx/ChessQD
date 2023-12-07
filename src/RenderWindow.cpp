@@ -320,13 +320,18 @@ void RenderWindow::fullRender(const std::vector <glm::ivec2> &highlight, const s
 */
 void RenderWindow::renderTextBox(textBox& textBox) {
     // make global textfont size smaller for this function
-    TTF_SetFontSize(ChessQLDfont, 64);
+    TTF_SetFontSize(ChessQLDfont, 32);
+    SDL_Surface* textsurface;
     if (textBox.text.empty()) {
-        textBox.text = " "; // sdl_ttf doesn't render text without any characters, so we add a space
+        textBox.text = " "; // so the text box doesnt go invisible
+    } 
+    SDL_Color textColor = textBox.textcolor;
+    if (textBox.text == "Enter ip here (Enter for localhost):") {
+        // placeholder text
+        textColor = {161, 167, 179, 255};
     }
-
+    textsurface = TTF_RenderText_Blended_Wrapped(ChessQLDfont, textBox.text.c_str(), textColor, windowx/2);
     // create surface and texture
-    SDL_Surface *textsurface = TTF_RenderText_Blended_Wrapped(ChessQLDfont, textBox.text.c_str(), textBox.textcolor, windowx/2);
     SDL_Texture *texttexture = SDL_CreateTextureFromSurface(renderer, textsurface);
     if (textsurface == nullptr){
         std::cerr << "failed to create text surface!" << std::endl;
@@ -382,7 +387,7 @@ std::string RenderWindow::TextBox(textBox textBox) {
             if (event.type == SDL_QUIT) {
                 // If the user closes the window, exit the loop and the function
                 textBox.isDone = true;
-                return "quit";
+                return "close";
             }
             textBox.handleEvent(event);
         }
@@ -450,10 +455,6 @@ bool RenderWindow::displayMessage(std::string text) {
     SDL_DestroyTexture(textTexture);
     SDL_FreeSurface(textSurface);
 
-    SDL_DisplayMode DM;
-    SDL_GetCurrentDisplayMode(0, &DM);
-    int height = DM.h < DM.w ? DM.h * 0.9 : DM.w;
-    SDL_SetWindowSize(window, height, height); //FIXME: WHATS THAT DOING MY MAN
     return true;
 }
 /** Function to display the promotion options

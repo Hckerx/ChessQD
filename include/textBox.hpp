@@ -6,7 +6,6 @@
 class textBox {
 public:
     textBox(int x, int y) :x(x), y(y){
-        text = "";
         cursorvisible = true;
         cursorblinkrate = 500; // Cursor blink rate in milliseconds
         lastcursortoggletime = SDL_GetTicks();
@@ -17,7 +16,7 @@ public:
 
     int x, y;
     bool isDone = false;
-    std::string text;
+    std::string text = "Enter ip here (Enter for localhost):";
     SDL_Color textcolor = {0, 0, 0, 255};
     bool cursorvisible;
     uint32_t cursorblinkrate;

@@ -27,6 +27,7 @@
 * @return void
 */
 Game::Game(std::string fen) : window("ChessQLD") {
+    //window.displayMessage("Welcome to ChessQLD");
     // import default fen
     Pieces = FenImport(fen);
     moveHistory.push_back(fen);
@@ -136,17 +137,20 @@ void Game::run() {
     // Display end-game messages based on the final state
     //0=white lost 1=black lost 2=draw else=quit
     if (state == 2) {
-        gameRunning = false;
         window.displayMessage("Draw");
-        return;
     } else if (state == 0) {
-        gameRunning = false;
         window.displayMessage("White lost");
-        return;
     } else if (state == 1) {
-        gameRunning = false;
         window.displayMessage("Black lost");
-        return;
+    }
+    if (state != 1 && state != 3) {
+        state = -1;
+        lastMoves = {{1000,1000}};
+        highlightMoves = {{1000,1000}};
+        FenImport(defaultFen);
+        moveHistory = {};
+        gameRunning = true;
+        run();
     }
 }
 /**
@@ -305,11 +309,15 @@ void Game::handleEvents() {
                             std::string ip = window.TextBox(ipBox);
 
                             // some weird character at the end of the string is causing problems 
-                            if (ip.empty() || ip.size() == 1) {
+                            if (ip == "localhost") {
                                 ip = "127.0.0.1";
                             } else if (ip == "close") {
                                 gameRunning = false;
+                                state = 3;
                                 break;
+                            } else if (ip == "no") {
+                                // if cancel then don't start online mode
+                                continue;
                             }
                             Pieces = FenImport(defaultFen);
                             std::thread t([&]() {
@@ -318,6 +326,7 @@ void Game::handleEvents() {
                             });
                             t.detach();
                             communication = new Communication(io_context, ip);
+                            continue;
                             // start a thread which starts the io_context.run()
                         } else {
                             Pieces = FenImport(defaultFen);
