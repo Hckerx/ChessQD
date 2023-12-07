@@ -144,6 +144,8 @@ void Game::run() {
         state = -1;
         lastMoves = {{1000,1000}};
         highlightMoves = {{1000,1000}};
+        wTimer.stop();
+        bTimer.stop();
         FenImport(defaultFen);
         moveHistory = {};
         gameRunning = true;
@@ -290,6 +292,13 @@ void Game::handleEvents() {
                 // Check if the left mouse button is pressed and handle the button clicks
                 if (event.button.button == SDL_BUTTON_LEFT) {
                     // Check if the resign button is pressed and handle the resign
+                    for (auto i: buttons) {
+                        if (i->hovered()) {
+                            PieceSelected = false;
+                            selectedPiece = nullptr;
+                            break;
+                        }
+                    }
                     if (buttons[0]->hovered()) {
                         if (whiteTurn) {
                             state = 0;
@@ -333,11 +342,13 @@ void Game::handleEvents() {
                             communication = nullptr;
                             isPlayingOnline = false;
                             io_context.stop();
+                            continue;
                         }
                     }
                     // Toggle automatic board rotation
                     if (buttons[2]->hovered()) {
                         rotate_board = !rotate_board;
+                        continue;
                     }
 
                     // Check if a piece is promoting and handle the promotion else select a piece
