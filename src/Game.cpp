@@ -1,6 +1,7 @@
 // import libraries
 #include <glm/gtx/string_cast.hpp>
 #include <cstdint>
+#include <iostream>
 #include <memory>
 #include <bits/stdc++.h>
 
@@ -59,11 +60,33 @@ void Game::run() {
         if (PieceSelected)
             DragPiece();
 
-        // Check for the 50-move rule
-        if (halfMoveNumber >= 50) {
-            state = 2;  // Set state to draw if 50-move rule is reached
+        // Check for the 75-move rule
+        if (halfMoveNumber >= 75) {
+            state = 2;  // Set state to draw if 75-move rule is reached which results in an automatic draw 
+            // 50-move rule only applies if one claims it
             break;
         }
+        // Check for fivefold repetition
+        // what im about to write is disgusting and a violoation of the genova convention
+        // buuuuuut ...
+        // we count the duplicates by creating a hashmap of the fen strings and their occurences and then we check if there are 5 or more
+        std::map<std::string, int> map;
+        for (const auto& i: moveHistory) {
+            std::string removedMovedString = removeMoves(i);
+            if (map.find(removedMovedString) == map.end()) {
+                map[removedMovedString] = 1;
+            } else {
+                map[removedMovedString]++;
+            }
+        }
+        // check if there are 5 or more
+        for (const auto& i: map) {
+            if (i.second >= 5) {
+                state = 2;
+            break;
+            }
+        }
+
         // insufficent material
         if (Pieces.size() <= 2) {
             state = 2;
@@ -85,12 +108,13 @@ void Game::run() {
             int color = -1;
             // for white
             for (const auto& i: Pieces) {
+
                 std::shared_ptr <Bishop> derivedPtr = std::dynamic_pointer_cast<Bishop>(i);
                 if (derivedPtr != nullptr) {
                     // get position
                     glm::ivec2 pos = derivedPtr->getPos();
                     // check if it's on a white field
-                    if (color != -1) {
+                    if (color == -1) {
                         color = (pos.x + pos.y) % 2;
                     } else if (color == (pos.x + pos.y) % 2) {
                         state = 2;

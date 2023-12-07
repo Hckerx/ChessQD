@@ -6,3 +6,5 @@ glm::vec2 getMousePosition(bool whiteDown, int squareSize);
 
 std::string FenExport(const std::vector <std::shared_ptr<Piece>>& pieces,bool whiteTurn,int halfMoveNumber);
 
+
+std::string removeMoves(std::string FenString);

@@ -183,3 +183,22 @@ std::string FenExport(const std::vector <std::shared_ptr<Piece>>& pieces,bool wh
     FenExportString += " 0";
     return FenExportString;
 }
+
+/** Function that removes the amount of moves from the end of the FenString
+* @param std::string FenString
+* @return std::string FenString
+*/
+std::string removeMoves(std::string FenString) {
+    int amountOfWhiteSpaces = 0;
+    for (auto i = FenString.end(); i != FenString.begin(); i--) {
+        if (amountOfWhiteSpaces <= 1) {
+            if (*i == ' ') {
+                amountOfWhiteSpaces++;
+            }
+            FenString.erase(i, FenString.end());
+        }     
+    }
+    return FenString;
+}
+
+
