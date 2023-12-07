@@ -4,7 +4,7 @@
 
 class Timer : public SDL_Rect {
 public:
-    Timer();
+    explicit Timer(int limit);
 
     void startPause();
 
@@ -20,7 +20,7 @@ public:
     SDL_Texture *texture = nullptr;
 
 private:
-
+    int limit = 0;
     uint32_t startTicks = 0;
     uint32_t pausedTicks = 0;
 };

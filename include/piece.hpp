@@ -1,4 +1,4 @@
-#pragma once //???FIXME)
+#pragma once
 #define SDL_MAIN_HANDLED
 #include <glm/glm.hpp>
 #include <SDL2/SDL_rect.h>

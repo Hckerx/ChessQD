@@ -3,7 +3,7 @@
 /**
 * Timer constructor inheriting from SDL_Rect
  */
-Timer::Timer() : SDL_Rect() {
+Timer::Timer(int limit) : SDL_Rect(), limit(limit) {
 }
 
 /** Function which is responsible for the logic of the timer
@@ -36,8 +36,8 @@ void Timer::stop() {
 */
 float Timer::getTime() const {
     if (isPaused) {
-        return (float)pausedTicks / 1000.f;
+        return limit - (float)pausedTicks / 1000.f;
     } else {
-        return (float)(SDL_GetTicks() - startTicks) / 1000.f;
+        return limit - (float)(SDL_GetTicks() - startTicks) / 1000.f;
     }
 }

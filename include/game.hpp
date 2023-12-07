@@ -1,9 +1,9 @@
+#pragma once
 #include <sys/types.h>
 #include <array>
 #include <memory>
 #include <vector>
 #include "renderWindow.hpp"
-#include "piece.hpp"
 #include "communication.hpp"
 
 class Game {
@@ -26,27 +26,29 @@ private:
         return false;
     }
 
-
+    // Render class to render game
+    RenderWindow window; //displayed main window
+    std::vector <glm::ivec2> highlightMoves = {{1000, 1000}};
+    std::vector <glm::ivec2> lastMoves = {{1000, 1000}}; 
+    std::shared_ptr <Piece> lastPiece; // used for promoting 
+    // Widgets
     Timer wTimer;
     Timer bTimer;
+    std::array<Button *, 3> buttons;
+
+    // Game Logic
     bool gameRunning = true;
     bool PieceSelected = false; //Does user hold leftclick on piece
     bool whiteTurn = true;
-    bool whiteDown = true; // defines which color is on the bottom of the board when game is startes
+    bool whiteDown = true; // defines which color is on the bottom of the board when game is started
     bool rotate_board = false; // defines if the board should rotate after every move or not
     bool isPromoting = false;
     int halfMoveNumber = 0;
-    int fullMoveNumber = 0; //FIXME
-    int state = -1; //state of the game (draw, checkmate, closed)
+    int fullMoveNumber = 0; 
+    int state = -1; //state = -1 -> game is running, state = 0 -> white lost, state = 1 -> black lost, state = 2 -> draw, state = 3 -> quit
     u_long counter = 0; //move forwards and backwards
 
-    std::array<Button *, 3> buttons;
 
-    // Render class to render game
-    RenderWindow window; //displayed main window
-    std::vector <glm::ivec2> highlightMoves = {{1000, 1000}}; //vector of moves to highlight
-    std::vector <glm::ivec2> lastMoves = {{1000, 1000}}; //FIXME vector of last moves?? CHANGE NAME
-    std::shared_ptr <Piece> lastPiece; //FIXME WHATS THTA NAME
 
     // Pieces 
     std::shared_ptr <Piece> selectedPiece;

@@ -1,5 +1,4 @@
 #include "king.hpp"
-#include "piece.hpp"
 #include "util.hpp"
 #include "rook.hpp"
 
