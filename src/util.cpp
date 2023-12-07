@@ -180,7 +180,7 @@ std::string FenExport(const std::vector <std::shared_ptr<Piece>>& pieces,bool wh
     // Add enPassantSquare and halfMoveNumber Full move number not implemented yet
     FenExportString += ' ' + enPassantSquare + ' ';
     FenExportString += std::to_string(halfMoveNumber);
-    FenExportString += " 0";
+    FenExportString += " "+std::to_string(halfMoveNumber/2);
     return FenExportString;
 }
 

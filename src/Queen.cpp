@@ -1,5 +1,4 @@
 #include "queen.hpp"
-#include "piece.hpp"
 
 /**
 * constructor for the piece

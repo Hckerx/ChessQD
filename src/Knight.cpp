@@ -1,5 +1,4 @@
 #include "knight.hpp"
-#include "piece.hpp"
 
 /* constructor for the knight
 * define the knights position on sprite in bin/debug/res/gfx/pieces.png

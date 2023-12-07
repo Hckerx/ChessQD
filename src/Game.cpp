@@ -18,20 +18,17 @@
 // define constants
 #define RESIGN 1
 #define ONLINE 0
-// TODO: Threefold FIVEFOLD seventy move rule insufficient material?
-
+#define minutes 60
 /** constructor of class Game (the main class)
 * @param void
 * @return void
 */
-Game::Game(std::string fen) : window("ChessQLD") {
+Game::Game(std::string fen) : window("ChessQLD"), wTimer(5*minutes), bTimer(5*minutes) {
     //window.displayMessage("Welcome to ChessQLD");
     // import default fen
     Pieces = FenImport(fen);
     moveHistory.push_back(fen);
     // create Timers and Buttons
-    wTimer = Timer();
-    bTimer = Timer();
     buttons = {new Button("resign"), new Button("online"), new Button("rotate")};
     window.initButtons(buttons);
     // start Game
@@ -64,6 +61,14 @@ void Game::run() {
         if (halfMoveNumber >= 75) {
             state = 2;  // Set state to draw if 75-move rule is reached which results in an automatic draw 
             // 50-move rule only applies if one claims it
+            break;
+        }
+        // check if one of the timers is at 0 and set state accordigly
+       if (wTimer.getTime() <= 0) {
+            state = 0;
+            break;
+        } else if (bTimer.getTime() <= 0) {
+            state = 1;
             break;
         }
         // Check for fivefold repetition
@@ -167,8 +172,6 @@ void Game::run() {
             }
         }
 
-        wTimer.timeText = std::to_string((float)wTimer.getTime());
-        bTimer.timeText = std::to_string((float)bTimer.getTime()); //TODO necessary?
 
 
         // Handle user input events
@@ -204,8 +207,8 @@ void Game::run() {
         state = -1;
         lastMoves = {{1000,1000}};
         highlightMoves = {{1000,1000}};
-        wTimer = Timer();
-        bTimer = Timer();
+        wTimer = Timer(5*minutes);
+        bTimer = Timer(5*minutes);
         Pieces = FenImport(defaultFen);
         moveHistory = {defaultFen};
         gameRunning = true;

@@ -51,6 +51,7 @@ private:
     bool isServer = false;
     std::string data;
 
+    // initializes the server
     void init();
 };
 

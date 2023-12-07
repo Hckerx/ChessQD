@@ -123,6 +123,13 @@ void RenderWindow::loadFromRenderedText(Timer *timer) {
         std::cerr << "Font is null" << std::endl;
     }
     // create a surface from the text and texture
+    // set the text of the timer and format it to mm:ss
+    int time = (int)timer->getTime();
+    std::string seconds = std::to_string(time % 60);
+    if (seconds.length() == 1) {
+        seconds = "0" + seconds;
+    }
+    timer->timeText = std::to_string(time/60) + ":" + seconds;
     SDL_Surface *textSurface = TTF_RenderText_Blended(ChessQLDfont, timer->timeText.c_str(), timer->textColor);
     if (textSurface != nullptr) {
         //Create texture from surface pixels

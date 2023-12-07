@@ -1,5 +1,4 @@
 #include "pawn.hpp"
-#include "piece.hpp"
 #include "game.hpp"
 #include "util.hpp"
 
