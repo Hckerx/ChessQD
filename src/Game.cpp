@@ -1,10 +1,7 @@
-//necessary for windows
-#define SDL_MAIN_HANDLED
 // import libraries
 #include <glm/gtx/string_cast.hpp>
 #include <cstdint>
 #include <memory>
-#include <SDL2/SDL.h>
 #include <bits/stdc++.h>
 
 // import files

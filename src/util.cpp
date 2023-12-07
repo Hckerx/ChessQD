@@ -5,7 +5,7 @@
 #include "king.hpp"
 #include "queen.hpp"
 #include "knight.hpp"
-#include "piece.hpp"
+
 #include <SDL2/SDL_mouse.h>
 #include <glm/gtx/string_cast.hpp>
 #include <map>
