@@ -6,44 +6,44 @@ ChessQD, developed by Frank Hans and Wertzuz, is an implementation of the ancien
 
 ## Features
 
-- Graphical User Interface
-- In-game accessible buttons:
-  - Rotate Board
-  - Play Online
-    - Play against another person on the local network
-  - Resign
+-     Graphical User Interface
+-     In-game accessible buttons:
+  -     Rotate Board
+  -     Play Online
+    -     Play against another person on the local network
+  -     Resign
     End the current game
-- Display of the game result
-- Timer display
-- Variable resolution and window size
-- Implementation of the Chess board game following official rules
+-     Display of the game result
+-     Timer display
+-     Variable resolution and window size
+-     Implementation of the Chess board game following official rules
 
 ## Installation (Release Version)
 
 To install the release version of ChessQD, follow these steps:
 
-1. Visit the [Releases](https://github.com/Hckerx/ChessQD/releases) section of our GitHub repository.
+1.      Visit the [Releases](https://github.com/Hckerx/ChessQD/releases) section of our GitHub repository.
 
-2. Download the latest release exe file or ELF file from the available assets.
+2.      Download the latest release exe file or ELF file from the available assets.
 
-3. Run the file
+3.      Run the file
 
 ## Build instructions
 
-```shell
+    ```shell
 git clone https://github.com/Hckerx/ChessQD.git
 //FIXME install dependencies
 make #to build and run or alternatively make build just to build
-```
+    ```
 
 ## Future Enhancements
 
 In future versions, we plan to:
 
-- Enhance the online mode
-- Add PGN-Notation
-- Add a time limit feature
-- Implement new features based on user feedback.
+-     Enhance the online mode
+-     Add PGN-Notation
+-     Add a time limit feature
+-     Implement new features based on user feedback.
 
 ## Contributing
 
