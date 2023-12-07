@@ -54,17 +54,17 @@ glm::vec2 getMousePosition(bool whiteDown, int squareSize) {
 /**
 * Converts board position into valid FEN-string
 * https://en.wikipedia.org/wiki/Forsyth-Edwards_Notation
-* @param piecesVector
+* @param pieces
 * @param whiteTurn
 * @param halfMoveNumber
 * @return std::string FEN-string
 */
-std::string FenExport(const std::vector <std::shared_ptr<Piece>>& piecesVector,bool whiteTurn,int halfMoveNumber) {
+std::string FenExport(const std::vector <std::shared_ptr<Piece>>& pieces,bool whiteTurn,int halfMoveNumber) {
     std::map <std::string, std::shared_ptr<Piece>> posMap; //en.wikipedia.org/wiki/Hash_table
     std::string FenExportString; // string to be returned
     std::string enPassantSquare = "-";
     // fill map with all pieces 
-    for (const auto& i: piecesVector) {
+    for (const auto& i: pieces) {
         posMap[glm::to_string(i->getPos())] = i;
     }
     int count = 0;
