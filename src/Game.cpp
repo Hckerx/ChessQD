@@ -472,7 +472,7 @@ void Game::selectPiece() {
 * @return std::vector <std::shared_ptr<Piece>>
 */
 std::vector <std::shared_ptr<Piece>> Game::FenImport(const std::string &FenString) {
-    std::vector <std::shared_ptr<Piece>> piecesVector;
+    std::vector <std::shared_ptr<Piece>> pieces;
     int countx = 0;
     int county = 0;
     std::string delimiter = " ";
@@ -491,27 +491,27 @@ std::vector <std::shared_ptr<Piece>> Game::FenImport(const std::string &FenStrin
         } else if (std::isalpha(c)) {
             switch (tolower(c)) {
                 case 'k':
-                    piecesVector.push_back(std::make_shared<King>(glm::vec2{countx, county}, isupper(c)));
+                    pieces.push_back(std::make_shared<King>(glm::vec2{countx, county}, isupper(c)));
                     countx += 1;
                     break;
                 case 'n':
-                    piecesVector.push_back(std::make_shared<Knight>(glm::vec2{countx, county}, isupper(c)));
+                    pieces.push_back(std::make_shared<Knight>(glm::vec2{countx, county}, isupper(c)));
                     countx += 1;
                     break;
                 case 'p':
-                    piecesVector.push_back(std::make_shared<Pawn>(glm::vec2{countx, county}, isupper(c)));
+                    pieces.push_back(std::make_shared<Pawn>(glm::vec2{countx, county}, isupper(c)));
                     countx += 1;
                     break;
                 case 'r':
-                    piecesVector.push_back(std::make_shared<Rook>(glm::vec2{countx, county}, isupper(c)));
+                    pieces.push_back(std::make_shared<Rook>(glm::vec2{countx, county}, isupper(c)));
                     countx += 1;
                     break;
                 case 'b':
-                    piecesVector.push_back(std::make_shared<Bishop>(glm::vec2{countx, county}, isupper(c)));
+                    pieces.push_back(std::make_shared<Bishop>(glm::vec2{countx, county}, isupper(c)));
                     countx += 1;
                     break;
                 case 'q':
-                    piecesVector.push_back(std::make_shared<Queen>(glm::vec2{countx, county}, isupper(c)));
+                    pieces.push_back(std::make_shared<Queen>(glm::vec2{countx, county}, isupper(c)));
                     countx += 1;
                     break;
             }
@@ -532,7 +532,7 @@ std::vector <std::shared_ptr<Piece>> Game::FenImport(const std::string &FenStrin
 
     // Check if castling is possible and update the pieces
     if (metadataFen[count] == '-') {
-        for (const auto& i: piecesVector) {
+        for (const auto& i: pieces) {
             std::shared_ptr <King> Kings = std::dynamic_pointer_cast<King>(i);
             if (Kings != nullptr) {
                 Kings->hasMoved = true;
@@ -541,7 +541,7 @@ std::vector <std::shared_ptr<Piece>> Game::FenImport(const std::string &FenStrin
         count++;
     } else {
         if (metadataFen[count] == 'K') {
-            std::shared_ptr <Piece> pieceTemp = getMatchingPiece(glm::vec2{7, 7}, piecesVector);
+            std::shared_ptr <Piece> pieceTemp = getMatchingPiece(glm::vec2{7, 7}, pieces);
             std::shared_ptr <Rook> derivedPtr = std::dynamic_pointer_cast<Rook>(pieceTemp);
             if (derivedPtr != nullptr) {
                 if (derivedPtr->white) {
@@ -552,7 +552,7 @@ std::vector <std::shared_ptr<Piece>> Game::FenImport(const std::string &FenStrin
         }
 
         if (metadataFen[count] == 'Q') {
-            std::shared_ptr <Piece> pieceTemp = getMatchingPiece(glm::vec2{0, 7}, piecesVector);
+            std::shared_ptr <Piece> pieceTemp = getMatchingPiece(glm::vec2{0, 7}, pieces);
             std::shared_ptr <Rook> derivedPtr = std::dynamic_pointer_cast<Rook>(pieceTemp);
             if (derivedPtr != nullptr) {
                 if (derivedPtr->white) {
@@ -563,7 +563,7 @@ std::vector <std::shared_ptr<Piece>> Game::FenImport(const std::string &FenStrin
         }
 
         if (metadataFen[count] == 'k') {
-            std::shared_ptr <Piece> pieceTemp = getMatchingPiece(glm::vec2{7, 0}, piecesVector);
+            std::shared_ptr <Piece> pieceTemp = getMatchingPiece(glm::vec2{7, 0}, pieces);
             std::shared_ptr <Rook> derivedPtr = std::dynamic_pointer_cast<Rook>(pieceTemp);
             if (derivedPtr != nullptr) {
                 if (!derivedPtr->white) {
@@ -573,7 +573,7 @@ std::vector <std::shared_ptr<Piece>> Game::FenImport(const std::string &FenStrin
             count++;
         }
         if (metadataFen[count] == 'q') {
-            std::shared_ptr <Piece> pieceTemp = getMatchingPiece(glm::vec2{0, 0}, piecesVector);
+            std::shared_ptr <Piece> pieceTemp = getMatchingPiece(glm::vec2{0, 0}, pieces);
             std::shared_ptr <Rook> derivedPtr = std::dynamic_pointer_cast<Rook>(pieceTemp);
             if (derivedPtr != nullptr) {
                 if (!derivedPtr->white) {
@@ -591,7 +591,7 @@ std::vector <std::shared_ptr<Piece>> Game::FenImport(const std::string &FenStrin
         std::find(abc.begin(), abc.end(), metadataFen[count + 1]) != abc.end()) {
         u_long pos_x = abc.find(metadataFen[count]);
         u_long pos_y = 8 - (metadataFen[count + 1] - '0');
-        std::shared_ptr <Piece> derivedPtr = getMatchingPiece({pos_x, whiteTurn ? pos_y + 1 : pos_y - 1}, piecesVector);
+        std::shared_ptr <Piece> derivedPtr = getMatchingPiece({pos_x, whiteTurn ? pos_y + 1 : pos_y - 1}, pieces);
         std::shared_ptr <Pawn> enPassant = std::dynamic_pointer_cast<Pawn>(derivedPtr);
         if (enPassant != nullptr) {
             enPassant->isEnPassantVulnerable = true;
@@ -618,5 +618,5 @@ std::vector <std::shared_ptr<Piece>> Game::FenImport(const std::string &FenStrin
     if (metadataFen[count]) {
         fullMoveNumber = stoi(metadataFen.substr(count));
     }
-    return piecesVector;
+    return pieces;
 }
