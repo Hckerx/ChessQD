@@ -1,4 +1,3 @@
-#include <SDL2/SDL_rect.h>
 #include <string>
 #include <utility>
 #include "button.hpp"
