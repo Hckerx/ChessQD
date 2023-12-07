@@ -2,7 +2,6 @@
 #include <SDL2/SDL_render.h>
 #include <string>
 
-
 class Timer : public SDL_Rect {
 public:
     Timer();

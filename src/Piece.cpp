@@ -1,10 +1,5 @@
-#define SDL_MAIN_HANDLED
-
 #include "piece.hpp"
 #include "util.hpp"
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
-#include "communication.hpp"
 #include <algorithm>
 #include <king.hpp>
 #include <pawn.hpp>
