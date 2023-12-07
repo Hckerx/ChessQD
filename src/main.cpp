@@ -5,6 +5,6 @@
 * @return 0
 */
 int main() {
-    Game Game("3k2b2/8/8/8/8/8/5R2/3K1B2 w - - 0 1");
+    Game Game(defaultFen);
     return 0;
 }
