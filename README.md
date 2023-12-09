@@ -82,10 +82,10 @@ make build
 
 In future versions, we plan to:
 
--     Enhance the online mode
--     Add PGN-Notation
--     Add a time limit feature
--     Implement new features based on user feedback.
+- Enhance the online mode
+- Add PGN-Notation
+- Add a time limit feature
+- Implement new features based on user feedback.
 
 ## Contributing
 
