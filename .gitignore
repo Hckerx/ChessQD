@@ -1,5 +1,6 @@
 *.o
 *.tmp
+.idea
 .vscode/
 .cache/
 bin/debug/main
@@ -8,3 +9,4 @@ main.exe
 bin/debug/main.exe
 compile_commands.json
 compile_commands.events.json
+.clang-tidy
