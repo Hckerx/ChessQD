@@ -6,17 +6,17 @@ ChessQD, developed by Frank Hans and Wertzuz, is an implementation of the ancien
 
 ## Features
 
--     Graphical User Interface
--     In-game accessible buttons:
-  -     Rotate Board
-  -     Play Online
-    -     Play against another person on the local network
-  -     Resign
+- Graphical User Interface
+- In-game accessible buttons:
+  - Rotate Board
+  - Play Online
+    - Play against another person on the local network
+  - Resign
     End the current game
--     Display of the game result
--     Timer display
--     Variable resolution and window size
--     Implementation of the Chess board game following official rules
+- Display of the game result
+- Timer display
+- Variable resolution and window size
+- Implementation of the Chess board game following official rules
 
 
 ## Prerequisites Running
@@ -41,11 +41,11 @@ sudo apt-get install libsdl2-2.0-0 libsdl2-image-2.0-0 libsdl2-ttf-2.0-0
 
 To install the release version of ChessQD, follow these steps:
 
-1.      Visit the [Releases](https://github.com/Hckerx/ChessQD/releases) section of our GitHub repository.
+1. Visit the [Releases](https://github.com/Hckerx/ChessQD/releases) section of our GitHub repository.
 
-2.      Download the latest release exe file or ELF file from the available assets.
+2. Download the latest release exe file or ELF file from the available assets.
 
-3.      Run the file from the bin directory or make sure that it had access to the subfolders font/ and gfx/
+3. Run the file from the bin directory or make sure that it had access to the subfolders font/ and gfx/
 
 
 ## Prerequisites Building
