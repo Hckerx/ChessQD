@@ -15,20 +15,21 @@ class RenderWindow {
 public:
     explicit RenderWindow(const char *p_title);
 
-    void renderTextBox(textBox& textBox);
+    std::string TextBox(textBox textBox, std::vector <std::shared_ptr<Piece>> &Pieces,
+                              std::array<Button *, 3> buttons, Timer *wTimer, Timer *bTimer);
     bool displayMessage(std::string text);
 
     void cleanUp();
 
     void fullRender(const std::vector <glm::ivec2> &highlight, const std::vector <glm::ivec2> &lastMoves,
-                              std::vector <std::shared_ptr<Piece>> &Pieces, bool whiteDown,
-                              std::array<Button *, 3> buttons, Timer *wTimer, Timer *bTimer);
+                              std::vector <std::shared_ptr<Piece>> &Pieces,
+                              std::array<Button *, 3> buttons, Timer *wTimer, Timer *bTimer, bool whiteDown = true);
 
     int displayPromotionOptions(glm::vec2 pos, bool white);
 
     int squareSize;
 
-    std::string TextBox(textBox textBox);
+    void renderTextBox(textBox& textBox);
     void updateSquareSize() {
         SDL_GetWindowSize(window, &windowx, &windowy);
         squareSize = std::min(windowx, (int) (windowy * 0.95)) / 8;

@@ -305,8 +305,8 @@ void RenderWindow::display() {
 * @return void
 */
 void RenderWindow::fullRender(const std::vector <glm::ivec2> &highlight, const std::vector <glm::ivec2> &lastMoves,
-                              std::vector <std::shared_ptr<Piece>> &Pieces, bool whiteDown,
-                              std::array<Button *, 3> buttons, Timer *wTimer, Timer *bTimer) {
+                              std::vector <std::shared_ptr<Piece>> &Pieces,
+                            std::array<Button *, 3> buttons, Timer *wTimer, Timer *bTimer, bool whiteDown) {
     // order is important
     // first clear the window
     // then render the background
@@ -326,13 +326,14 @@ void RenderWindow::fullRender(const std::vector <glm::ivec2> &highlight, const s
 * @return void
 */
 void RenderWindow::renderTextBox(textBox& textBox) {
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
     // make global textfont size smaller for this function
     SDL_Surface* textsurface;
     if (textBox.text.empty()) {
         textBox.text = " "; // so the text box doesnt go invisible
     } 
     SDL_Color textColor = textBox.textcolor;
-    if (textBox.text == "Enter ip here (Enter for localhost):") {
+    if (textBox.text == textBox.placeholder) {
         // placeholder text
         textColor = {161, 167, 179, 255};
     }
@@ -354,6 +355,7 @@ void RenderWindow::renderTextBox(textBox& textBox) {
 
 
     SDL_RenderDrawRect(renderer, &rect);
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderCopy(renderer, texttexture, nullptr, &textrect);
 
     // free surface and texture
@@ -361,19 +363,24 @@ void RenderWindow::renderTextBox(textBox& textBox) {
     SDL_DestroyTexture(texttexture);
 
     // render the cursor not sure if this works lmao
-    if (textBox.cursorvisible) {
-        uint32_t currenttime = SDL_GetTicks();
-        if (currenttime - textBox.lastcursortoggletime >= textBox.cursorblinkrate) {
-            textBox.cursorvisible = !textBox.cursorvisible;
-            textBox.lastcursortoggletime = currenttime;
-        }
+    // blinking not implemented yet
+       
+   // if (textBox.cursorvisible) {
+   //     uint32_t currenttime = SDL_GetTicks();
+   //     std::cout << "currenttime" << currenttime << std::endl;
+   //     if (currenttime - textBox.lastcursortoggletime >= textBox.cursorblinkrate) {
+   //         std::cout << "toggle" << std::endl;
+   //         textBox.lastcursortoggletime = currenttime;
+   //         std::cout << "lasttime" << textBox.lastcursortoggletime << std::endl;
+   //     }
 
-        if (textBox.cursorvisible) {
+   //     if (textBox.cursorvisible) {
             int cursorx = textBox.x + textrect.w + 2; // adjust the cursor position as needed
             SDL_RenderDrawLine(renderer, cursorx, textBox.y + 2, cursorx, textBox.y + textrect.h - 2);
-        }
-    }
+   //     }
+   // }
     // since its a new loop we need to manually display the changes
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 }
 
 
@@ -382,15 +389,12 @@ void RenderWindow::renderTextBox(textBox& textBox) {
 * @param textBox the text box to render
 * @return std::string the text entered
 */
-std::string RenderWindow::TextBox(textBox textBox) {
+std::string RenderWindow::TextBox(textBox textBox, std::vector <std::shared_ptr<Piece>> &Pieces,
+                              std::array<Button *, 3> buttons, Timer *wTimer, Timer *bTimer) {
 
-    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
     TTF_SetFontSize(ChessQLDfont, 32);
     // new game loops just for textbox because implementing it in the other loop would be a pain
-    uint16_t frameStart;
-    uint16_t frameTime;
     while (!textBox.isDone) {
-        frameStart = SDL_GetTicks();
         SDL_Event event;
         while (SDL_PollEvent(&event)) {
             if (event.type == SDL_QUIT) {
@@ -399,13 +403,10 @@ std::string RenderWindow::TextBox(textBox textBox) {
                 TTF_SetFontSize(ChessQLDfont, 128);
                 return "close";
             }
+            textBox.handleEvent(event);
         }
-        textBox.handleEvent(event);
+        fullRender({{1000, 1000}}, {{1000,1000}}, Pieces, buttons, wTimer, bTimer);
         renderTextBox(textBox);
-        frameTime = SDL_GetTicks() - frameStart;
-        if (1/60 > frameTime) {
-            SDL_Delay(1/60*1000 - frameTime);
-        }
         SDL_RenderPresent(renderer);
     }
     TTF_SetFontSize(ChessQLDfont, 128);

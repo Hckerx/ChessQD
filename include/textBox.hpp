@@ -4,12 +4,13 @@
 #include <string>
 #include <utility>
 #include <sys/types.h>
+#include <iostream>
 class textBox {
 public:
-    textBox(std::string placeholder, int x, int y) :x(x), y(y), placeholder(std::move(placeholder)) {
+    textBox(const std::string& placeholder, int x, int y) :x(x), y(y), placeholder(placeholder) {
         text = placeholder;
         cursorvisible = true;
-        cursorblinkrate = 500; // Cursor blink rate in milliseconds
+        cursorblinkrate = 100; // Cursor blink rate in milliseconds
         lastcursortoggletime = SDL_GetTicks();
     }
 
@@ -22,7 +23,7 @@ public:
     std::string text;
     SDL_Color textcolor = {0, 0, 0, 255};
     bool cursorvisible;
-    uint32_t cursorblinkrate;
+    uint32_t cursorblinkrate = 1000;
     uint32_t lastcursortoggletime;
 };
 

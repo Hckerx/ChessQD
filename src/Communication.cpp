@@ -85,7 +85,7 @@ void Communication::asyncReceive() {
                     processData(); // Process the received data
                     asyncReceive(); // Continue asynchronous receive operation
                 } else {
-                    std::cerr << "Error receiving data: " << ec.message() << std::endl;
+                    // Error receiving data probably means the connection is closed
                 }
             });
 }

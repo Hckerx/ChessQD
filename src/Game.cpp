@@ -52,14 +52,16 @@ Game::~Game() {
 */
 void Game::run() {
     // First render to display the initial game board
-    window.fullRender(highlightMoves, lastMoves, Pieces, whiteDown, buttons, &wTimer, &bTimer);
+    window.fullRender(highlightMoves, lastMoves, Pieces, buttons, &wTimer, &bTimer, whiteDown);
     textBox fenStringBox = textBox("Enter FenString here(Enter for default):", window.windowx / 2 - window.windowx/4, window.windowy / 2 - window.windowy/4);
-    std::string fenString = window.TextBox(fenStringBox);
+    std::string fenString = window.TextBox(fenStringBox, Pieces, buttons, &wTimer, &bTimer);
     if (fenString == "close") {
         gameRunning = false;
         state = 3;
         return;
     } else if (fenString != "no" && fenString != "default") {
+        // remove first letter because weird whitespace is inserted
+        fenString.erase(0,1);
         Pieces = FenImport(fenString);
         moveHistory.clear();
         moveHistory.push_back(fenString);
@@ -162,17 +164,22 @@ void Game::run() {
                     } else {
                         state = 1;  // Black lost
                     }
-                    break;
-                } else if (read == "close") {
-                    // Close communication in case of disconnect
+                } else if (read == "w") {
+                    if (isWhite()) {
+                        state = 1;  // White won
+                    } else {
+                        state = 0;  // Black won
+                    }
+                } else if (read == "d") {
+                    state = 2;  // Draw
+                }
+                if (read == "close" || read == "l" || read == "w" || read == "d") {
                     communication->close();
                     delete communication;
                     communication = nullptr;
                     isPlayingOnline = false;
                     io_context.stop();
-                    break;
-                } else if (read == "d") {
-                    state = 2;  // Draw
+                    whiteDown = true;
                     break;
                 }
 
@@ -191,7 +198,7 @@ void Game::run() {
 
         // Update the game display
         window.fullRender(highlightMoves, std::vector<glm::ivec2>(lastMoves.end() - 2, lastMoves.end()), Pieces,
-                          whiteDown, buttons, &wTimer, &bTimer);
+                           buttons, &wTimer, &bTimer, whiteDown);
 
         // Display promotion options if a pawn is promoting
         if (isPromoting) {
@@ -215,7 +222,7 @@ void Game::run() {
     } else if (state == 1) {
         window.displayMessage("Black lost");
     }
-    if (state != 1 && state != 3) {
+    if (state != -1 && state != 3) {
         state = -1;
         lastMoves = {{1000,1000}};
         highlightMoves = {{1000,1000}};
@@ -351,6 +358,17 @@ void Game::handleCheckmate() {
                 communication->send("l");
             }
         }
+
+        if (isPlayingOnline) {
+            Pieces = FenImport(defaultFen);
+            communication->send("w");
+            communication->close();
+            delete communication;
+            communication = nullptr;
+            isPlayingOnline = false;
+            io_context.stop();
+            whiteDown = true;
+        }
     }
 }
 
@@ -375,10 +393,20 @@ void Game::handleEvents() {
                         }
                     }
                     if (buttons[0]->hovered()) {
-                        if (whiteTurn) {
+                        if (isWhite()) {
                             state = 0;
                         } else {
                             state = 1;
+                        }
+                        if (isPlayingOnline) {
+                            Pieces = FenImport(defaultFen);
+                            communication->send("w");
+                            communication->close();
+                            delete communication;
+                            communication = nullptr;
+                            isPlayingOnline = false;
+                            io_context.stop();
+                            whiteDown = true;
                         }
                         break;
                     }
@@ -387,7 +415,7 @@ void Game::handleEvents() {
                         // If the player is not playing online, start the communication. If not, close the communication
                         if (!isPlayingOnline && communication == nullptr) {
                             textBox ipBox = textBox("Enter ip here(Enter for localhost):",window.windowx / 2 - window.windowx/4, window.windowy / 2 - window.windowy/4);
-                            std::string ip = window.TextBox(ipBox);
+                            std::string ip = window.TextBox(ipBox, Pieces, buttons, &wTimer, &bTimer);
 
                             // some weird character at the end of the string is causing problems 
                             if (ip == "default") {

@@ -13,7 +13,6 @@ public:
     void close() {
         if (acceptor != nullptr && isConnected) {
             acceptor->close();
-            delete acceptor;
         }
         socket.close();
     }
