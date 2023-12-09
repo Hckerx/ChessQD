@@ -57,6 +57,7 @@ To install the release version of ChessQD, follow these steps:
 - libsdl2-ttf-dev
 - libsdl2-dev
 - libasio-dev
+- libglm-dev
 
 
 For building ChessQD, use the following command to install the necessary development libraries:
