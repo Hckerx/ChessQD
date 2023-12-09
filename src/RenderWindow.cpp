@@ -40,7 +40,7 @@ RenderWindow::RenderWindow(const char *p_title) { //SDL initiation
         std::cout << "TTF_init has failed. Error: " << SDL_GetError() << std::endl;
 
     // font
-    ChessQLDfont = TTF_OpenFont("bin/debug/res/font/REFOLTER.otf", 128);
+    ChessQLDfont = TTF_OpenFont("res/font/REFOLTER.otf", 128);
     if (ChessQLDfont == nullptr) {
         std::cerr << "Failed to load font! SDL_ttf Error: %s\n", TTF_GetError();
     }
@@ -67,7 +67,7 @@ RenderWindow::RenderWindow(const char *p_title) { //SDL initiation
     // show cursor
     SDL_ShowCursor(1);
     // load sprite
-    loadTexture("bin/debug/res/gfx/pieces.png");
+    loadTexture("res/gfx/pieces.png");
 
 }
 
